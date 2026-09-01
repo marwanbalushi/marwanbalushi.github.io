@@ -1,0 +1,22 @@
+---
+layout: default
+title: الأرشيف الزمني
+permalink: /arshif/
+---
+<div class="bar"><a href="{{ '/' | relative_url }}">{{ site.title }}</a></div>
+<main>
+{% assign posts = site.posts %}
+{% assign current = '' %}
+{% for p in posts %}
+  {% assign y = p.date | date: "%Y" %}
+  {% if y != current %}
+    {% unless forloop.first %}</ul>{% endunless %}
+    <h2 class="yr">{{ y }}</h2><ul style="list-style:none;padding:0;margin:0">
+    {% assign current = y %}
+  {% endif %}
+  <li style="padding:7px 0;border-top:.5px solid var(--rule)">
+    <a href="{{ p.url | relative_url }}">{{ p.content | strip_html | truncate: 70 }}</a>
+  </li>
+{% endfor %}
+</ul>
+</main>

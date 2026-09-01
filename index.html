@@ -1,0 +1,16 @@
+---
+layout: default
+---
+{% include masthead.html %}
+<div class="forms">
+ <button data-f="all" class="on">الكل</button>
+ <button data-f="waqfah">وقفات</button>
+ <button data-f="shathrah">شذرات</button>
+</div>
+<main id="stream"></main>
+<button class="more" id="more">المزيد</button>
+<script>
+var MEDIA_BASE = "{{ site.media_base }}";
+var DATA_URL = "{{ '/assets/data.json' | relative_url }}";
+</script>
+<script src="{{ '/assets/js/stream.js' | relative_url }}"></script>

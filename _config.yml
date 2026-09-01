@@ -1,0 +1,15 @@
+title: مروان يوسف البلوشي
+tagline: "نكتبُ عن الفقدِ.. كي لا يبردَ في القلبِ شوقٌ.. ولا تتحجّرَ ذكرى"
+description: "مدونة مروان يوسف البلوشي — وقفات وشذرات في عُمان والهُويّة والإنسان."
+lang: ar
+url: "https://marwanbalushi80.github.io"
+
+# مصدر الصور والمقاطع.
+# اتركه كما هو الآن. وبعد رفع الوسائط إلى R2 غيّره إلى رابط مستودعك، مثل:
+# media_base: "https://media.marwanbalushi.com"
+media_base: ""
+
+permalink: /:year/:month/:day/:slug/
+timezone: Asia/Muscat
+markdown: kramdown
+exclude: [README.md, "الدليل.md", "أدوات/"]

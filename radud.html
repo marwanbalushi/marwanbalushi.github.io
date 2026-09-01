@@ -1,0 +1,26 @@
+---
+layout: default
+title: أرشيف الردود
+permalink: /radud/
+noindex: true
+---
+<div class="bar"><a href="{{ '/' | relative_url }}">{{ site.title }}</a></div>
+<main>
+<p class="none" style="padding:26px 0 6px">أرشيف خاصّ لا يظهر في التصفّح ولا في محرّكات البحث.<br>ردودك على حسابات أخرى، محفوظةً للرجوع.</p>
+<div id="rl"></div>
+<button class="more" id="rmore">المزيد</button>
+</main>
+<script>
+var shown=0, D=[];
+function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;')}
+function draw(){
+ var n=D.slice(shown,shown+40);
+ document.getElementById('rl').insertAdjacentHTML('beforeend', n.map(function(e){
+  return '<article class="e"><p class="meta">'+e.d+(e.to?' · ردّاً على @'+e.to:'')+
+  '</p><p class="tx">'+esc(e.t)+'</p></article>'}).join(''));
+ shown+=n.length;
+ document.getElementById('rmore').style.display = shown<D.length?'block':'none';
+}
+document.getElementById('rmore').onclick=draw;
+fetch("{{ '/assets/radud.json' | relative_url }}").then(function(r){return r.json()}).then(function(j){D=j;draw()});
+</script>
