@@ -1,26 +1,119 @@
----
-layout: default
-title: أرشيف الردود
-permalink: /radud/
-noindex: true
----
-<div class="bar"><a href="{{ '/' | relative_url }}">{{ site.title }}</a></div>
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>أرشيف الردود</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Scheherazade+New:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+ --paper:#F8F4EE;--paper2:#F1EBE2;--ink:#241F1E;--accent:#5A1F28;--gold:#A8834B;
+ --muted:#6B5A56;--rule:#E2D8CD;--scale:1;--body:calc(20px*var(--scale));--measure:32em;
+ --display:"Amiri",serif;--text:"Scheherazade New",serif;
+}
+@media(min-width:760px){:root{--body:calc(22px*var(--scale))}}
+html[data-theme=dark]{--paper:#191614;--paper2:#211D19;--ink:#E9E1D6;--accent:#C9A063;
+ --gold:#C9A063;--muted:#9A9088;--rule:#332C27}
+*{box-sizing:border-box}html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--text);
+ font-size:var(--body);line-height:1.85;letter-spacing:0;padding:0 20px 70px}
+a{color:inherit;text-decoration:none}
+a:focus-visible,button:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+.tools{max-width:var(--measure);margin:0 auto;display:flex;justify-content:flex-end;gap:6px;padding:14px 0 0}
+.tools button{font-family:var(--text);font-size:.66em;line-height:1;color:var(--muted);background:none;
+ border:.5px solid var(--rule);border-radius:4px;padding:7px 11px;cursor:pointer}
+.tools button:hover{color:var(--accent);border-color:var(--gold)}
+.mast{max-width:var(--measure);margin:0 auto;text-align:center;padding:32px 0 26px}
+.name{font-family:var(--display);font-weight:400;font-size:clamp(30px,8.5vw,46px);
+ line-height:1.45;color:var(--accent);margin:0}
+.fl{display:flex;align-items:center;justify-content:center;gap:9px;margin:15px 0}
+.fl i{display:block;height:.5px;width:48px;background:var(--rule)}
+.lz{width:5px;height:5px;background:var(--gold);transform:rotate(45deg)}
+.doors{font-family:var(--display);font-size:calc(var(--body)*.82);line-height:2.15;margin:0}
+.doors b{font-weight:400;cursor:pointer}
+.subj{color:var(--accent)}.pred{color:var(--gold)}.sep{color:var(--rule);padding:0 5px}
+.doors b.off .subj,.doors b.off .pred{opacity:.35}
+.tag{color:var(--muted);font-size:calc(var(--body)*.74);line-height:1.9;margin:16px auto 0;max-width:24em}
+.forms{max-width:var(--measure);margin:26px auto 0;display:flex;
+ border-top:.5px solid var(--rule);border-bottom:.5px solid var(--rule)}
+.forms button{flex:1;font-family:var(--display);font-size:calc(var(--body)*.8);color:var(--muted);
+ background:none;border:none;padding:12px 0;cursor:pointer;border-bottom:2px solid transparent}
+.forms button.on{color:var(--accent);border-bottom-color:var(--gold)}
+html[data-theme=dark] .forms button.on{color:var(--gold)}
+main{max-width:var(--measure);margin:0 auto}
+.e{padding:32px 0;border-top:.5px solid var(--rule)}
+.e:first-child{border-top:none}
+.meta{font-size:calc(var(--body)*.6);color:var(--muted);margin:0 0 10px}
+.meta .dr{color:var(--gold)}
+.meta a{color:var(--muted)}
+.med{margin:0 0 18px}
+.med figure{margin:0 0 8px}
+.med.grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.med.grid figure{margin:0}
+.med img,.med video{width:100%;border-radius:3px;display:block;background:var(--paper2)}
+.wide{max-width:calc(var(--measure)+6em);margin-inline:auto}
+.tx{margin:0;white-space:pre-wrap}
+.end{width:5px;height:5px;background:var(--gold);transform:rotate(45deg);margin:16px auto 0}
+.more{display:block;margin:40px auto 0;font-family:var(--display);font-size:calc(var(--body)*.8);
+ color:var(--muted);background:none;border:.5px solid var(--rule);border-radius:4px;
+ padding:11px 26px;cursor:pointer}
+.more:hover{color:var(--accent);border-color:var(--gold)}
+.foot{max-width:var(--measure);margin:50px auto 0;padding-top:24px;border-top:.5px solid var(--rule);
+ text-align:center;font-size:calc(var(--body)*.6);color:var(--muted);line-height:2}
+.none{text-align:center;color:var(--muted);padding:50px 0;font-size:calc(var(--body)*.8)}
+.back{display:block;max-width:var(--measure);margin:0 auto;padding:14px 0;
+ font-family:var(--display);font-size:calc(var(--body)*.75);color:var(--accent)}
+html[data-theme=dark] .back{color:var(--gold)}
+</style>
+</head>
+<body>
+
+<div class="tools">
+ <button id="sm" aria-label="تصغير النص">أ−</button>
+ <button id="bg" aria-label="تكبير النص">أ+</button>
+ <button id="md">الوضع الليلي</button>
+</div>
+
+<a class="back" href="index.html">→ العودة إلى المدونة</a>
 <main>
-<p class="none" style="padding:26px 0 6px">أرشيف خاصّ لا يظهر في التصفّح ولا في محرّكات البحث.<br>ردودك على حسابات أخرى، محفوظةً للرجوع.</p>
+<p class="none" style="padding:20px 0 6px">أرشيف خاصّ لا يظهر في التصفّح ولا في محرّكات البحث.<br>ردودك على حسابات أخرى، محفوظةً للرجوع.</p>
 <div id="rl"></div>
-<button class="more" id="rmore">المزيد</button>
 </main>
+<button class="more" id="rmore" style="display:none">المزيد</button>
+<footer class="foot"><div class="fl" aria-hidden="true"><i></i><span class="lz"></span><i></i></div>
+مروان يوسف البلوشي</footer>
 <script>
 var shown=0, D=[];
 function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;')}
+function arn(n){return String(n).replace(/\d/g,function(d){return '٠١٢٣٤٥٦٧٨٩'[d]})}
 function draw(){
  var n=D.slice(shown,shown+40);
  document.getElementById('rl').insertAdjacentHTML('beforeend', n.map(function(e){
   return '<article class="e"><p class="meta">'+e.d+(e.to?' · ردّاً على @'+e.to:'')+
   '</p><p class="tx">'+esc(e.t)+'</p></article>'}).join(''));
  shown+=n.length;
- document.getElementById('rmore').style.display = shown<D.length?'block':'none';
+ var m=document.getElementById('rmore');
+ m.style.display = shown<D.length?'block':'none';
+ m.textContent='المزيد ('+arn(D.length-shown)+')';
 }
 document.getElementById('rmore').onclick=draw;
-fetch("{{ '/assets/radud.json' | relative_url }}").then(function(r){return r.json()}).then(function(j){D=j;draw()});
+fetch('radud.json').then(function(r){return r.json()}).then(function(j){D=j;draw()});
+(function(){
+  var r=document.documentElement, sc=1;
+  function st(k,v){try{localStorage.setItem(k,v)}catch(e){}}
+  function rd(k){try{return localStorage.getItem(k)}catch(e){return null}}
+  function ap(){r.style.setProperty('--scale',sc);st('scale',sc)}
+  document.getElementById('bg').onclick=function(){sc=Math.min(1.3,Math.round((sc+.1)*10)/10);ap()};
+  document.getElementById('sm').onclick=function(){sc=Math.max(.85,Math.round((sc-.1)*10)/10);ap()};
+  var md=document.getElementById('md');
+  function th(t){r.setAttribute('data-theme',t);md.textContent=t==='dark'?'الوضع النهاري':'الوضع الليلي';st('theme',t)}
+  md.onclick=function(){th(r.getAttribute('data-theme')==='dark'?'light':'dark')};
+  var s=parseFloat(rd('scale')); if(s){sc=s;ap()}
+  var t=rd('theme'); if(t) th(t);
+  else if(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches) th('dark');
+})();
 </script>
+</body></html>
