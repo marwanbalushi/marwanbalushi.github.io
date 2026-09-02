@@ -254,9 +254,8 @@ function card(e,solo){
     med='<div class="med '+(e.m.length>1?'grid':'')+' '+(isW?'wide':'')+'">'+
       e.m.map(function(m){
         if(m.v && m.vf && MEDIA_BASE)
-          return '<figure><video controls preload="metadata" playsinline poster="'+
-                 MEDIA_BASE+'/'+m.f+'"><source src="'+MEDIA_BASE+'/'+m.vf+
-                 '" type="video/mp4"></video></figure>';
+          return '<figure><video controls preload="metadata" playsinline '+
+                 'src="'+MEDIA_BASE+'/'+m.vf+'#t=0.5"></video></figure>';
         return '<figure><img loading="lazy" src="'+src(m)+'" alt=""></figure>';
       }).join('')+'</div>';
   }
