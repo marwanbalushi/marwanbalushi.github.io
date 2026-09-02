@@ -1,5 +1,5 @@
 /* عامل الخدمة — يجعل المدونة تفتح بلا إنترنت */
-var V     = 'mb-v3';
+var V     = 'mb-v4';
 var SHELL = ['./index.html','./tahrir.html','./radud.html','./404.html',
              './manifest.json','./icon-192.png','./icon-512.png'];
 
@@ -22,8 +22,9 @@ self.addEventListener('fetch', function(e){
   var req = e.request, url = new URL(req.url);
   if(req.method !== 'GET') return;
 
-  // الوسائط الثقيلة تمرّ ولا تُخزَّن
+  // الوسائط الثقيلة ونداءات التحليلات تمرّ ولا تُخزَّن
   if(url.hostname.indexOf('r2.dev') > -1) return;
+  if(url.hostname.indexOf('cloudflareinsights') > -1) return;
 
   // البيانات: الشبكة أولاً كي تظهر تعديلاتك فوراً، والمخزون احتياطاً
   if(url.pathname.indexOf('data.json') > -1 || url.pathname.indexOf('radud.json') > -1){

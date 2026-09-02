@@ -171,7 +171,8 @@ label{display:block;font-size:15px;color:var(--muted);margin:15px 0 5px}
 <script>
 var MEDIA_BASE="https://pub-3f426d74e97747c4ada9bcfe8803132a.r2.dev";
 var OWNER="marwanbalushi", REPO="marwanbalushi.github.io", PATH="data.json",
-    KEYF="mift.json", BRANCH="main", SITE="https://"+OWNER+".github.io/";
+    KEYF="mift.json", BRANCH="main",
+    SITE=location.origin+location.pathname.replace(/[^\/]*$/,'');
 var TOKEN="", DATA=[], SHA="", shown=0, PAGE=20, cur=null;
 var AR=function(n){return String(n).replace(/\d/g,function(d){return '٠١٢٣٤٥٦٧٨٩'[d]})};
 var MON=['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
@@ -269,8 +270,9 @@ function boot(){
     $('editor').className=''; $('foot').className='foot';
     stt('مفتوح · '+AR(DATA.length)+' مدخلاً');
     render();
-    var h=location.hash.replace('#/','').trim();
-    if(h){ var e=DATA.filter(function(x){return x.id===h})[0]; if(e) openF(e); }
+    var h=location.hash.replace('#/','').replace('#','').trim();
+    if(h==='new'){ openF(null); }
+    else if(h){ var e=DATA.filter(function(x){return x.id===h})[0]; if(e) openF(e); }
   });
 }
 $('logout').onclick=function(){
