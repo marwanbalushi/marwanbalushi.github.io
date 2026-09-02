@@ -114,7 +114,10 @@ main{max-width:var(--measure);margin:0 auto}
  border-bottom:var(--rulew) solid var(--gold);padding-bottom:3px}
 .cont svg{width:1.05em;height:1.05em;flex:none}
 
-.end{width:5px;height:5px;background:var(--gold);transform:rotate(45deg);margin:16px auto 0}
+.end{display:flex;align-items:center;justify-content:center;gap:11px;margin:22px auto 0}
+.end i{display:block;height:var(--rulew);width:32px;background:var(--rule)}
+.end span{width:5px;height:5px;background:var(--gold);transform:rotate(45deg)}
+[data-clarity=high] .end i{width:44px}
 .more{display:block;margin:40px auto 0;font-family:var(--display);font-size:calc(var(--body)*.8);
  color:var(--muted);background:none;border:var(--rulew) solid var(--rule);border-radius:5px;
  padding:11px 26px;cursor:pointer}
@@ -260,13 +263,12 @@ function card(e,solo){
   var long = !solo && e.t.length>600;
   var meta='<p class="meta">'+(solo?e.d:'<a href="#/'+e.id+'">'+e.d+'</a>')+
     (e.dk?'<span class="dot">·</span><span class="dr">'+e.door+'</span>':'')+
-    (e.n>1?'<span class="dot">·</span>سلسلة':'')+
     (long?'<a class="mk" href="#/'+e.id+'" title="نصّ طويل — افتحه ليكتمل" aria-label="نصّ طويل، افتحه ليكتمل">'+IC_LONG+'</a>':'')+
     (EDIT?'<a class="pen" href="tahrir.html#/'+e.id+'" title="تحرير" aria-label="تحرير">'+IC_PEN+'</a>':'')+
     '</p>';
   var body='<p class="tx'+(long?' clamp':'')+'">'+esc(e.t)+'</p>'+
     (long?'<a class="cont" href="#/'+e.id+'">'+IC_DOWN+'اقرأ التتمة</a>':'');
-  return '<article class="e">'+meta+med+body+(isW&&!long?'<div class="end"></div>':'')+'</article>';
+  return '<article class="e">'+meta+med+body+(solo?'<div class="end"></div>':'')+'</article>';
 }
 
 function filtered(){
