@@ -10,60 +10,81 @@
 :root{--paper:#F8F4EE;--paper2:#F1EBE2;--ink:#241F1E;--accent:#5A1F28;--gold:#A8834B;
  --muted:#6B5A56;--rule:#E2D8CD;--ok:#2C6E49;--bad:#A32C2C;
  --display:"Amiri",serif;--text:"Scheherazade New",serif}
+@media(prefers-color-scheme:dark){:root{--paper:#191614;--paper2:#211D19;--ink:#E9E1D6;
+ --accent:#C9A063;--gold:#C9A063;--muted:#9A9088;--rule:#332C27}}
 *{box-sizing:border-box}
 body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--text);
- font-size:18px;line-height:1.8;padding:0 16px 90px}
-h1{font-family:var(--display);font-weight:400;font-size:30px;color:var(--accent);margin:0 0 4px}
+ font-size:19px;line-height:1.85;padding:0 16px 96px}
+h1{font-family:var(--display);font-weight:400;font-size:31px;color:var(--accent);margin:0 0 4px}
 .wrap{max-width:44em;margin:0 auto}
-.hd{text-align:center;padding:24px 0 16px}
-.hd p{color:var(--muted);font-size:15px;margin:0}
-button{font-family:var(--text);font-size:15px;color:var(--muted);background:none;
- border:.5px solid var(--rule);border-radius:5px;padding:8px 15px;cursor:pointer}
+.hd{text-align:center;padding:26px 0 14px}
+.hd p{color:var(--muted);font-size:16px;margin:0}
+button{font-family:var(--text);font-size:16px;color:var(--muted);background:none;
+ border:.5px solid var(--rule);border-radius:5px;padding:9px 16px;cursor:pointer}
 button:hover{color:var(--accent);border-color:var(--gold)}
-button.p{color:#fff;background:var(--accent);border-color:var(--accent)}
-button.p:hover{color:#fff;opacity:.9}
+button.p{color:var(--paper);background:var(--accent);border-color:var(--accent)}
 button.dl{color:var(--bad);border-color:var(--bad)}
-input,textarea,select{font-family:var(--text);font-size:17px;width:100%;background:var(--paper2);
- color:var(--ink);border:.5px solid var(--rule);border-radius:5px;padding:10px 12px;line-height:1.9}
-textarea{min-height:16em;resize:vertical;white-space:pre-wrap}
-label{display:block;font-size:14px;color:var(--muted);margin:14px 0 5px}
+input,textarea,select{font-family:var(--text);font-size:18px;width:100%;background:var(--paper2);
+ color:var(--ink);border:.5px solid var(--rule);border-radius:5px;padding:11px 13px;line-height:1.9}
+textarea{min-height:17em;resize:vertical;white-space:pre-wrap}
+label{display:block;font-size:15px;color:var(--muted);margin:15px 0 5px}
 .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
-.row>*{flex:1;min-width:130px}
+.row>*{flex:1;min-width:135px}
+.row>button{flex:0 0 auto}
 .bar{position:sticky;top:0;z-index:9;background:var(--paper);border-bottom:.5px solid var(--rule);padding:11px 0}
 .card{border:.5px solid var(--rule);border-radius:8px;padding:14px;margin-bottom:10px;cursor:pointer}
 .card:hover{border-color:var(--gold)}
-.card .m{font-size:13px;color:var(--muted);margin:0 0 6px}
+.card .m{font-size:14px;color:var(--muted);margin:0 0 6px}
 .card .m b{color:var(--gold);font-weight:400}
-.card .t{margin:0;font-size:16px;max-height:3.6em;overflow:hidden}
-.pill{display:inline-block;font-size:12px;border:.5px solid var(--rule);border-radius:3px;
+.card .t{margin:0;font-size:17px;max-height:3.6em;overflow:hidden}
+.pill{display:inline-block;font-size:13px;border:.5px solid var(--rule);border-radius:3px;
  padding:1px 8px;color:var(--muted);margin-inline-start:6px}
-.note{background:var(--paper2);border-radius:6px;padding:14px;font-size:15px;
+.note{background:var(--paper2);border-radius:7px;padding:15px;font-size:16px;
  color:var(--muted);line-height:1.9;margin:14px 0}
-.msg{padding:11px 14px;border-radius:6px;margin:12px 0;font-size:15px;display:none}
-.msg.ok{display:block;background:rgba(44,110,73,.12);color:var(--ok)}
-.msg.err{display:block;background:rgba(163,44,44,.1);color:var(--bad)}
+.msg{padding:12px 15px;border-radius:6px;margin:13px 0;font-size:16px;display:none}
+.msg.ok{display:block;background:rgba(44,110,73,.13);color:var(--ok)}
+.msg.err{display:block;background:rgba(163,44,44,.11);color:var(--bad)}
+.msg.wait{display:block;background:var(--paper2);color:var(--muted)}
 .foot{position:fixed;inset-block-end:0;inset-inline:0;background:var(--paper);
  border-top:.5px solid var(--rule);padding:11px 16px}
 .foot .wrap{display:flex;gap:10px;align-items:center}
-.hide{display:none}
-.cnt{font-family:var(--display);font-size:19px;color:var(--accent)}
+.hide{display:none!important}
+.cnt{font-family:var(--display);font-size:20px;color:var(--accent)}
+.link{color:var(--accent);border-bottom:.5px solid var(--gold);cursor:pointer;font-size:15px}
 </style>
 </head>
 <body>
 
-<!-- ===== تسجيل الدخول ===== -->
+<!-- ===== الدخول بجملة السرّ ===== -->
 <div id="login" class="wrap">
   <div class="hd"><h1>تحرير المدونة</h1><p>يحفظ تعديلاتك مباشرة في الموقع</p></div>
-  <div class="note">
-    تحتاج مفتاحاً من GitHub مرّة واحدة فقط. يُحفظ في متصفّحك ولا يُرسل إلى أحد.<br>
-    طريقة إنشائه مشروحة في المحادثة.
-  </div>
-  <label>المفتاح</label>
-  <input id="tok" type="password" placeholder="github_pat_...">
-  <div class="row" style="margin-top:14px">
-    <button class="p" id="enter">دخول</button>
+  <div id="lockbox">
+    <label>جملة السرّ</label>
+    <input id="pass" type="password" placeholder="اكتب جملتك…" autocomplete="current-password">
+    <div class="row" style="margin-top:14px"><button class="p" id="unlock">فتح</button></div>
+    <p style="margin-top:16px"><span class="link" id="toSetup">إعداد جملة سرّ جديدة</span></p>
   </div>
   <div class="msg" id="lmsg"></div>
+</div>
+
+<!-- ===== الإعداد الأوّل ===== -->
+<div id="setup" class="wrap hide">
+  <div class="hd"><h1>إعداد جملة السرّ</h1><p>مرّة واحدة فقط</p></div>
+  <div class="note">
+    اختر <b>جملة</b> لا كلمة. خمس كلمات فأكثر يسهل عليك حفظها ويستحيل تخمينها.<br>
+    جملتك لا تُحفظ في أي مكان، ولا يعرفها أحد سواك. وإن نسيتها، تُنشئ مفتاحاً جديداً وتعيد الإعداد.
+  </div>
+  <label>مفتاح GitHub</label>
+  <input id="stok" type="password" placeholder="github_pat_…">
+  <label>جملة السرّ</label>
+  <input id="sp1" type="password" placeholder="جملة من خمس كلمات فأكثر">
+  <label>أعد كتابتها</label>
+  <input id="sp2" type="password">
+  <div class="row" style="margin-top:16px">
+    <button class="p" id="mkkey">توليد الملف</button>
+    <button id="toLogin">رجوع</button>
+  </div>
+  <div class="msg" id="smsg"></div>
 </div>
 
 <!-- ===== المحرّر ===== -->
@@ -75,17 +96,16 @@ label{display:block;font-size:14px;color:var(--muted);margin:14px 0 5px}
       <option>عُمان</option><option>الإسلام مرجعيّة</option><option>الهُويّة عزّة</option>
       <option>الإنسان كرامة</option><option>دبلوماسيّة</option><option>غير مصنّف</option>
     </select>
-    <button id="new" style="flex:0 0 auto">مدخل جديد</button>
+    <button id="new">مدخل جديد</button>
   </div></div>
-
   <div class="wrap">
-    <p style="color:var(--muted);font-size:14px"><span class="cnt" id="cnt">٠</span> مدخلاً</p>
+    <p style="color:var(--muted);font-size:15px"><span class="cnt" id="cnt">٠</span> مدخلاً</p>
     <div id="list"></div>
     <button id="more" style="width:100%;margin-top:14px">المزيد</button>
   </div>
 </div>
 
-<!-- ===== نافذة التحرير ===== -->
+<!-- ===== نموذج التحرير ===== -->
 <div id="form" class="wrap hide">
   <div class="hd"><h1 id="ftitle">تحرير مدخل</h1></div>
   <label>النصّ</label>
@@ -100,101 +120,161 @@ label{display:block;font-size:14px;color:var(--muted);margin:14px 0 5px}
       <select id="fform"><option value="shathrah">شذرة</option><option value="waqfah">وقفة</option></select></div>
     <div><label>التاريخ</label><input id="fdate" type="date"></div>
   </div>
-  <label>أسماء ملفات الوسائط (اختياري، ملف في كل سطر)</label>
+  <label>أسماء ملفات الوسائط — ملفٌ في كل سطر (اختياري)</label>
   <textarea id="fmedia" style="min-height:5em" placeholder="1234567890-ABCdef.jpg"></textarea>
   <div class="row" style="margin-top:18px">
     <button class="p" id="save">حفظ في المدونة</button>
     <button id="cancel">رجوع</button>
-    <button class="dl" id="del">حذف المدخل</button>
+    <button class="dl" id="del">حذف</button>
   </div>
   <div class="msg" id="fmsg"></div>
 </div>
 
 <div class="foot hide" id="foot"><div class="wrap">
-  <span id="status" style="flex:1;font-size:14px;color:var(--muted)">جاهز</span>
-  <button id="logout">خروج</button>
+  <span id="status" style="flex:1;font-size:15px;color:var(--muted)">جاهز</span>
+  <a href="index.html"><button>المدونة</button></a>
+  <button id="logout">قفل</button>
 </div></div>
 
 <script>
-var OWNER="marwanbalushi", REPO="marwanbalushi.github.io", PATH="data.json", BRANCH="main";
-var SITE="https://"+OWNER+".github.io/";
+var OWNER="marwanbalushi", REPO="marwanbalushi.github.io", PATH="data.json",
+    KEYF="mift.json", BRANCH="main", SITE="https://"+OWNER+".github.io/";
 var TOKEN="", DATA=[], SHA="", shown=0, PAGE=20, cur=null;
 var AR=function(n){return String(n).replace(/\d/g,function(d){return '٠١٢٣٤٥٦٧٨٩'[d]})};
 var MON=['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
 var DK={'عُمان':'oman','الإسلام مرجعيّة':'marjieyah','الهُويّة عزّة':'huwiyah',
         'الإنسان كرامة':'karamah','دبلوماسيّة':'diblomasi','غير مصنّف':''};
 var $=function(i){return document.getElementById(i)};
-function say(el,t,bad){el.textContent=t;el.className='msg '+(bad?'err':'ok')}
-function st(t){$('status').textContent=t}
+function say(el,t,k){el.textContent=t;el.className='msg '+(k||'ok')}
+function stt(t){$('status').textContent=t}
 function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;')}
-function b64(str){
-  var b=new TextEncoder().encode(str), s='';
-  for(var i=0;i<b.length;i++) s+=String.fromCharCode(b[i]);
-  return btoa(s);
+function b64e(str){var b=new TextEncoder().encode(str),s='';
+  for(var i=0;i<b.length;i++)s+=String.fromCharCode(b[i]);return btoa(s)}
+function ab2b64(buf){var b=new Uint8Array(buf),s='';
+  for(var i=0;i<b.length;i++)s+=String.fromCharCode(b[i]);return btoa(s)}
+function b642ab(s){var bin=atob(s),b=new Uint8Array(bin.length);
+  for(var i=0;i<bin.length;i++)b[i]=bin.charCodeAt(i);return b}
+
+/* ---------- التشفير ---------- */
+var ITER=600000;
+function derive(pass,salt){
+  return crypto.subtle.importKey('raw',new TextEncoder().encode(pass),'PBKDF2',false,['deriveKey'])
+   .then(function(k){ return crypto.subtle.deriveKey(
+     {name:'PBKDF2',salt:salt,iterations:ITER,hash:'SHA-256'},k,
+     {name:'AES-GCM',length:256},false,['encrypt','decrypt']); });
 }
+function encryptTok(tok,pass){
+  var salt=crypto.getRandomValues(new Uint8Array(16));
+  var iv=crypto.getRandomValues(new Uint8Array(12));
+  return derive(pass,salt).then(function(key){
+    return crypto.subtle.encrypt({name:'AES-GCM',iv:iv},key,new TextEncoder().encode(tok));
+  }).then(function(ct){
+    return {v:1,it:ITER,salt:ab2b64(salt),iv:ab2b64(iv),ct:ab2b64(ct)};
+  });
+}
+function decryptTok(obj,pass){
+  return derive(pass,b642ab(obj.salt)).then(function(key){
+    return crypto.subtle.decrypt({name:'AES-GCM',iv:b642ab(obj.iv)},key,b642ab(obj.ct));
+  }).then(function(pt){ return new TextDecoder().decode(pt); });
+}
+
 function api(path,opt){
-  opt=opt||{}; opt.headers=Object.assign({
-    'Authorization':'Bearer '+TOKEN,'Accept':'application/vnd.github+json'},opt.headers||{});
+  opt=opt||{}; opt.headers=Object.assign({'Authorization':'Bearer '+TOKEN,
+    'Accept':'application/vnd.github+json'},opt.headers||{});
   return fetch('https://api.github.com/repos/'+OWNER+'/'+REPO+path,opt);
 }
 
-/* ---- الدخول ---- */
-try{ var sv=localStorage.getItem('ghtok'); if(sv) $('tok').value=sv; }catch(e){}
-$('enter').onclick=function(){
-  TOKEN=$('tok').value.trim();
-  if(!TOKEN){ say($('lmsg'),'اكتب المفتاح أولاً',1); return; }
-  say($('lmsg'),'جارٍ الاتصال…');
-  api('/git/trees/'+BRANCH).then(function(r){
-    if(!r.ok) throw new Error('المفتاح غير صالح أو لا يملك صلاحية على المستودع');
+/* ---------- التبديل بين الشاشات ---------- */
+$('toSetup').onclick=function(){ $('login').className='wrap hide'; $('setup').className='wrap'; };
+$('toLogin').onclick=function(){ $('setup').className='wrap hide'; $('login').className='wrap'; };
+
+/* ---------- الإعداد ---------- */
+$('mkkey').onclick=function(){
+  var tok=$('stok').value.trim(), p1=$('sp1').value, p2=$('sp2').value;
+  if(!tok){ say($('smsg'),'الصق مفتاح GitHub','err'); return; }
+  if(p1.length<16){ say($('smsg'),'الجملة قصيرة. اجعلها ١٦ حرفاً فأكثر — خمس كلمات تكفي.','err'); return; }
+  if(p1!==p2){ say($('smsg'),'الجملتان غير متطابقتين','err'); return; }
+  say($('smsg'),'جارٍ التشفير…','wait');
+  encryptTok(tok,p1).then(function(o){
+    var blob=new Blob([JSON.stringify(o)],{type:'application/json'});
+    var a=document.createElement('a');
+    a.href=URL.createObjectURL(blob); a.download='mift.json'; a.click();
+    say($('smsg'),'نزل الملف mift.json — ارفعه إلى المستودع، ثم ارجع وافتح بجملتك.');
+  }).catch(function(e){ say($('smsg'),'تعذّر التشفير: '+e.message,'err'); });
+};
+
+/* ---------- الفتح ---------- */
+$('pass').addEventListener('keydown',function(e){ if(e.key==='Enter') $('unlock').click(); });
+$('unlock').onclick=function(){
+  var p=$('pass').value;
+  if(!p){ say($('lmsg'),'اكتب جملتك','err'); return; }
+  say($('lmsg'),'جارٍ الفتح… قد يستغرق ثوانٍ','wait');
+  fetch(SITE+KEYF+'?t='+Date.now()).then(function(r){
+    if(!r.ok) throw new Error('لم أجد ملف المفتاح. أنشئه من «إعداد جملة سرّ جديدة».');
+    return r.json();
+  }).then(function(o){ return decryptTok(o,p); })
+  .then(function(tok){ TOKEN=tok; return boot(); })
+  .catch(function(e){
+    say($('lmsg'), /operation-specific/i.test(e.message)||e.name==='OperationError'
+      ? 'الجملة غير صحيحة' : e.message, 'err');
+  });
+};
+
+function boot(){
+  return api('/git/trees/'+BRANCH).then(function(r){
+    if(!r.ok) throw new Error('المفتاح لا يملك صلاحية على المستودع');
     return r.json();
   }).then(function(j){
     var f=j.tree.filter(function(x){return x.path===PATH})[0];
-    if(!f) throw new Error('لم أجد data.json في المستودع');
+    if(!f) throw new Error('لم أجد data.json');
     SHA=f.sha;
-    try{ localStorage.setItem('ghtok',TOKEN); }catch(e){}
+    try{ localStorage.setItem('ghunlocked','1'); }catch(e){}
     return fetch(SITE+PATH+'?t='+Date.now());
-  }).then(function(r){ return r.json(); }).then(function(j){
-    DATA=j; $('login').className='hide'; $('editor').className='';
-    $('foot').className='foot'; st('متّصل · '+AR(DATA.length)+' مدخلاً');
+  }).then(function(r){return r.json()}).then(function(j){
+    DATA=j;
+    $('login').className='wrap hide'; $('setup').className='wrap hide';
+    $('editor').className=''; $('foot').className='foot';
+    stt('مفتوح · '+AR(DATA.length)+' مدخلاً');
     render();
-  }).catch(function(e){ say($('lmsg'),e.message,1); });
-};
+    var h=location.hash.replace('#/','').trim();
+    if(h){ var e=DATA.filter(function(x){return x.id===h})[0]; if(e) openF(e); }
+  });
+}
 $('logout').onclick=function(){
-  try{ localStorage.removeItem('ghtok'); }catch(e){}
-  location.reload();
+  try{ localStorage.removeItem('ghunlocked'); }catch(e){}
+  location.href='tahrir.html';
 };
 
-/* ---- القائمة ---- */
+/* ---------- القائمة ---------- */
 function filtered(){
   var q=$('q').value.trim(), d=$('fdoor').value;
-  return DATA.filter(function(e){
-    return (!q||e.t.indexOf(q)>-1) && (!d||e.door===d); });
+  return DATA.filter(function(e){ return (!q||e.t.indexOf(q)>-1) && (!d||e.door===d) });
 }
-function render(reset){
-  if(reset!==false) shown=0;
+function render(more){
+  if(!more) shown=0;
   var L=filtered(), box=$('list');
   if(shown===0) box.innerHTML='';
   $('cnt').textContent=AR(L.length);
   var n=L.slice(shown,shown+PAGE);
   box.insertAdjacentHTML('beforeend', n.map(function(e){
-    return '<div class="card" data-id="'+e.id+'"><p class="m">'+e.d+
-      ' · <b>'+e.door+'</b><span class="pill">'+(e.f==='waqfah'?'وقفة':'شذرة')+'</span>'+
+    return '<div class="card" data-id="'+e.id+'"><p class="m">'+e.d+' · <b>'+e.door+'</b>'+
+      '<span class="pill">'+(e.f==='waqfah'?'وقفة':'شذرة')+'</span>'+
       (e.m&&e.m.length?'<span class="pill">'+AR(e.m.length)+' وسائط</span>':'')+
       '</p><p class="t">'+esc(e.t)+'</p></div>'; }).join(''));
   shown+=n.length;
   $('more').style.display = shown<L.length ? 'block':'none';
   $('more').textContent='المزيد ('+AR(L.length-shown)+')';
 }
-$('more').onclick=function(){ render(false); };
-$('q').oninput=function(){ render(); };
-$('fdoor').onchange=function(){ render(); };
+$('more').onclick=function(){ render(true) };
+$('q').oninput=function(){ render() };
+$('fdoor').onchange=function(){ render() };
 $('list').onclick=function(ev){
   var c=ev.target.closest('.card'); if(!c) return;
-  open(DATA.filter(function(x){return x.id===c.dataset.id})[0]);
+  openF(DATA.filter(function(x){return x.id===c.dataset.id})[0]);
 };
 
-/* ---- نموذج التحرير ---- */
-function open(e){
+/* ---------- النموذج ---------- */
+function openF(e){
   cur=e;
   $('ftitle').textContent = e ? 'تحرير مدخل' : 'مدخل جديد';
   $('ftext').value = e ? e.t : '';
@@ -207,54 +287,46 @@ function open(e){
   $('editor').className='hide'; $('form').className='wrap';
   window.scrollTo(0,0);
 }
-$('new').onclick=function(){ open(null); };
+$('new').onclick=function(){ openF(null) };
 $('cancel').onclick=function(){
-  $('form').className='wrap hide'; $('editor').className=''; render();
+  location.hash=''; $('form').className='wrap hide'; $('editor').className=''; render();
 };
 
 function collect(){
   var txt=$('ftext').value.trim();
   if(!txt) throw new Error('النصّ فارغ');
-  var iso=$('fdate').value, p=iso.split('-');
+  var iso=$('fdate').value; if(!iso) throw new Error('اختر التاريخ');
+  var p=iso.split('-');
   var med=$('fmedia').value.split('\n').map(function(x){return x.trim()}).filter(Boolean)
-    .map(function(f){
-      var o={f:f,u:'',v:/\.mp4$/i.test(f)};
-      if(o.v) o.vf=f;
-      return o; });
+    .map(function(f){ var o={f:f,u:'',v:/\.mp4$/i.test(f)}; if(o.v) o.vf=f; return o });
   var door=$('fdoorsel').value;
   return {t:txt,iso:iso,d:AR(parseInt(p[2],10))+' '+MON[parseInt(p[1],10)-1]+' '+AR(p[0]),
           door:door,dk:DK[door],f:$('fform').value,m:med,n:1};
 }
-
 $('save').onclick=function(){
-  var o;
-  try{ o=collect(); }catch(e){ say($('fmsg'),e.message,1); return; }
-  if(cur){ Object.keys(o).forEach(function(k){ cur[k]=o[k] }); }
-  else { o.id='n'+Date.now(); DATA.push(o); }
-  DATA.sort(function(a,b){ return a.iso<b.iso?1:a.iso>b.iso?-1:0 });
+  var o; try{ o=collect() }catch(e){ say($('fmsg'),e.message,'err'); return }
+  if(cur){ Object.keys(o).forEach(function(k){cur[k]=o[k]}) }
+  else { o.id='n'+Date.now(); DATA.push(o) }
+  DATA.sort(function(a,b){return a.iso<b.iso?1:a.iso>b.iso?-1:0});
   commit('تحديث مدخل');
 };
 $('del').onclick=function(){
-  if(!cur) return;
-  if(!confirm('حذف هذا المدخل نهائياً من المدونة؟')) return;
-  DATA=DATA.filter(function(x){ return x!==cur });
+  if(!cur || !confirm('حذف هذا المدخل نهائياً من المدونة؟')) return;
+  DATA=DATA.filter(function(x){return x!==cur});
   commit('حذف مدخل');
 };
-
 function commit(msg){
-  say($('fmsg'),'جارٍ الحفظ…');
-  st('جارٍ الحفظ…');
-  var body=JSON.stringify({message:msg,content:b64(JSON.stringify(DATA)),sha:SHA,branch:BRANCH});
-  api('/contents/'+PATH,{method:'PUT',body:body}).then(function(r){
-    return r.json().then(function(j){ if(!r.ok) throw new Error(j.message||'فشل الحفظ'); return j; });
-  }).then(function(j){
+  say($('fmsg'),'جارٍ الحفظ…','wait'); stt('جارٍ الحفظ…');
+  api('/contents/'+PATH,{method:'PUT',body:JSON.stringify(
+    {message:msg,content:b64e(JSON.stringify(DATA)),sha:SHA,branch:BRANCH})})
+  .then(function(r){ return r.json().then(function(j){
+    if(!r.ok) throw new Error(j.message||'فشل الحفظ'); return j }) })
+  .then(function(j){
     SHA=j.content.sha;
-    say($('fmsg'),'حُفظ. ستظهر التغييرات في المدونة خلال دقيقتين.');
-    st('حُفظ · '+AR(DATA.length)+' مدخلاً');
-    setTimeout(function(){ $('cancel').click(); },1200);
-  }).catch(function(e){
-    say($('fmsg'),e.message,1); st('فشل الحفظ');
-  });
+    say($('fmsg'),'حُفظ. تظهر التغييرات في المدونة خلال دقيقتين.');
+    stt('حُفظ · '+AR(DATA.length)+' مدخلاً');
+    setTimeout(function(){ $('cancel').click() },1300);
+  }).catch(function(e){ say($('fmsg'),e.message,'err'); stt('فشل الحفظ') });
 }
 </script>
 </body>
