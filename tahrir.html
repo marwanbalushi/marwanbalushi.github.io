@@ -100,6 +100,10 @@ label{display:block;font-size:15px;color:var(--muted);margin:15px 0 5px}
   </div>
   <label>مفتاح GitHub</label>
   <input id="stok" type="password" placeholder="github_pat_…">
+  <label>مفتاح الرفع <span style="opacity:.7">(اختياري — لرفع الصور والمقاطع)</span></label>
+  <input id="sup" type="password" placeholder="المفتاح الذي وضعته في الوسيط">
+  <label>رابط الوسيط <span style="opacity:.7">(اختياري)</span></label>
+  <input id="swrk" placeholder="https://upload.marwanbalushi.workers.dev">
   <label>جملة السرّ</label>
   <input id="sp1" type="password" placeholder="جملة من خمس كلمات فأكثر">
   <label>أعد كتابتها</label>
@@ -147,6 +151,16 @@ label{display:block;font-size:15px;color:var(--muted);margin:15px 0 5px}
   <label>الوسائط المرتبطة بالمدخل</label>
   <div id="mgrid" class="mgrid"></div>
   <p class="mempty hide" id="mempty">لا وسائط في هذا المدخل.</p>
+  <div id="upwrap" class="hide" style="margin-top:12px">
+    <input id="upfile" type="file" accept="image/*,video/*" multiple style="display:none">
+    <div class="row">
+      <button id="upBtn" style="flex:0 0 auto">ارفع صورة أو مقطعاً</button>
+      <span id="upmsg" style="flex:1;font-size:15px;color:var(--muted)"></span>
+    </div>
+    <div id="upbar" class="hide" style="height:4px;background:var(--rule);border-radius:3px;margin-top:10px;overflow:hidden">
+      <div id="upfill" style="height:100%;width:0;background:var(--gold);transition:width .2s"></div>
+    </div>
+  </div>
   <p style="margin:10px 0 0"><span class="link" id="maddBtn">إضافة ملف يدوياً</span>
    <span class="link" id="mrestore" style="margin-inline-start:16px;display:none">استرجاع الوسائط الأصلية</span></p>
   <div id="maddBox" class="hide" style="margin-top:10px">
@@ -173,7 +187,7 @@ var MEDIA_BASE="https://pub-3f426d74e97747c4ada9bcfe8803132a.r2.dev";
 var OWNER="marwanbalushi", REPO="marwanbalushi.github.io", PATH="data.json",
     KEYF="mift.json", BRANCH="main",
     SITE=location.origin+location.pathname.replace(/[^\/]*$/,'');
-var TOKEN="", DATA=[], SHA="", shown=0, PAGE=20, cur=null;
+var TOKEN="", UPKEY="", WORKER="", DATA=[], SHA="", shown=0, PAGE=20, cur=null;
 var AR=function(n){return String(n).replace(/\d/g,function(d){return '٠١٢٣٤٥٦٧٨٩'[d]})};
 var MON=['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
 var DK={'عُمان':'oman','الإسلام مرجعيّة':'marjieyah','الهُويّة عزّة':'huwiyah',
@@ -229,7 +243,8 @@ $('mkkey').onclick=function(){
   if(p1.length<16){ say($('smsg'),'الجملة قصيرة. اجعلها ١٦ حرفاً فأكثر — خمس كلمات تكفي.','err'); return; }
   if(p1!==p2){ say($('smsg'),'الجملتان غير متطابقتين','err'); return; }
   say($('smsg'),'جارٍ التشفير…','wait');
-  encryptTok(tok,p1).then(function(o){
+  var bundle=JSON.stringify({gh:tok, up:$('sup').value.trim(), wk:$('swrk').value.trim().replace(/\/+$/,'')});
+  encryptTok(bundle,p1).then(function(o){
     var blob=new Blob([JSON.stringify(o)],{type:'application/json'});
     var a=document.createElement('a');
     a.href=URL.createObjectURL(blob); a.download='mift.json'; a.click();
@@ -247,7 +262,11 @@ $('unlock').onclick=function(){
     if(!r.ok) throw new Error('لم أجد ملف المفتاح. أنشئه من «إعداد جملة سرّ جديدة».');
     return r.json();
   }).then(function(o){ return decryptTok(o,p); })
-  .then(function(tok){ TOKEN=tok; return boot(); })
+  .then(function(raw){
+    try{ var o=JSON.parse(raw); TOKEN=o.gh; UPKEY=o.up||''; WORKER=o.wk||''; }
+    catch(x){ TOKEN=raw; }        // توافقٌ مع الإعداد القديم
+    return boot();
+  })
   .catch(function(e){
     say($('lmsg'), /operation-specific/i.test(e.message)||e.name==='OperationError'
       ? 'الجملة غير صحيحة' : e.message, 'err');
@@ -332,6 +351,47 @@ $('mgrid').onclick=function(ev){
   var b=ev.target.closest('.x'); if(!b) return;
   MED.splice(+b.dataset.i,1); drawMed();
 };
+$('upBtn') && ($('upBtn').onclick=function(){ $('upfile').click(); });
+function upOne(file){
+  return new Promise(function(res,rej){
+    var x=new XMLHttpRequest();
+    x.open('POST', WORKER, true);
+    x.setRequestHeader('Content-Type', file.type || 'application/octet-stream');
+    x.setRequestHeader('X-Auth', UPKEY);
+    x.setRequestHeader('X-Filename', encodeURIComponent(file.name));
+    x.upload.onprogress=function(e){
+      if(e.lengthComputable) $('upfill').style.width=Math.round(e.loaded/e.total*100)+'%';
+    };
+    x.onload=function(){
+      try{ var j=JSON.parse(x.responseText); }catch(e){ return rej(new Error('ردّ غير مفهوم')); }
+      if(x.status===200 && j.ok) res(j.file); else rej(new Error(j.error||x.responseText||('خطأ '+x.status)));
+    };
+    x.onerror=function(){ rej(new Error('تعذّر الاتصال بالوسيط')); };
+    x.send(file);
+  });
+}
+$('upfile') && ($('upfile').onchange=function(){
+  var files=Array.prototype.slice.call(this.files); if(!files.length) return;
+  var i=0, ok=0;
+  $('upbar').className=''; $('upfill').style.width='0';
+  (function next(){
+    if(i>=files.length){
+      $('upmsg').textContent='رُفع '+AR(ok)+' من '+AR(files.length);
+      $('upbar').className='hide'; $('upfile').value=''; drawMed(); return;
+    }
+    var f=files[i++];
+    $('upmsg').textContent='جارٍ رفع '+f.name+'…';
+    $('upfill').style.width='0';
+    upOne(f).then(function(name){
+      var o={f:name,u:'',v:/^video\//.test(f.type)};
+      if(o.v) o.vf=name;
+      MED.push(o); ok++; drawMed(); next();
+    }).catch(function(e){
+      $('upmsg').textContent='فشل «'+f.name+'»: '+e.message;
+      $('upbar').className='hide'; $('upfile').value='';
+    });
+  })();
+});
 $('mrestore').onclick=function(){ MED=MED0.map(function(m){return Object.assign({},m)}); drawMed(); };
 $('maddBtn').onclick=function(){ $('maddBox').className = $('maddBox').className? '':'hide'; };
 $('maddOk').onclick=function(){
@@ -342,6 +402,8 @@ $('maddOk').onclick=function(){
 
 function openF(e){
   cur=e;
+  $('upwrap').className = (WORKER && UPKEY) ? '' : 'hide';
+  $('upmsg').textContent='';
   MED0 = e && e.m ? e.m.map(function(m){return Object.assign({},m)}) : [];
   MED  = MED0.map(function(m){return Object.assign({},m)});
   drawMed();
