@@ -56,6 +56,15 @@ main{max-width:var(--measure);margin:0 auto}
 .med img,.med video{width:100%;border-radius:3px;display:block;background:var(--paper2)}
 .wide{max-width:calc(var(--measure)+6em);margin-inline:auto}
 .tx{margin:0;white-space:pre-wrap}
+.tx.clamp{max-height:17em;overflow:hidden;position:relative;
+ -webkit-mask-image:linear-gradient(to bottom,#000 72%,transparent 100%);
+ mask-image:linear-gradient(to bottom,#000 72%,transparent 100%)}
+.cont{display:inline-flex;align-items:center;gap:7px;margin-top:14px;font-family:var(--display);
+ font-size:calc(var(--body)*.72);color:var(--accent);border-bottom:.5px solid var(--gold);padding-bottom:3px}
+.cont svg{width:1em;height:1em;flex:none}
+.longmark{display:inline-flex;align-items:center;gap:5px;color:var(--gold)}
+.longmark svg{width:.85em;height:.85em}
+html[data-theme=dark] .cont{color:var(--gold)}
 .end{width:5px;height:5px;background:var(--gold);transform:rotate(45deg);margin:16px auto 0}
 .more{display:block;margin:40px auto 0;font-family:var(--display);font-size:calc(var(--body)*.8);
  color:var(--muted);background:none;border:.5px solid var(--rule);border-radius:4px;
@@ -140,16 +149,26 @@ function card(e,solo){
   if(e.m.length){
     med='<div class="med '+(e.m.length>1?'grid':'')+' '+(isW?'wide':'')+'">'+
       e.m.map(function(m){
-        if(m.v && MEDIA_BASE)
-          return '<figure><video controls preload="none" poster="'+src(m)+'"><source src="'+
-                 src(m).replace(/\.jpg$/,'.mp4')+'" type="video/mp4"></video></figure>';
+        if(m.v && m.vf && MEDIA_BASE)
+          return '<figure><video controls preload="metadata" playsinline poster="'+
+                 MEDIA_BASE+'/'+m.f+'"><source src="'+MEDIA_BASE+'/'+m.vf+
+                 '" type="video/mp4"></video></figure>';
         return '<figure><img loading="lazy" src="'+src(m)+'" alt=""></figure>';
       }).join('')+'</div>';
   }
   var meta='<p class="meta">'+(solo?e.d:'<a href="#/'+e.id+'">'+e.d+'</a>')+
     (e.dk?' · <span class="dr">'+e.door+'</span>':'')+(e.n>1?' · سلسلة':'')+'</p>';
-  return '<article class="e">'+meta+med+'<p class="tx">'+esc(e.t)+'</p>'+
-    (isW?'<div class="end"></div>':'')+'</article>';
+  var long = !solo && e.t.length>600;
+  var ic='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" '+
+    'stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+
+    '<path d="M4 6h16M4 12h16M4 18h10"/></svg>';
+  var chev='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" '+
+    'stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>';
+  if(long) meta=meta.replace('</p>',' · <span class="longmark">'+ic+'نصّ طويل</span></p>');
+  var body='<p class="tx'+(long?' clamp':'')+'">'+esc(e.t)+'</p>'+
+    (long?'<a class="cont" href="#/'+e.id+'">'+chev+'اقرأ التتمة</a>':'');
+  return '<article class="e">'+meta+med+body+
+    (isW&&!long?'<div class="end"></div>':'')+'</article>';
 }
 
 function filtered(){
