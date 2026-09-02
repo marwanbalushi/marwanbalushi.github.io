@@ -83,14 +83,32 @@ a:focus-visible,button:focus-visible{outline:3px solid var(--gold);outline-offse
 .doors b.off{opacity:.34}
 .doors b.sel{border-bottom:2px solid var(--gold)}
 /* صورة صغيرة تحت الاسم تفتح «عنّي» */
-.avatar{display:block;width:62px;height:62px;border-radius:50%;object-fit:cover;
- margin:0 auto 14px;border:var(--rulew) solid var(--rule);background:var(--paper2);
- transition:border-color .2s}
-a.avlink:hover .avatar{border-color:var(--gold)}
-a.avlink{display:block;text-align:center}
-.avcap{font-family:var(--display);font-size:calc(var(--body)*.6);color:var(--muted);
- margin-top:-8px;margin-bottom:6px;display:block}
-a.avlink:hover .avcap{color:var(--accent)}
+a.avlink{display:block;text-align:center;margin-top:16px}
+.avatar{display:block;width:66px;height:66px;border-radius:50%;object-fit:cover;
+ margin:0 auto 9px;background:var(--paper2);
+ border:2px solid var(--gold);
+ box-shadow:0 0 0 4px var(--paper), 0 0 0 5px var(--rule);
+ transition:transform .25s ease}
+a.avlink:hover .avatar,a.avlink:focus-visible .avatar{transform:scale(1.05)}
+.avcap{display:inline-block;font-family:var(--display);
+ font-size:calc(var(--body)*.66);color:var(--accent);
+ border-bottom:1.5px solid var(--gold);padding-bottom:2px;margin-bottom:4px}
+[data-color=plain] .avatar{border-color:var(--ink)}
+[data-color=plain] .avcap{color:var(--ink)}
+[data-contrast=high] .avatar{border-width:3px}
+
+/* ظهورٌ واحد عند فتح الصفحة، ثم سكون */
+@keyframes avin{
+  0%{opacity:0;transform:scale(.82)}
+  60%{opacity:1;transform:scale(1.06)}
+  100%{opacity:1;transform:scale(1)}
+}
+a.avlink .avatar{animation:avin .9s .35s ease-out both}
+a.avlink .avcap{animation:avin .7s .6s ease-out both}
+@media (prefers-reduced-motion:reduce){
+  a.avlink .avatar,a.avlink .avcap{animation:none}
+  a.avlink:hover .avatar{transform:none}
+}
 
 /* الوسائط العمودية تتوسّط ولا تنزوي */
 .med figure{display:flex;justify-content:center}
@@ -222,9 +240,9 @@ main{max-width:var(--measure);margin:0 auto}
 <div id="app">
  <header class="mast">
   <h1 class="name"><a href="#/">مروان يوسف البلوشي</a></h1>
-  <a class="avlink" href="#/about" aria-label="عنّي">
+  <a class="avlink" href="#/about" aria-label="عن الكاتب">
    <img class="avatar" src="portrait.jpg" alt="مروان يوسف البلوشي" width="62" height="62" loading="lazy">
-   <span class="avcap">عنّي</span></a>
+   <span class="avcap">عن الكاتب</span></a>
   <div class="fl" aria-hidden="true"><i></i><span class="lz"></span><i></i></div>
   <nav class="doors" id="doors" aria-label="أبواب المدونة"></nav>
   <p class="tag">نكتبُ عن الفقدِ.. كي لا يبردَ في القلبِ شوقٌ.. ولا تتحجّرَ ذكرى</p>
