@@ -1,0 +1,19 @@
+{
+  "name": "مروان يوسف البلوشي",
+  "short_name": "المدونة",
+  "description": "نكتبُ عن الفقدِ.. كي لا يبردَ في القلبِ شوقٌ.. ولا تتحجّرَ ذكرى",
+  "lang": "ar",
+  "dir": "rtl",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#F8F4EE",
+  "theme_color": "#5A1F28",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icon-192-maskable.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable" },
+    { "src": "icon-512-maskable.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
