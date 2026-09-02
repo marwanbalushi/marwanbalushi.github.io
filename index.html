@@ -82,6 +82,22 @@ a:focus-visible,button:focus-visible{outline:3px solid var(--gold);outline-offse
 .sep{color:var(--rule);padding:0 5px}
 .doors b.off{opacity:.34}
 .doors b.sel{border-bottom:2px solid var(--gold)}
+/* صورة صغيرة تحت الاسم تفتح «عنّي» */
+.avatar{display:block;width:62px;height:62px;border-radius:50%;object-fit:cover;
+ margin:0 auto 14px;border:var(--rulew) solid var(--rule);background:var(--paper2);
+ transition:border-color .2s}
+a.avlink:hover .avatar{border-color:var(--gold)}
+a.avlink{display:block;text-align:center}
+.avcap{font-family:var(--display);font-size:calc(var(--body)*.6);color:var(--muted);
+ margin-top:-8px;margin-bottom:6px;display:block}
+a.avlink:hover .avcap{color:var(--accent)}
+
+/* الوسائط العمودية تتوسّط ولا تنزوي */
+.med figure{display:flex;justify-content:center}
+.med img,.med video{max-width:100%;width:auto;max-height:78vh;margin-inline:auto}
+.med.grid figure{display:block}
+.med.grid img,.med.grid video{width:100%;height:100%;object-fit:cover}
+
 .tag{color:var(--muted);font-size:calc(var(--body)*.74);line-height:1.9;margin:16px auto 0;max-width:24em}
 
 .forms{max-width:var(--measure);margin:26px auto 0;display:flex;
@@ -206,6 +222,9 @@ main{max-width:var(--measure);margin:0 auto}
 <div id="app">
  <header class="mast">
   <h1 class="name"><a href="#/">مروان يوسف البلوشي</a></h1>
+  <a class="avlink" href="#/about" aria-label="عنّي">
+   <img class="avatar" src="portrait.jpg" alt="مروان يوسف البلوشي" width="62" height="62" loading="lazy">
+   <span class="avcap">عنّي</span></a>
   <div class="fl" aria-hidden="true"><i></i><span class="lz"></span><i></i></div>
   <nav class="doors" id="doors" aria-label="أبواب المدونة"></nav>
   <p class="tag">نكتبُ عن الفقدِ.. كي لا يبردَ في القلبِ شوقٌ.. ولا تتحجّرَ ذكرى</p>
@@ -227,8 +246,7 @@ main{max-width:var(--measure);margin:0 auto}
 
 <footer class="foot">
  <div class="fl" aria-hidden="true"><i></i><span class="lz"></span><i></i></div>
- <a href="#/about">عنّي</a>
- <br>مروان يوسف البلوشي · مسقط، سلطنة عُمان
+ مروان يوسف البلوشي · مسقط، سلطنة عُمان
 </footer>
 
 <script>
