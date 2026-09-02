@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>تحرير المدونة</title>
+<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Scheherazade+New:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--paper:#F8F4EE;--paper2:#F1EBE2;--ink:#241F1E;--accent:#5A1F28;--gold:#A8834B;
+ --muted:#6B5A56;--rule:#E2D8CD;--ok:#2C6E49;--bad:#A32C2C;
+ --display:"Amiri",serif;--text:"Scheherazade New",serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--text);
+ font-size:18px;line-height:1.8;padding:0 16px 90px}
+h1{font-family:var(--display);font-weight:400;font-size:30px;color:var(--accent);margin:0 0 4px}
+.wrap{max-width:44em;margin:0 auto}
+.hd{text-align:center;padding:24px 0 16px}
+.hd p{color:var(--muted);font-size:15px;margin:0}
+button{font-family:var(--text);font-size:15px;color:var(--muted);background:none;
+ border:.5px solid var(--rule);border-radius:5px;padding:8px 15px;cursor:pointer}
+button:hover{color:var(--accent);border-color:var(--gold)}
+button.p{color:#fff;background:var(--accent);border-color:var(--accent)}
+button.p:hover{color:#fff;opacity:.9}
+button.dl{color:var(--bad);border-color:var(--bad)}
+input,textarea,select{font-family:var(--text);font-size:17px;width:100%;background:var(--paper2);
+ color:var(--ink);border:.5px solid var(--rule);border-radius:5px;padding:10px 12px;line-height:1.9}
+textarea{min-height:16em;resize:vertical;white-space:pre-wrap}
+label{display:block;font-size:14px;color:var(--muted);margin:14px 0 5px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.row>*{flex:1;min-width:130px}
+.bar{position:sticky;top:0;z-index:9;background:var(--paper);border-bottom:.5px solid var(--rule);padding:11px 0}
+.card{border:.5px solid var(--rule);border-radius:8px;padding:14px;margin-bottom:10px;cursor:pointer}
+.card:hover{border-color:var(--gold)}
+.card .m{font-size:13px;color:var(--muted);margin:0 0 6px}
+.card .m b{color:var(--gold);font-weight:400}
+.card .t{margin:0;font-size:16px;max-height:3.6em;overflow:hidden}
+.pill{display:inline-block;font-size:12px;border:.5px solid var(--rule);border-radius:3px;
+ padding:1px 8px;color:var(--muted);margin-inline-start:6px}
+.note{background:var(--paper2);border-radius:6px;padding:14px;font-size:15px;
+ color:var(--muted);line-height:1.9;margin:14px 0}
+.msg{padding:11px 14px;border-radius:6px;margin:12px 0;font-size:15px;display:none}
+.msg.ok{display:block;background:rgba(44,110,73,.12);color:var(--ok)}
+.msg.err{display:block;background:rgba(163,44,44,.1);color:var(--bad)}
+.foot{position:fixed;inset-block-end:0;inset-inline:0;background:var(--paper);
+ border-top:.5px solid var(--rule);padding:11px 16px}
+.foot .wrap{display:flex;gap:10px;align-items:center}
+.hide{display:none}
+.cnt{font-family:var(--display);font-size:19px;color:var(--accent)}
+</style>
+</head>
+<body>
+
+<!-- ===== تسجيل الدخول ===== -->
+<div id="login" class="wrap">
+  <div class="hd"><h1>تحرير المدونة</h1><p>يحفظ تعديلاتك مباشرة في الموقع</p></div>
+  <div class="note">
+    تحتاج مفتاحاً من GitHub مرّة واحدة فقط. يُحفظ في متصفّحك ولا يُرسل إلى أحد.<br>
+    طريقة إنشائه مشروحة في المحادثة.
+  </div>
+  <label>المفتاح</label>
+  <input id="tok" type="password" placeholder="github_pat_...">
+  <div class="row" style="margin-top:14px">
+    <button class="p" id="enter">دخول</button>
+  </div>
+  <div class="msg" id="lmsg"></div>
+</div>
+
+<!-- ===== المحرّر ===== -->
+<div id="editor" class="hide">
+  <div class="bar"><div class="wrap row">
+    <input id="q" placeholder="ابحث في النصوص…" style="flex:3">
+    <select id="fdoor" style="flex:1">
+      <option value="">كل الأبواب</option>
+      <option>عُمان</option><option>الإسلام مرجعيّة</option><option>الهُويّة عزّة</option>
+      <option>الإنسان كرامة</option><option>دبلوماسيّة</option><option>غير مصنّف</option>
+    </select>
+    <button id="new" style="flex:0 0 auto">مدخل جديد</button>
+  </div></div>
+
+  <div class="wrap">
+    <p style="color:var(--muted);font-size:14px"><span class="cnt" id="cnt">٠</span> مدخلاً</p>
+    <div id="list"></div>
+    <button id="more" style="width:100%;margin-top:14px">المزيد</button>
+  </div>
+</div>
+
+<!-- ===== نافذة التحرير ===== -->
+<div id="form" class="wrap hide">
+  <div class="hd"><h1 id="ftitle">تحرير مدخل</h1></div>
+  <label>النصّ</label>
+  <textarea id="ftext"></textarea>
+  <div class="row">
+    <div><label>الباب</label>
+      <select id="fdoorsel">
+        <option>غير مصنّف</option><option>عُمان</option><option>الإسلام مرجعيّة</option>
+        <option>الهُويّة عزّة</option><option>الإنسان كرامة</option><option>دبلوماسيّة</option>
+      </select></div>
+    <div><label>الشكل</label>
+      <select id="fform"><option value="shathrah">شذرة</option><option value="waqfah">وقفة</option></select></div>
+    <div><label>التاريخ</label><input id="fdate" type="date"></div>
+  </div>
+  <label>أسماء ملفات الوسائط (اختياري، ملف في كل سطر)</label>
+  <textarea id="fmedia" style="min-height:5em" placeholder="1234567890-ABCdef.jpg"></textarea>
+  <div class="row" style="margin-top:18px">
+    <button class="p" id="save">حفظ في المدونة</button>
+    <button id="cancel">رجوع</button>
+    <button class="dl" id="del">حذف المدخل</button>
+  </div>
+  <div class="msg" id="fmsg"></div>
+</div>
+
+<div class="foot hide" id="foot"><div class="wrap">
+  <span id="status" style="flex:1;font-size:14px;color:var(--muted)">جاهز</span>
+  <button id="logout">خروج</button>
+</div></div>
+
+<script>
+var OWNER="marwanbalushi", REPO="marwanbalushi.github.io", PATH="data.json", BRANCH="main";
+var SITE="https://"+OWNER+".github.io/";
+var TOKEN="", DATA=[], SHA="", shown=0, PAGE=20, cur=null;
+var AR=function(n){return String(n).replace(/\d/g,function(d){return '٠١٢٣٤٥٦٧٨٩'[d]})};
+var MON=['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
+var DK={'عُمان':'oman','الإسلام مرجعيّة':'marjieyah','الهُويّة عزّة':'huwiyah',
+        'الإنسان كرامة':'karamah','دبلوماسيّة':'diblomasi','غير مصنّف':''};
+var $=function(i){return document.getElementById(i)};
+function say(el,t,bad){el.textContent=t;el.className='msg '+(bad?'err':'ok')}
+function st(t){$('status').textContent=t}
+function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;')}
+function b64(str){
+  var b=new TextEncoder().encode(str), s='';
+  for(var i=0;i<b.length;i++) s+=String.fromCharCode(b[i]);
+  return btoa(s);
+}
+function api(path,opt){
+  opt=opt||{}; opt.headers=Object.assign({
+    'Authorization':'Bearer '+TOKEN,'Accept':'application/vnd.github+json'},opt.headers||{});
+  return fetch('https://api.github.com/repos/'+OWNER+'/'+REPO+path,opt);
+}
+
+/* ---- الدخول ---- */
+try{ var sv=localStorage.getItem('ghtok'); if(sv) $('tok').value=sv; }catch(e){}
+$('enter').onclick=function(){
+  TOKEN=$('tok').value.trim();
+  if(!TOKEN){ say($('lmsg'),'اكتب المفتاح أولاً',1); return; }
+  say($('lmsg'),'جارٍ الاتصال…');
+  api('/git/trees/'+BRANCH).then(function(r){
+    if(!r.ok) throw new Error('المفتاح غير صالح أو لا يملك صلاحية على المستودع');
+    return r.json();
+  }).then(function(j){
+    var f=j.tree.filter(function(x){return x.path===PATH})[0];
+    if(!f) throw new Error('لم أجد data.json في المستودع');
+    SHA=f.sha;
+    try{ localStorage.setItem('ghtok',TOKEN); }catch(e){}
+    return fetch(SITE+PATH+'?t='+Date.now());
+  }).then(function(r){ return r.json(); }).then(function(j){
+    DATA=j; $('login').className='hide'; $('editor').className='';
+    $('foot').className='foot'; st('متّصل · '+AR(DATA.length)+' مدخلاً');
+    render();
+  }).catch(function(e){ say($('lmsg'),e.message,1); });
+};
+$('logout').onclick=function(){
+  try{ localStorage.removeItem('ghtok'); }catch(e){}
+  location.reload();
+};
+
+/* ---- القائمة ---- */
+function filtered(){
+  var q=$('q').value.trim(), d=$('fdoor').value;
+  return DATA.filter(function(e){
+    return (!q||e.t.indexOf(q)>-1) && (!d||e.door===d); });
+}
+function render(reset){
+  if(reset!==false) shown=0;
+  var L=filtered(), box=$('list');
+  if(shown===0) box.innerHTML='';
+  $('cnt').textContent=AR(L.length);
+  var n=L.slice(shown,shown+PAGE);
+  box.insertAdjacentHTML('beforeend', n.map(function(e){
+    return '<div class="card" data-id="'+e.id+'"><p class="m">'+e.d+
+      ' · <b>'+e.door+'</b><span class="pill">'+(e.f==='waqfah'?'وقفة':'شذرة')+'</span>'+
+      (e.m&&e.m.length?'<span class="pill">'+AR(e.m.length)+' وسائط</span>':'')+
+      '</p><p class="t">'+esc(e.t)+'</p></div>'; }).join(''));
+  shown+=n.length;
+  $('more').style.display = shown<L.length ? 'block':'none';
+  $('more').textContent='المزيد ('+AR(L.length-shown)+')';
+}
+$('more').onclick=function(){ render(false); };
+$('q').oninput=function(){ render(); };
+$('fdoor').onchange=function(){ render(); };
+$('list').onclick=function(ev){
+  var c=ev.target.closest('.card'); if(!c) return;
+  open(DATA.filter(function(x){return x.id===c.dataset.id})[0]);
+};
+
+/* ---- نموذج التحرير ---- */
+function open(e){
+  cur=e;
+  $('ftitle').textContent = e ? 'تحرير مدخل' : 'مدخل جديد';
+  $('ftext').value = e ? e.t : '';
+  $('fdoorsel').value = e ? e.door : 'غير مصنّف';
+  $('fform').value = e ? e.f : 'shathrah';
+  $('fdate').value = e ? e.iso : new Date().toISOString().slice(0,10);
+  $('fmedia').value = e && e.m ? e.m.map(function(m){return m.f}).join('\n') : '';
+  $('del').style.display = e ? '' : 'none';
+  $('fmsg').className='msg';
+  $('editor').className='hide'; $('form').className='wrap';
+  window.scrollTo(0,0);
+}
+$('new').onclick=function(){ open(null); };
+$('cancel').onclick=function(){
+  $('form').className='wrap hide'; $('editor').className=''; render();
+};
+
+function collect(){
+  var txt=$('ftext').value.trim();
+  if(!txt) throw new Error('النصّ فارغ');
+  var iso=$('fdate').value, p=iso.split('-');
+  var med=$('fmedia').value.split('\n').map(function(x){return x.trim()}).filter(Boolean)
+    .map(function(f){
+      var o={f:f,u:'',v:/\.mp4$/i.test(f)};
+      if(o.v) o.vf=f;
+      return o; });
+  var door=$('fdoorsel').value;
+  return {t:txt,iso:iso,d:AR(parseInt(p[2],10))+' '+MON[parseInt(p[1],10)-1]+' '+AR(p[0]),
+          door:door,dk:DK[door],f:$('fform').value,m:med,n:1};
+}
+
+$('save').onclick=function(){
+  var o;
+  try{ o=collect(); }catch(e){ say($('fmsg'),e.message,1); return; }
+  if(cur){ Object.keys(o).forEach(function(k){ cur[k]=o[k] }); }
+  else { o.id='n'+Date.now(); DATA.push(o); }
+  DATA.sort(function(a,b){ return a.iso<b.iso?1:a.iso>b.iso?-1:0 });
+  commit('تحديث مدخل');
+};
+$('del').onclick=function(){
+  if(!cur) return;
+  if(!confirm('حذف هذا المدخل نهائياً من المدونة؟')) return;
+  DATA=DATA.filter(function(x){ return x!==cur });
+  commit('حذف مدخل');
+};
+
+function commit(msg){
+  say($('fmsg'),'جارٍ الحفظ…');
+  st('جارٍ الحفظ…');
+  var body=JSON.stringify({message:msg,content:b64(JSON.stringify(DATA)),sha:SHA,branch:BRANCH});
+  api('/contents/'+PATH,{method:'PUT',body:body}).then(function(r){
+    return r.json().then(function(j){ if(!r.ok) throw new Error(j.message||'فشل الحفظ'); return j; });
+  }).then(function(j){
+    SHA=j.content.sha;
+    say($('fmsg'),'حُفظ. ستظهر التغييرات في المدونة خلال دقيقتين.');
+    st('حُفظ · '+AR(DATA.length)+' مدخلاً');
+    setTimeout(function(){ $('cancel').click(); },1200);
+  }).catch(function(e){
+    say($('fmsg'),e.message,1); st('فشل الحفظ');
+  });
+}
+</script>
+</body>
+</html>
