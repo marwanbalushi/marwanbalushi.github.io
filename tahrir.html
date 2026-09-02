@@ -51,6 +51,21 @@ label{display:block;font-size:15px;color:var(--muted);margin:15px 0 5px}
 .hide{display:none!important}
 .cnt{font-family:var(--display);font-size:20px;color:var(--accent)}
 .link{color:var(--accent);border-bottom:.5px solid var(--gold);cursor:pointer;font-size:15px}
+.mgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(112px,1fr));gap:10px;margin-top:6px}
+.mit{position:relative;border:.5px solid var(--rule);border-radius:6px;overflow:hidden;background:var(--paper2)}
+.mit img{width:100%;height:84px;object-fit:cover;display:block}
+.mit .lab{font-size:12px;color:var(--muted);padding:5px 7px;line-height:1.5;
+ word-break:break-all;max-height:3.4em;overflow:hidden}
+.mit .vtag{position:absolute;inset-block-start:6px;inset-inline-start:6px;background:rgba(0,0,0,.6);
+ color:#fff;font-size:12px;padding:1px 8px;border-radius:3px}
+.mit .x{position:absolute;inset-block-start:6px;inset-inline-end:6px;width:26px;height:26px;
+ border-radius:50%;border:none;background:rgba(0,0,0,.62);color:#fff;font-size:16px;
+ line-height:1;padding:0;cursor:pointer}
+.mit .x:hover{background:var(--bad)}
+.mempty{color:var(--muted);font-size:15px;padding:10px 0}
+.warn{background:rgba(163,44,44,.09);color:var(--bad);border-radius:6px;
+ padding:11px 14px;font-size:15px;margin-top:10px;display:none}
+.warn.on{display:block}
 </style>
 </head>
 <body>
@@ -120,8 +135,16 @@ label{display:block;font-size:15px;color:var(--muted);margin:15px 0 5px}
       <select id="fform"><option value="shathrah">شذرة</option><option value="waqfah">وقفة</option></select></div>
     <div><label>التاريخ</label><input id="fdate" type="date"></div>
   </div>
-  <label>أسماء ملفات الوسائط — ملفٌ في كل سطر (اختياري)</label>
-  <textarea id="fmedia" style="min-height:5em" placeholder="1234567890-ABCdef.jpg"></textarea>
+  <label>الوسائط المرتبطة بالمدخل</label>
+  <div id="mgrid" class="mgrid"></div>
+  <p class="mempty hide" id="mempty">لا وسائط في هذا المدخل.</p>
+  <p style="margin:10px 0 0"><span class="link" id="maddBtn">إضافة ملف يدوياً</span>
+   <span class="link" id="mrestore" style="margin-inline-start:16px;display:none">استرجاع الوسائط الأصلية</span></p>
+  <div id="maddBox" class="hide" style="margin-top:10px">
+    <input id="madd" placeholder="1234567890-ABCdef.jpg أو .mp4">
+    <div class="row" style="margin-top:8px"><button id="maddOk">أضف</button></div>
+  </div>
+  <div class="warn" id="mwarn">تنبيه: ستحفظ المدخل بلا وسائط، وكان فيه وسائط. اضغط «استرجاع الوسائط الأصلية» إن كان هذا غير مقصود.</div>
   <div class="row" style="margin-top:18px">
     <button class="p" id="save">حفظ في المدونة</button>
     <button id="cancel">رجوع</button>
@@ -137,6 +160,7 @@ label{display:block;font-size:15px;color:var(--muted);margin:15px 0 5px}
 </div></div>
 
 <script>
+var MEDIA_BASE="https://pub-3f426d74e97747c4ada9bcfe8803132a.r2.dev";
 var OWNER="marwanbalushi", REPO="marwanbalushi.github.io", PATH="data.json",
     KEYF="mift.json", BRANCH="main", SITE="https://"+OWNER+".github.io/";
 var TOKEN="", DATA=[], SHA="", shown=0, PAGE=20, cur=null;
@@ -274,14 +298,44 @@ $('list').onclick=function(ev){
 };
 
 /* ---------- النموذج ---------- */
+var MED=[], MED0=[];
+function drawMed(){
+  var g=$('mgrid'); g.innerHTML='';
+  $('mempty').className = MED.length ? 'mempty hide':'mempty';
+  MED.forEach(function(m,i){
+    var poster = MEDIA_BASE+'/'+m.f;
+    g.insertAdjacentHTML('beforeend',
+      '<div class="mit"><img loading="lazy" src="'+poster+'" alt="">'+
+      (m.v?'<span class="vtag">مقطع</span>':'')+
+      '<button class="x" data-i="'+i+'" title="إزالة" aria-label="إزالة">&times;</button>'+
+      '<div class="lab">'+m.f+(m.vf?'<br>'+m.vf:'')+'</div></div>');
+  });
+  var lost = MED0.length && MED.length<MED0.length;
+  $('mwarn').className = lost && MED.length===0 ? 'warn on':'warn';
+  $('mrestore').style.display = lost ? 'inline':'none';
+}
+$('mgrid').onclick=function(ev){
+  var b=ev.target.closest('.x'); if(!b) return;
+  MED.splice(+b.dataset.i,1); drawMed();
+};
+$('mrestore').onclick=function(){ MED=MED0.map(function(m){return Object.assign({},m)}); drawMed(); };
+$('maddBtn').onclick=function(){ $('maddBox').className = $('maddBox').className? '':'hide'; };
+$('maddOk').onclick=function(){
+  var f=$('madd').value.trim(); if(!f) return;
+  var o={f:f,u:'',v:/\.mp4$/i.test(f)}; if(o.v) o.vf=f;
+  MED.push(o); $('madd').value=''; drawMed();
+};
+
 function openF(e){
   cur=e;
+  MED0 = e && e.m ? e.m.map(function(m){return Object.assign({},m)}) : [];
+  MED  = MED0.map(function(m){return Object.assign({},m)});
+  drawMed();
   $('ftitle').textContent = e ? 'تحرير مدخل' : 'مدخل جديد';
   $('ftext').value = e ? e.t : '';
   $('fdoorsel').value = e ? e.door : 'غير مصنّف';
   $('fform').value = e ? e.f : 'shathrah';
   $('fdate').value = e ? e.iso : new Date().toISOString().slice(0,10);
-  $('fmedia').value = e && e.m ? e.m.map(function(m){return m.f}).join('\n') : '';
   $('del').style.display = e ? '' : 'none';
   $('fmsg').className='msg';
   $('editor').className='hide'; $('form').className='wrap';
@@ -297,13 +351,14 @@ function collect(){
   if(!txt) throw new Error('النصّ فارغ');
   var iso=$('fdate').value; if(!iso) throw new Error('اختر التاريخ');
   var p=iso.split('-');
-  var med=$('fmedia').value.split('\n').map(function(x){return x.trim()}).filter(Boolean)
-    .map(function(f){ var o={f:f,u:'',v:/\.mp4$/i.test(f)}; if(o.v) o.vf=f; return o });
+  var med=MED;
   var door=$('fdoorsel').value;
   return {t:txt,iso:iso,d:AR(parseInt(p[2],10))+' '+MON[parseInt(p[1],10)-1]+' '+AR(p[0]),
           door:door,dk:DK[door],f:$('fform').value,m:med,n:1};
 }
 $('save').onclick=function(){
+  if(MED0.length && MED.length===0 &&
+     !confirm('هذا المدخل فيه '+AR(MED0.length)+' من الوسائط وستحفظه بلا شيء منها. أتريد المتابعة؟')) return;
   var o; try{ o=collect() }catch(e){ say($('fmsg'),e.message,'err'); return }
   if(cur){ Object.keys(o).forEach(function(k){cur[k]=o[k]}) }
   else { o.id='n'+Date.now(); DATA.push(o) }
