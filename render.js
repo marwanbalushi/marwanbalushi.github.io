@@ -65,6 +65,7 @@
     fb:   '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M22 12a10 10 0 1 0-11.6 9.9v-7h-2.5V12h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.4h-1.2c-1.2 0-1.6.8-1.6 1.6V12h2.7l-.4 2.9h-2.3v7A10 10 0 0 0 22 12z"/></svg>',
     tg:   '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M21.9 4.3 18.7 19c-.2 1-.9 1.3-1.8.8l-4.9-3.6-2.4 2.3c-.3.3-.5.5-1 .5l.4-5 9.1-8.2c.4-.4-.1-.6-.6-.2L6.3 12.8 1.5 11.3c-1-.3-1-1 .2-1.5l18.9-7.3c.9-.3 1.6.2 1.3 1.8z"/></svg>',
     cp:   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>',
+    up:   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 15l-6-6-6 6"/></svg>',
     ok:   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>'
   };
 
@@ -102,7 +103,20 @@
       "border:var(--rulew) solid var(--gold);border-radius:4px;padding:1px 8px;" +
       "font-family:var(--display);font-size:.96em;line-height:1.7;white-space:nowrap}" +
       ".mk svg{width:1.02em;height:1.02em;flex:none}" +
-      ".mk:hover{color:var(--accent);border-color:var(--accent)}";
+      ".mk:hover{color:var(--accent);border-color:var(--accent)}" +
+      /* سهما التنقّل */
+      ".sup{position:fixed;inset-inline-end:14px;bottom:16px;z-index:40;display:none;" +
+      "flex-direction:column;gap:7px}" +
+      ".sup button{width:38px;height:38px;display:flex;align-items:center;justify-content:center;" +
+      "padding:0;cursor:pointer;border-radius:50%;color:var(--muted);background:var(--paper2);" +
+      "border:var(--rulew) solid var(--rule);box-shadow:0 1px 5px rgba(0,0,0,.09);transition:opacity .2s}" +
+      ".sup button:hover{color:var(--accent);border-color:var(--gold)}" +
+      ".sup svg{width:19px;height:19px}" +
+      "@media print{.sup{display:none!important}}";
+    var rss = document.createElement("link");
+    rss.rel = "alternate"; rss.type = "application/rss+xml";
+    rss.title = cfg.site.name; rss.href = "rss.xml";
+    document.head.appendChild(rss);
     document.head.appendChild(s);
     document.title = cfg.site.name;
     var tc = document.querySelector('meta[name="theme-color"]');
@@ -243,6 +257,33 @@
     return att(t.length > 100 ? cut(t, 100) + "…" : t);
   }
 
+  /* سهما الصعود والنزول — يظهران حين تطول الصفحة، ويخفت غير النافع منهما */
+  var SUP = null;
+  function supUpd() {
+    if (!SUP) return;
+    var h = document.documentElement.scrollHeight, v = window.innerHeight, y = window.scrollY || 0;
+    SUP.style.display = h > v * 1.8 ? "flex" : "none";
+    SUP.children[0].style.opacity = y > 220 ? "1" : ".35";
+    SUP.children[1].style.opacity = y < h - v - 60 ? "1" : ".35";
+  }
+  function supMake() {
+    if (SUP) return;
+    SUP = document.createElement("div");
+    SUP.className = "sup";
+    SUP.innerHTML =
+      '<button data-go="top" aria-label="إلى أعلى الصفحة" title="إلى الأعلى">' + IC.up + "</button>" +
+      '<button data-go="end" aria-label="إلى أسفل الصفحة" title="إلى الأسفل">' + IC.down + "</button>";
+    SUP.addEventListener("click", function (ev) {
+      var b = ev.target.closest("button"); if (!b) return;
+      window.scrollTo({ top: b.dataset.go === "top" ? 0 : document.documentElement.scrollHeight,
+                        behavior: "smooth" });
+    });
+    document.body.appendChild(SUP);
+    window.addEventListener("scroll", supUpd, { passive: true });
+    window.addEventListener("resize", supUpd);
+    supUpd();
+  }
+
   function card(e, solo) {
     var isW = e.f === "waqfah", med = "", L = CFG.layout;
     if (e.m && e.m.length) {
@@ -324,6 +365,7 @@
     more.style.display = shown < list.length ? "block" : "none";
     more.textContent = "المزيد (" + arn(list.length - shown) + ")";
     $("hits").textContent = query ? arn(list.length) + " نتيجة لـ«" + query + "»" : "";
+    supMake(); setTimeout(supUpd, 60);
   }
   $("more").onclick = function () { render(); };
   var tmr = null;
@@ -392,6 +434,7 @@
     app.style.display = "";
   }
   window.addEventListener("hashchange", route);
+  window.addEventListener("hashchange", function () { setTimeout(supUpd, 80); });
 
   /* ---------- الإقلاع ---------- */
   /* التحميل على دفعتين: الأحدث أولاً ليقرأ الزائر فوراً، ثم الأرشيف كاملاً في الخلف */
