@@ -132,7 +132,7 @@ document.querySelectorAll(".tabs button").forEach(function(b){
 /* ---------- الأبواب في القوائم ---------- */
 function doorNames(){return CFG.doors.map(function(d){return d.pred?d.subj+" "+d.pred:d.subj})}
 function fillDoorSelects(){
-  var names=doorNames().concat(["غير مصنّف"]);
+  var names=doorNames();
   [["fdoor","كل الأبواب"],["bulkdoor","انقل إلى باب…"]].forEach(function(p){
     var s=$(p[0]);s.innerHTML='<option value="">'+p[1]+"</option>"+
       names.map(function(n){return "<option>"+esc(n)+"</option>"}).join("")});
@@ -279,7 +279,7 @@ function openF(e){
   $("upmsg").textContent="";$("lib").className="hide";
   $("ftitle").textContent=e?"تحرير مدخل":"مدخل جديد";
   $("ftext").value=e?e.t:"";
-  $("fdoorsel").value=e?e.door:"غير مصنّف";
+  $("fdoorsel").value=e?e.door:"متفرّقات";
   $("fform").value=e?e.f:"shathrah";
   $("fdate").value=e?e.iso:new Date().toISOString().slice(0,10);
   $("fdraft").checked=e?!!e.draft:false;
@@ -482,6 +482,36 @@ function drawPreview(){
 /* ---------- الحفظ ---------- */
 
 /* ---------- توليد الملفات المرافقة ---------- */
+/* ---------- أيقونات صفحات المداخل ---------- */
+var PIC={
+ wa:'<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18a8 8 0 0 1-4.1-1.1l-.3-.2-3 .8.8-2.9-.2-.3A8 8 0 1 1 12 20zm4.5-5.9c-.2-.1-1.4-.7-1.7-.8s-.4-.1-.5.1-.6.8-.7.9-.3.2-.5 0a6.5 6.5 0 0 1-3.2-2.8c-.2-.4.2-.4.6-1.2a.5.5 0 0 0 0-.4c0-.1-.5-1.3-.7-1.7s-.4-.4-.5-.4h-.5a.9.9 0 0 0-.7.3 2.8 2.8 0 0 0-.9 2.1 4.9 4.9 0 0 0 1 2.6 11 11 0 0 0 4.3 3.8c1.6.6 2.2.7 3 .6a2.5 2.5 0 0 0 1.7-1.2 2 2 0 0 0 .2-1.2c-.1-.1-.3-.2-.5-.3z"/></svg>',
+ x:'<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.2 2H21l-6.6 7.5L22 22h-6.2l-4.8-6.3L5.4 22H2.6l7-8L2 2h6.3l4.4 5.8zM17 20.3h1.6L7.1 3.6H5.4z"/></svg>',
+ fb:'<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M22 12a10 10 0 1 0-11.6 9.9v-7h-2.5V12h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.4h-1.2c-1.2 0-1.6.8-1.6 1.6V12h2.7l-.4 2.9h-2.3v7A10 10 0 0 0 22 12z"/></svg>',
+ tg:'<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M21.9 4.3 18.7 19c-.2 1-.9 1.3-1.8.8l-4.9-3.6-2.4 2.3c-.3.3-.5.5-1 .5l.4-5 9.1-8.2c.4-.4-.1-.6-.6-.2L6.3 12.8 1.5 11.3c-1-.3-1-1 .2-1.5l18.9-7.3c.9-.3 1.6.2 1.3 1.8z"/></svg>',
+ cp:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>'
+};
+function pShare(e,url){
+  var S=CFG.share||{},t=encodeURIComponent(snip(e.t,90)),u=encodeURIComponent(url),h='<span class="shx">';
+  if(S.whatsapp)h+='<a href="https://wa.me/?text='+t+"%20"+u+'" target="_blank" rel="noopener" title="واتساب" aria-label="مشاركة على واتساب">'+PIC.wa+"</a>";
+  if(S.x)h+='<a href="https://x.com/intent/tweet?text='+t+"&url="+u+'" target="_blank" rel="noopener" title="X" aria-label="مشاركة على X">'+PIC.x+"</a>";
+  if(S.telegram)h+='<a href="https://t.me/share/url?url='+u+"&text="+t+'" target="_blank" rel="noopener" title="تلغرام" aria-label="مشاركة على تلغرام">'+PIC.tg+"</a>";
+  if(S.facebook)h+='<a href="https://www.facebook.com/sharer/sharer.php?u='+u+'" target="_blank" rel="noopener" title="فيسبوك" aria-label="مشاركة على فيسبوك">'+PIC.fb+"</a>";
+  if(S.copy!==false)h+='<button id="cpbtn" data-url="'+xe(url)+'" title="نسخ الرابط" aria-label="نسخ الرابط">'+PIC.cp+"</button>";
+  return h+"</span>"}
+function pMedia(e){
+  var m=e.m||[];if(!m.length)return "";
+  var cls=m.length===1?"":"g2",wide=(e.f==="waqfah"&&CFG.layout.wideMedia!==false)?"wide":"",alt=xe(snip(e.t,100));
+  return '<div class="med '+cls+" "+wide+'">'+m.map(function(x){
+    if(x.v&&x.vf)return '<figure><video controls preload="metadata" playsinline poster="'+CFG.media.base+"/"+xe(x.f)+
+      '" src="'+CFG.media.base+"/"+xe(x.vf)+'#t=0.5"></video></figure>';
+    return '<figure><img loading="lazy" src="'+CFG.media.base+"/"+xe(x.f)+'" alt="'+alt+'"></figure>'}).join("")+"</div>"}
+function pNav(e){
+  var i=DATA.indexOf(e);if(i<0)return "";
+  var nx=i>0?DATA[i-1]:null,pv=i+1<DATA.length?DATA[i+1]:null,h="";
+  if(nx)h+='<a href="'+xe(nx.id)+'.html" rel="next">→ '+xe(snip(nx.t,34))+"</a>";
+  if(pv)h+='<a href="'+xe(pv.id)+'.html" rel="prev">'+xe(snip(pv.t,34))+" ←</a>";
+  return h?'<nav class="nb">'+h+"</nav>":""}
+
 var BASEURL="https://marwanbalushi.com/";
 function xe(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")
   .replace(/"/g,"&quot;")}
@@ -503,30 +533,52 @@ function buildRSS(){
     "</description><language>ar</language>"+(pub[0]?"<lastBuildDate>"+rfc(pub[0].iso)+"</lastBuildDate>":"")+
     items+"</channel></rss>"}
 function buildSitemap(){
-  var u=[BASEURL,BASEURL+"#/about",BASEURL+"#/archive"].concat(
-    DATA.filter(function(e){return !e.draft}).map(function(e){return BASEURL+"p/"+e.id+".html"}));
+  var pub=DATA.filter(function(e){return !e.draft});
   return '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'+
-    u.map(function(x){return "<url><loc>"+xe(x)+"</loc></url>"}).join("")+"</urlset>"}
+    "<url><loc>"+BASEURL+"</loc><changefreq>daily</changefreq><priority>1.0</priority></url>"+
+    pub.map(function(e){return "<url><loc>"+BASEURL+"p/"+e.id+".html</loc><lastmod>"+xe(e.iso)+"</lastmod></url>"}).join("")+
+    "</urlset>"}
 function postPage(e){
   var img=BASEURL+"card.jpg";
   (e.m||[]).some(function(m){if(!m.vf){img=CFG.media.base+"/"+m.f;return true}return false});
   var url=BASEURL+"p/"+e.id+".html";
-  var keep={};["id","t","d","door","dk","f","m","iso"].forEach(function(k){if(k in e)keep[k]=e[k]});
-  var T=xe(snip(e.t,60)),Dsc=xe(snip(e.t,180));
+  var T=xe(snip(e.t,65)),Dsc=xe(snip(e.t,155));
+  var rt=(CFG.layout.showReadingTime!==false&&e.t.length>400)
+    ? '<span class="dot">·</span>'+AR(Math.max(1,Math.round(e.t.trim().split(/\s+/).length/180)))+" دقيقة قراءة":"";
+  var meta='<time datetime="'+xe(e.iso)+'">'+xe(e.d)+"</time>"+
+    (e.dk?'<span class="dot">·</span><span class="dr">'+xe(e.door)+"</span>":"")+rt+pShare(e,url);
+  var tok=(CFG.analytics&&CFG.analytics.cloudflareToken)||"";
+  var S="script";
+  var prefs="<"+S+">(function(){try{var R=document.documentElement,g=function(k){return localStorage.getItem(k)};"+
+    "R.setAttribute('data-theme',g('theme')||(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'));"+
+    "R.setAttribute('data-contrast',g('contrast')||'normal');R.setAttribute('data-clarity',g('clarity')||'normal');"+
+    "R.setAttribute('data-color',g('color')||'full');var s=parseFloat(g('scale'));if(s)R.style.setProperty('--scale',s);}catch(e){}})();</"+S+">";
+  var cpjs="<"+S+">(function(){var b=document.getElementById('cpbtn');if(!b)return;var o=b.innerHTML,u=b.dataset.url;"+
+    "var OK='<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.1\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M20 6L9 17l-5-5\"/></svg>';"+
+    "b.onclick=function(){var d=function(){b.innerHTML=OK;setTimeout(function(){b.innerHTML=o},1600)};"+
+    "if(navigator.clipboard)navigator.clipboard.writeText(u).then(d,d);else{var i=document.createElement('input');i.value=u;"+
+    "document.body.appendChild(i);i.select();try{document.execCommand('copy')}catch(x){}i.remove();d()}}})();</"+S+">";
+  var beacon=tok?"<"+S+" defer src=\"https://static.cloudflareinsights.com/beacon.min.js\" data-cf-beacon='{\"token\":\""+tok+"\"}'></"+S+">":"";
   return '<!DOCTYPE html>\n<html lang="ar" dir="rtl">\n<head>\n<meta charset="utf-8">\n'+
    '<meta name="viewport" content="width=device-width, initial-scale=1">\n<title>'+T+"</title>\n"+
    '<meta name="description" content="'+Dsc+'">\n<link rel="canonical" href="'+url+'">\n'+
    '<meta property="og:type" content="article">\n<meta property="og:site_name" content="'+xe(CFG.site.name)+'">\n'+
    '<meta property="og:title" content="'+T+'">\n<meta property="og:description" content="'+Dsc+'">\n'+
    '<meta property="og:url" content="'+url+'">\n<meta property="og:image" content="'+xe(img)+'">\n'+
-   '<meta property="og:locale" content="ar_OM">\n<meta name="twitter:card" content="summary_large_image">\n'+
-   '<meta name="twitter:title" content="'+T+'">\n<meta name="twitter:description" content="'+Dsc+'">\n'+
-   '<meta name="twitter:image" content="'+xe(img)+'">\n<meta name="theme-color" content="#5A1F28">\n'+
-   '<link rel="stylesheet" href="style.css">\n</head>\n<body>\n<div class="bar" id="bar"></div>\n'+
-   '<main id="post"></main>\n<div id="share"></div>\n'+
-   '<footer class="foot"><a href="../index.html">العودة إلى المدونة</a></footer>\n'+
-   "<script>window.__ENTRY__="+JSON.stringify(keep)+";<\/script>\n"+
-   '<script src="../post.js"><\/script>\n</body>\n</html>\n'}
+   '<meta property="og:locale" content="ar_OM">\n<meta property="article:published_time" content="'+xe(e.iso)+'">\n'+
+   '<meta name="twitter:card" content="summary_large_image">\n<meta name="twitter:title" content="'+T+'">\n'+
+   '<meta name="twitter:description" content="'+Dsc+'">\n<meta name="twitter:image" content="'+xe(img)+'">\n'+
+   '<meta name="theme-color" content="'+CFG.theme.light.accent+'">\n'+
+   '<link rel="icon" href="../icon-192.png">\n<link rel="apple-touch-icon" href="../apple-touch-icon.png">\n'+
+   '<link rel="stylesheet" href="style.css">\n'+prefs+'\n</head>\n<body>\n'+
+   '<div class="bar"><a href="../index.html">→ العودة إلى المدونة</a></div>\n'+
+   '<main id="post">\n<article class="e">\n<p class="meta">'+meta+"</p>\n"+pMedia(e)+
+   '<p class="tx">'+xe(e.t)+"</p>\n"+
+   (CFG.layout.showEndMark!==false?'<div class="end" aria-hidden="true"><i></i><span></span><i></i></div>\n':"")+
+   "</article>\n</main>\n"+pNav(e)+"\n"+
+   '<footer class="foot">\n<div class="fl" aria-hidden="true"><i></i><span class="lz"></span><i></i></div>\n'+
+   '<a href="../index.html#/archive">الأرشيف الزمني</a><br>'+xe(CFG.site.name)+
+   (CFG.site.location?" · "+xe(CFG.site.location):"")+"\n</footer>\n"+cpjs+beacon+"\n</body>\n</html>\n"}
 function putRaw(path,text,msg){
   var body={message:msg,content:b64e(text),branch:BRANCH};
   if(SHA[path])body.sha=SHA[path];
