@@ -111,7 +111,7 @@ function boot(){
     $("login").className="wrap hide";$("setup").className="wrap hide";
     $("app").className="";$("foot").className="foot";
     stt("مفتوح · "+AR(DATA.length)+" مدخلاً");
-    buildIdentity();buildLook();drawPresets();fillDoorSelects();render();
+    buildIdentity();buildLook();drawPresets();fillDoorSelects();render();mkDraftBtn();
     var h=location.hash.replace("#/","").replace("#","").trim();
     if(h==="new") openF(null);
     else if(h){var e=DATA.filter(function(x){return x.id===h})[0];if(e)openF(e)}
@@ -147,6 +147,34 @@ function filtered(){
   return DATA.filter(function(e){
     return (!q||e.t.indexOf(q)>-1)&&(!d||e.door===d)&&
       (!s||(s==="draft"?!!e.draft:!e.draft))})}
+
+/* ---------- زرّ المسوّدات ---------- */
+var DBTN=null;
+function mkDraftBtn(){
+  if(DBTN)return;
+  var a=$("new");if(!a||!a.parentNode)return;
+  DBTN=document.createElement("button");
+  DBTN.id="draftsBtn";DBTN.type="button";
+  DBTN.className=a.className||"sm";
+  DBTN.style.marginInlineStart="8px";
+  DBTN.onclick=function(){
+    var on=$("fstate").value==="draft";
+    $("fstate").value=on?"":"draft";
+    render();updDraftBtn();
+    if(!on)window.scrollTo(0,0)};
+  a.parentNode.insertBefore(DBTN,a.nextSibling);
+  updDraftBtn()}
+function updDraftBtn(){
+  if(!DBTN)return;
+  var n=DATA.filter(function(e){return e.draft}).length;
+  var on=$("fstate").value==="draft";
+  var col=(CFG&&CFG.theme&&CFG.theme.light)?CFG.theme.light.accent:"#5A1F28";
+  DBTN.textContent=on?("عرض الكل ("+AR(n)+" مسوّدة)"):("المسوّدات ("+AR(n)+")");
+  DBTN.style.opacity=n?"1":".5";
+  DBTN.style.borderColor=on?col:"";
+  DBTN.style.color=on?col:"";
+  DBTN.style.fontWeight=on?"700":""}
+
 function render(more){
   if(!more)shown=0;
   var L=filtered(),box=$("list");
@@ -162,11 +190,12 @@ function render(more){
       '</p><p class="t">'+esc(e.t)+"</p></div></div>"}).join(""));
   shown+=n.length;
   $("more").style.display=shown<L.length?"block":"none";
-  $("more").textContent="المزيد ("+AR(L.length-shown)+")"}
+  $("more").textContent="المزيد ("+AR(L.length-shown)+")";
+  updDraftBtn()}
 $("more").onclick=function(){render(true)};
 $("q").oninput=function(){render()};
 $("fdoor").onchange=function(){render()};
-$("fstate").onchange=function(){render()};
+$("fstate").onchange=function(){render();updDraftBtn()};
 $("list").onclick=function(ev){
   var c=ev.target.closest(".card");if(!c)return;
   var e=DATA.filter(function(x){return x.id===c.dataset.id})[0];
