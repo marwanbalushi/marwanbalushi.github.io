@@ -201,7 +201,7 @@
   }
 
   function shareBar(e) {
-    var S = CFG.share || {}, base = location.href.replace(/[^\/]*$/, "");
+    var S = CFG.share || {}, base = location.origin + location.pathname.replace(/[^\/]*$/, "");
     var url = base + "p/" + e.id + ".html";
     var t = encodeURIComponent(e.t.slice(0, 90).replace(/\n/g, " ") + "…"), u = encodeURIComponent(url);
     var h = '<div class="share">';
