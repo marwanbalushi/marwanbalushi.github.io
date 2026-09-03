@@ -267,7 +267,7 @@
   });
 
   function route() {
-        var h = location.hash.replace("#/", "").trim().replace(/^p\//, "").replace(/\.html$/, ""), app = $("app");
+    var h = location.hash.replace("#/", "").trim().replace(/^p\//, "").replace(/\.html$/, ""), app = $("app");
     var old = $("solo"); if (old) old.remove();
     if (h === "archive") {
       app.style.display = "none";
