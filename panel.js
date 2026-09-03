@@ -247,6 +247,15 @@ $("bulkpub").onclick=function(){
   DATA.forEach(function(e){if(picked[e.id])delete e.draft});commitData("نشر مداخل")};
 
 /* ---------- الوسائط ---------- */
+(function(){var st=document.createElement("style");
+ st.textContent=".mit .alt{width:100%;box-sizing:border-box;margin-top:5px;font-family:inherit;"+
+  "font-size:12.5px;line-height:1.7;padding:6px 8px;border-radius:4px;background:transparent;"+
+  "color:inherit;border:1px solid rgba(128,110,100,.35)}"+
+  ".mit .alt:focus{outline:2px solid rgba(168,131,75,.55);outline-offset:1px}"+
+  ".mit .alt.on{border-color:rgba(168,131,75,.9)}"+
+  ".mit .alt::placeholder{opacity:.5}";
+ document.head.appendChild(st)})();
+
 function drawMed(){
   var g=$("mgrid");g.innerHTML="";
   $("mempty").className=MED.length?"hide":"";
@@ -254,15 +263,25 @@ function drawMed(){
     var vis=m.v?'<video muted playsinline preload="metadata" src="'+CFG.media.base+"/"+(m.vf||m.f)+'#t=0.5"></video>'
       :'<img loading="lazy" src="'+CFG.media.base+"/"+m.f+'" alt="">';
     var name=m.v?(m.vf||m.f):m.f;
+    var alt=m.alt||"";
+    var ph=m.v?"وصف المقطع — ما يُرى فيه":"وصف الصورة — ما يراه المبصر ولا يذكره النصّ";
     g.insertAdjacentHTML("beforeend",'<div class="mit">'+vis+
       (m.v?'<span class="vtag">مقطع</span>':"")+
-      '<button class="x" data-i="'+i+'">&times;</button><div class="lab">'+esc(name)+"</div></div>")});
+      '<button class="x" data-i="'+i+'">&times;</button><div class="lab">'+esc(name)+"</div>"+
+      '<input class="alt'+(alt?" on":"")+'" data-i="'+i+'" maxlength="180" value="'+
+      esc(alt).replace(/"/g,"&quot;")+'" placeholder="'+ph+'" aria-label="'+ph+'"></div>')});
   var lost=MED0.length&&MED.length<MED0.length;
   $("mwarn").className=lost&&!MED.length?"warn on":"warn";
   $("mrestore").style.display=lost?"inline":"none";
   drawFPrev()}
 $("mgrid").onclick=function(e){var b=e.target.closest(".x");if(!b)return;
   MED.splice(+b.dataset.i,1);drawMed()};
+$("mgrid").addEventListener("input",function(e){
+  var t=e.target;if(!t.classList||!t.classList.contains("alt"))return;
+  var i=+t.dataset.i,v=t.value.trim();
+  if(!MED[i])return;
+  if(v)MED[i].alt=v;else delete MED[i].alt;
+  t.classList.toggle("on",!!v);drawFPrev()});
 $("mrestore").onclick=function(){MED=MED0.map(function(m){return Object.assign({},m)});drawMed()};
 $("maddBtn").onclick=function(){$("maddBox").className=$("maddBox").className?"":"hide"};
 $("maddOk").onclick=function(){var f=$("madd").value.trim();if(!f)return;
@@ -700,9 +719,10 @@ function pMedia(e){
   var m=e.m||[];if(!m.length)return "";
   var cls=m.length===1?"":"g2",wide=(e.f==="waqfah"&&CFG.layout.wideMedia!==false)?"wide":"",alt=xe(snip(e.t,100));
   return '<div class="med '+cls+" "+wide+'">'+m.map(function(x){
-    if(x.v&&x.vf)return '<figure><video controls preload="metadata" playsinline poster="'+CFG.media.base+"/"+xe(x.f)+
-      '" src="'+CFG.media.base+"/"+xe(x.vf)+'#t=0.5"></video></figure>';
-    return '<figure><img loading="lazy" src="'+CFG.media.base+"/"+xe(x.f)+'" alt="'+alt+'"></figure>'}).join("")+"</div>"}
+    var a=x.alt?xe(x.alt):alt;
+    if(x.v&&x.vf)return '<figure><video controls preload="metadata" playsinline aria-label="'+a+
+      '" poster="'+CFG.media.base+"/"+xe(x.f)+'" src="'+CFG.media.base+"/"+xe(x.vf)+'#t=0.5"></video></figure>';
+    return '<figure><img loading="lazy" src="'+CFG.media.base+"/"+xe(x.f)+'" alt="'+a+'"></figure>'}).join("")+"</div>"}
 function pNav(e){
   var i=DATA.indexOf(e);if(i<0)return "";
   var nx=i>0?DATA[i-1]:null,pv=i+1<DATA.length?DATA[i+1]:null,h="";

@@ -290,11 +290,12 @@
       med = '<div class="med ' + galleryClass(e.m.length) + " " +
             (isW && L.wideMedia !== false ? "wide" : "") + '">' +
         e.m.map(function (m) {
+          var a = m.alt ? att(m.alt) : altOf(e);
           if (m.v && m.vf && CFG.media.base)
-            return '<figure><video controls preload="metadata" playsinline poster="' +
-                   CFG.media.base + "/" + m.f + '" src="' +
+            return '<figure><video controls preload="metadata" playsinline aria-label="' + a +
+                   '" poster="' + CFG.media.base + "/" + m.f + '" src="' +
                    CFG.media.base + "/" + m.vf + '#t=0.5"></video></figure>';
-          return '<figure><img loading="lazy" src="' + src(m) + '" alt="' + altOf(e) + '"></figure>';
+          return '<figure><img loading="lazy" src="' + src(m) + '" alt="' + a + '"></figure>';
         }).join("") + "</div>";
     }
     var long = !solo && e.t.length > (L.clampChars || 600);
