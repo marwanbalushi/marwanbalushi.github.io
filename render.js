@@ -385,16 +385,44 @@
   window.addEventListener("hashchange", route);
 
   /* ---------- الإقلاع ---------- */
-  Promise.all([
-    fetch("config.json", { cache: "no-cache" }).then(function (r) { return r.json(); }),
-    fetch("data.json", { cache: "no-cache" }).then(function (r) { return r.json(); })
-  ]).then(function (res) {
-    CFG = res[0]; DATA = res[1];
+  /* التحميل على دفعتين: الأحدث أولاً ليقرأ الزائر فوراً، ثم الأرشيف كاملاً في الخلف */
+  var FULL = false;
+  function ingest(list) {
+    DATA = list; NORM = {};
     DATA.forEach(function (e) { NORM[e.id] = norm(e.t); });
-    loadFonts(CFG); applyTheme(CFG); buildMast(); render(); route(); analytics(CFG);
-  }).catch(function (err) {
-    $("stream").innerHTML = '<p class="none">تعذّر تحميل المدونة.<br>' + esc(err.message) + "</p>";
-  });
+  }
+  function loadFull(first) {
+    return fetch("data.json", { cache: "no-cache" }).then(function (r) { return r.json(); })
+      .then(function (all) {
+        var keep = shown;
+        ingest(all); FULL = true;
+        $("q").placeholder = "ابحث في " + arn(DATA.length) + " نصّاً…";
+        $("q").disabled = false;
+        if (first) { buildMast(); shown = 0; render(); route(); analytics(CFG); return; }
+        shown = 0; render();
+        while (shown < keep && $("more").style.display !== "none") render();
+        if (!$("hits").textContent) $("hits").textContent = "";
+        route();
+      });
+  }
+
+  fetch("config.json", { cache: "no-cache" }).then(function (r) { return r.json(); })
+    .then(function (cfg) {
+      CFG = cfg; loadFonts(CFG); applyTheme(CFG);
+      return fetch("data-recent.json", { cache: "no-cache" })
+        .then(function (r) { return r.ok ? r.json() : null; })
+        .catch(function () { return null; });
+    })
+    .then(function (part) {
+      if (!part || !part.length) return loadFull(true);
+      ingest(part); buildMast(); render(); route(); analytics(CFG);
+      $("q").disabled = true;
+      $("q").placeholder = "جارٍ تحميل الأرشيف…";
+      return loadFull(false);
+    })
+    .catch(function (err) {
+      $("stream").innerHTML = '<p class="none">تعذّر تحميل المدونة.<br>' + esc(err.message) + "</p>";
+    });
 
   if ("serviceWorker" in navigator)
     window.addEventListener("load", function () { navigator.serviceWorker.register("sw.js").catch(function () {}); });

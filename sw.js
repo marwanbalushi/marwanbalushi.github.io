@@ -1,65 +1,42 @@
-/* عامل الخدمة — يجعل المدونة تفتح بلا إنترنت */
-var V     = 'mb-v5';
-var SHELL = ['./index.html','./tahrir.html','./radud.html','./404.html',
-             './render.js','./panel.js','./config.json','./portrait.jpg',
-             './manifest.json','./icon-192.png','./icon-512.png'];
+/* عامل الخدمة — شبكة أولاً، والتخزين احتياط عند انقطاعها.
+   لا يخزّن البيانات ولا صفحات المداخل، فلا يبقى القارئ على نسخة قديمة أبداً. */
+var V = "mb-v4";
+var SHELL = ["./", "./index.html", "./portrait.jpg", "./icon-192.png", "./icon-512.png",
+             "./apple-touch-icon.png", "./manifest.json", "./card.jpg"];
 
-self.addEventListener('install', function(e){
+self.addEventListener("install", function (e) {
   self.skipWaiting();
-  e.waitUntil(caches.open(V).then(function(c){
-    return Promise.all(SHELL.map(function(u){
-      return c.add(u).catch(function(){});   // لا نُفشل التثبيت بسبب ملف واحد
-    }));
+  e.waitUntil(caches.open(V).then(function (c) {
+    return Promise.all(SHELL.map(function (u) { return c.add(u).catch(function () {}); }));
   }));
 });
 
-self.addEventListener('activate', function(e){
-  e.waitUntil(caches.keys().then(function(ks){
-    return Promise.all(ks.map(function(k){ if(k!==V) return caches.delete(k); }));
-  }).then(function(){ return self.clients.claim(); }));
+self.addEventListener("activate", function (e) {
+  e.waitUntil(caches.keys().then(function (ks) {
+    return Promise.all(ks.filter(function (k) { return k !== V; })
+      .map(function (k) { return caches.delete(k); }));
+  }).then(function () { return self.clients.claim(); }));
 });
 
-self.addEventListener('fetch', function(e){
-  var req = e.request, url = new URL(req.url);
-  if(req.method !== 'GET') return;
+self.addEventListener("fetch", function (e) {
+  var req = e.request;
+  if (req.method !== "GET") return;
+  var url;
+  try { url = new URL(req.url); } catch (x) { return; }
+  if (url.origin !== self.location.origin) return;
 
-  // الوسائط الثقيلة ونداءات التحليلات تمرّ ولا تُخزَّن
-  if(url.hostname.indexOf('r2.dev') > -1) return;
-  if(url.hostname.indexOf('cloudflareinsights') > -1) return;
-
-  // البيانات: الشبكة أولاً كي تظهر تعديلاتك فوراً، والمخزون احتياطاً
-  if(/(data|radud|config)\.json/.test(url.pathname)){
-    e.respondWith(
-      fetch(req).then(function(r){
-        var cp = r.clone();
-        caches.open(V).then(function(c){ c.put(url.pathname, cp); });
-        return r;
-      }).catch(function(){ return caches.match(url.pathname); })
-    );
-    return;
-  }
-
-  // الخطوط: المخزون أولاً
-  if(url.hostname.indexOf('fonts.g') > -1){
-    e.respondWith(caches.match(req).then(function(m){
-      return m || fetch(req).then(function(r){
-        var cp = r.clone();
-        caches.open(V).then(function(c){ c.put(req, cp); });
-        return r;
+  e.respondWith(
+    fetch(req).then(function (res) {
+      if (res && res.status === 200 && res.type === "basic" &&
+          !/\.(json|xml)$/.test(url.pathname) && url.pathname.indexOf("/p/") !== 0) {
+        var copy = res.clone();
+        caches.open(V).then(function (c) { c.put(req, copy); });
+      }
+      return res;
+    }).catch(function () {
+      return caches.match(req).then(function (hit) {
+        return hit || caches.match("./index.html");
       });
-    }));
-    return;
-  }
-
-  // بقية ملفات الموقع: المخزون أولاً مع تحديث صامت
-  if(url.origin === location.origin){
-    e.respondWith(caches.match(req).then(function(m){
-      var net = fetch(req).then(function(r){
-        var cp = r.clone();
-        caches.open(V).then(function(c){ c.put(req, cp); });
-        return r;
-      }).catch(function(){ return m; });
-      return m || net;
-    }));
-  }
+    })
+  );
 });
