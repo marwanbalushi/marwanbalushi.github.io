@@ -216,6 +216,15 @@
 
   /* ---------- المداخل ---------- */
   function src(m) { return CFG.media.base ? CFG.media.base + "/" + m.f : m.u; }
+  /* «٢١:٤٠» تصير «٩:٤٠ م» — تُعرض لمن سُجّلت ساعته وحده */
+  function fmtTime(at) {
+    if (!at || at.length < 16) return "";
+    var hh = +at.slice(11, 13), mm = at.slice(14, 16);
+    if (isNaN(hh)) return "";
+    var ap = hh < 12 ? "ص" : "م", h = hh % 12; if (!h) h = 12;
+    return arn(h) + ":" + arn(mm) + " " + ap;
+  }
+
   function readTime(t) {
     var w = t.trim().split(/\s+/).length, m = Math.max(1, Math.round(w / 180));
     return arn(m) + " دقيقة قراءة";
@@ -301,7 +310,9 @@
     var long = !solo && e.t.length > (L.clampChars || 600);
     /* أيقونات المشاركة في سطر التاريخ لكل المداخل، طويلها وقصيرها */
     var inline = !solo;
+    var tstr = fmtTime(e.at);
     var meta = '<p class="meta">' + (solo ? e.d : '<a href="#/' + e.id + '">' + e.d + "</a>") +
+      (tstr ? '<span class="dot">·</span>' + tstr : "") +
       (e.dk ? '<span class="dot">·</span><span class="dr">' + esc(e.door) + "</span>" : "") +
       (L.showReadingTime && e.t.length > 400 ? '<span class="dot">·</span>' + readTime(e.t) : "") +
       (e.draft ? '<span class="draft">مسوّدة</span>' : "") +

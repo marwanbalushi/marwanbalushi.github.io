@@ -108,6 +108,7 @@ function boot(){
       fetch(SITE+"data.json?t="+Date.now()).then(function(r){return r.json()})]);
   }).then(function(res){
     CFG=res[0];DATA=res[1];DEFAULTS=JSON.parse(JSON.stringify(CFG));
+    sortData();
     $("login").className="wrap hide";$("setup").className="wrap hide";
     $("app").className="";$("foot").className="foot";
     stt("مفتوح · "+AR(DATA.length)+" مدخلاً");
@@ -348,7 +349,10 @@ function openF(e){
   $("ftext").value=e?e.t:"";
   $("fdoorsel").value=e?e.door:"متفرّقات";
   $("fform").value=e?e.f:"shathrah";
-  $("fdate").value=e?e.iso:new Date().toISOString().slice(0,10);
+  var mp=muscatParts();
+  $("fdate").value=e?e.iso:mp.date;
+  mkTimeField();
+  $("ftime").value = e ? (e.at&&e.at.length>=16 ? e.at.slice(11,16) : "") : mp.time;
   $("fdraft").checked=e?!!e.draft:false;
   MED0=e&&e.m?e.m.map(function(m){return Object.assign({},m)}):[];
   MED=MED0.map(function(m){return Object.assign({},m)});
@@ -377,10 +381,62 @@ function drawFPrev(){
   var rt=CFG.layout.showReadingTime&&txt.length>400
     ? " · "+AR(Math.max(1,Math.round(txt.trim().split(/\s+/).length/180)))+" دقيقة قراءة":"";
   $("fprev").setAttribute("style",pvVars());
-  $("fprev").innerHTML='<p class="pm">'+date+" · <b>"+esc($("fdoorsel").value)+"</b>"+rt+
+  var tv=$("ftime")?$("ftime").value:"";
+  var tp=/^\d{2}:\d{2}$/.test(tv)?" · "+fmtTime("0000-00-00T"+tv):"";
+  $("fprev").innerHTML='<p class="pm">'+date+tp+" · <b>"+esc($("fdoorsel").value)+"</b>"+rt+
     ($("fdraft").checked?" · مسوّدة":"")+"</p>"+med+
     '<p class="pt">'+esc(txt||"…")+"</p>"+
     (CFG.layout.showEndMark!==false?'<div class="pend"><i></i><span></span><i></i></div>':"")}
+
+/* توقيت مسقط — يُقرأ من ساعة الجهاز ويُحوَّل إلى +04:00 مهما كان مكانك */
+function muscatParts(dt){
+  try{
+    var f=new Intl.DateTimeFormat("en-CA",{timeZone:"Asia/Muscat",year:"numeric",month:"2-digit",
+      day:"2-digit",hour:"2-digit",minute:"2-digit",hourCycle:"h23"});
+    var o={};f.formatToParts(dt||new Date()).forEach(function(x){o[x.type]=x.value});
+    return {date:o.year+"-"+o.month+"-"+o.day,time:o.hour+":"+o.minute}
+  }catch(e){
+    var d=dt||new Date();
+    var p=function(n){return (n<10?"0":"")+n};
+    return {date:d.getFullYear()+"-"+p(d.getMonth()+1)+"-"+p(d.getDate()),
+            time:p(d.getHours())+":"+p(d.getMinutes())}}}
+
+/* «٢١:٤٠» تصير «٩:٤٠ م» */
+function fmtTime(at){
+  if(!at||at.length<16)return "";
+  var hh=+at.slice(11,13),mm=at.slice(14,16);
+  if(isNaN(hh))return "";
+  var ap=hh<12?"ص":"م",h=hh%12;if(!h)h=12;
+  return AR(h)+":"+AR(mm)+" "+ap}
+
+/* خانة الساعة تحت التاريخ — تُبنى من الجافاسكربت */
+function mkTimeField(){
+  if($("ftime"))return;
+  var fd=$("fdate");if(!fd||!fd.parentNode)return;
+  var w=document.createElement("input");
+  w.type="time";w.id="ftime";w.step="60";w.className=fd.className||"";
+  w.style.marginTop="7px";w.setAttribute("aria-label","الساعة بتوقيت مسقط");
+  fd.parentNode.insertBefore(w,fd.nextSibling);
+  var lb=document.createElement("div");
+  lb.textContent="الساعة بتوقيت مسقط — اتركها فارغة إن لم ترد تسجيلها";
+  lb.style.cssText="font-size:12px;opacity:.55;margin-top:5px;line-height:1.8";
+  fd.parentNode.insertBefore(lb,w.nextSibling);
+  w.addEventListener("input",drawFPrev)}
+
+/* الترتيب: الأحدث أولاً بالتاريخ، ثم بالساعة، ثم بالمعرّف.
+   ومعرّفات X ومعرّفات اللوحة كلاهما رقم زمنيّ يصعد مع الوقت،
+   فيستقيم ترتيب اليوم الواحد إلى الساعة. */
+function ordKey(e){
+  var v=String(e.id||"").replace(/^n/,"");
+  var n=/^\d+$/.test(v)?Number(v):0;
+  return isFinite(n)?n:0}
+function sortData(){
+  DATA.sort(function(a,b){
+    if(a.iso!==b.iso)return a.iso<b.iso?1:-1;
+    var ax=a.at||"",bx=b.at||"";
+    if(ax&&bx&&ax!==bx)return ax<bx?1:-1;
+    var x=ordKey(a),y=ordKey(b);
+    return x===y?0:(x<y?1:-1)})}
 
 function collect(){
   var txt=$("ftext").value.trim();if(!txt)throw new Error("النصّ فارغ");
@@ -388,6 +444,8 @@ function collect(){
   var p=iso.split("-"),door=$("fdoorsel").value;
   var o={t:txt,iso:iso,d:AR(parseInt(p[2],10))+" "+MON[parseInt(p[1],10)-1]+" "+AR(p[0]),
     door:door,dk:dkOf(door),f:$("fform").value,m:MED,n:1};
+  var tm=$("ftime")?$("ftime").value:"";
+  if(/^\d{2}:\d{2}$/.test(tm))o.at=iso+"T"+tm+":00+04:00";
   if($("fdraft").checked)o.draft=true;
   return o}
 $("save").onclick=function(){
@@ -395,7 +453,7 @@ $("save").onclick=function(){
   var o;try{o=collect()}catch(e){return say($("fmsg"),e.message,"err")}
   if(cur){Object.keys(o).forEach(function(k){cur[k]=o[k]});if(!o.draft)delete cur.draft}
   else{o.id="n"+Date.now();DATA.push(o)}
-  DATA.sort(function(a,b){return a.iso<b.iso?1:a.iso>b.iso?-1:0});
+  sortData();
   commitData("تحديث مدخل",$("fmsg"))};
 $("del").onclick=function(){
   if(!cur||!confirm("حذف هذا المدخل نهائياً؟"))return;
@@ -772,7 +830,9 @@ function postPage(e){
   var T=xe(snip(e.t,65)),Dsc=xe(snip(e.t,155));
   var rt=(CFG.layout.showReadingTime!==false&&e.t.length>400)
     ? '<span class="dot">·</span>'+AR(Math.max(1,Math.round(e.t.trim().split(/\s+/).length/180)))+" دقيقة قراءة":"";
-  var meta='<time datetime="'+xe(e.iso)+'">'+xe(e.d)+"</time>"+
+  var tstr=fmtTime(e.at);
+  var meta='<time datetime="'+xe(e.at||e.iso)+'">'+xe(e.d)+"</time>"+
+    (tstr?'<span class="dot">·</span>'+tstr:"")+
     (e.dk?'<span class="dot">·</span><span class="dr">'+xe(e.door)+"</span>":"")+rt+pShare(e,url);
   var tok=(CFG.analytics&&CFG.analytics.cloudflareToken)||"";
   var S="script";
