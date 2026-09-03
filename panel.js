@@ -100,7 +100,7 @@ function boot(){
     if(!r.ok) throw new Error("المفتاح لا يملك صلاحية على المستودع");return r.json()})
   .then(function(j){
     j.tree.forEach(function(f){
-      if(/^(data|config|data-recent)\.json$|^(rss|sitemap)\.xml$/.test(f.path))SHA[f.path]=f.sha});
+      if(/^(data|config|data-recent)\.json$|^(rss|sitemap)\.xml$|^(about|archive)\.html$/.test(f.path))SHA[f.path]=f.sha});
     if(!SHA["data.json"]) throw new Error("لم أجد data.json");
     try{localStorage.setItem("ghunlocked","1")}catch(e){}
     return Promise.all([
@@ -531,7 +531,75 @@ function drawPreview(){
 
 /* ---------- توليد الملفات المرافقة ---------- */
 /* ---------- أدوات المزامنة ---------- */
-var STATIC_CSS = "[data-contrast=high]{--ink:#000;--muted:#332E2B;--rule:#B4A896}\n[data-theme=dark][data-contrast=high]{--ink:#FFF;--muted:#D2CAC0;--rule:#4E463D}\n[data-clarity=high]{--rulew:1.5px;--lh:2.05;--scale:1.12}\n[data-color=plain]{--accent:var(--ink);--gold:var(--ink)}\n[data-color=plain] .dr{border-bottom:var(--rulew) solid var(--rule);padding-bottom:1px}\n[data-color=plain] .lz{background:var(--muted)}\n[data-color=plain] .subj,[data-color=plain] .pred{color:var(--ink)}\n\n*{box-sizing:border-box}html{-webkit-text-size-adjust:100%}\nbody{margin:0;background:var(--paper);color:var(--ink);font-family:var(--text);\n font-size:var(--body);line-height:var(--lh);letter-spacing:0;padding:0 20px 70px}\na{color:inherit;text-decoration:none}\na:focus-visible,button:focus-visible{outline:3px solid var(--gold);outline-offset:3px}\n.hide{display:none!important}\n\n.tools{max-width:var(--measure);margin:0 auto;display:flex;justify-content:flex-end;\n align-items:center;gap:8px;padding:14px 0 0}\n.tools button{font-family:var(--text);font-size:calc(var(--body)*.66);line-height:1;\n color:var(--muted);background:none;border:var(--rulew) solid var(--rule);border-radius:5px;\n padding:8px 12px;cursor:pointer;display:inline-flex;align-items:center;gap:7px}\n.tools button:hover{color:var(--accent);border-color:var(--gold)}\n.tools svg{width:1.15em;height:1.15em}\n\n.mast{max-width:var(--measure);margin:0 auto;text-align:center;padding:32px 0 26px}\n.name{font-family:var(--display);font-weight:400;\n font-size:calc(clamp(30px,8.5vw,46px)*var(--dscale));line-height:1.45;color:var(--accent);margin:0}\n.fl{display:flex;align-items:center;justify-content:center;gap:9px;margin:15px 0}\n.fl i{display:block;height:var(--rulew);width:48px;background:var(--rule)}\n.lz{width:5px;height:5px;background:var(--gold);transform:rotate(45deg)}\n.subj{color:var(--accent)}.pred{color:var(--gold)}\n.sep{color:var(--rule);padding:0 5px}\n.tag{color:var(--muted);font-size:calc(var(--body)*.74);line-height:1.9;margin:16px auto 0;max-width:24em}\n\nmain{max-width:var(--measure);margin:0 auto}\n.e{padding:32px 0;border-top:var(--rulew) solid var(--rule)}\n.e:first-child{border-top:none}\n.meta{font-size:calc(var(--body)*.6);color:var(--muted);margin:0 0 10px;\n display:flex;align-items:center;gap:7px;flex-wrap:wrap}\n.meta .dr{color:var(--gold)}\n.meta .dot{color:var(--rule)}\n.mk{display:inline-flex;align-items:center;color:var(--gold)}\n.mk svg{width:1.2em;height:1.2em}\n\n.med{margin:0 0 18px}\n.med figure{margin:0 0 8px;display:flex;justify-content:center}\n.med img,.med video{max-width:100%;width:auto;max-height:78vh;border-radius:3px;\n display:block;background:var(--paper2);margin-inline:auto}\n.med.g2,.med.g3{display:grid;gap:8px}\n.med.g2{grid-template-columns:1fr 1fr}\n.med.g3{grid-template-columns:1fr 1fr 1fr}\n.med.g2 figure,.med.g3 figure{margin:0;display:block}\n.med.g2 img,.med.g3 img,.med.g2 video,.med.g3 video{width:100%;height:100%;\n aspect-ratio:1;object-fit:cover;max-height:none}\n.med.stack figure{margin-bottom:10px}\n.wide{max-width:calc(var(--measure) + 6em);margin-inline:auto}\n\n.tx{margin:0;white-space:pre-wrap}\n.end{display:flex;align-items:center;justify-content:center;gap:11px;margin:22px auto 0}\n.end i{display:block;height:var(--rulew);width:32px;background:var(--rule)}\n.end span{width:5px;height:5px;background:var(--gold);transform:rotate(45deg)}\n\n.share{display:flex;gap:9px;justify-content:center;flex-wrap:wrap;\n max-width:var(--measure);margin:26px auto 0;padding-top:20px;\n border-top:var(--rulew) solid var(--rule)}\n.share a,.share button{display:inline-flex;align-items:center;gap:7px;\n font-family:var(--text);font-size:calc(var(--body)*.66);color:var(--muted);\n background:none;border:var(--rulew) solid var(--rule);border-radius:5px;\n padding:8px 14px;cursor:pointer}\n.share a:hover,.share button:hover{color:var(--accent);border-color:var(--gold)}\n.share svg{width:1.05em;height:1.05em}\n\n.foot{max-width:var(--measure);margin:50px auto 0;padding-top:24px;\n border-top:var(--rulew) solid var(--rule);text-align:center;\n font-size:calc(var(--body)*.6);color:var(--muted);line-height:2}\n.foot a{color:var(--accent);border-bottom:var(--rulew) solid var(--gold);padding-bottom:2px}\n.none{text-align:center;color:var(--muted);padding:50px 0;font-size:calc(var(--body)*.8)}\n.back{display:block;max-width:var(--measure);margin:0 auto;padding:14px 0;\n font-family:var(--display);font-size:calc(var(--body)*.75);color:var(--accent)}\n\n/* ===== صفحات المداخل المستقلّة ===== */\n\n.bar,#bar{max-width:var(--measure);margin:0 auto;padding:16px 0 0;\n font-family:var(--display);font-size:calc(var(--body)*.72);color:var(--accent)}\n#bar a{color:var(--accent);border-bottom:var(--rulew) solid var(--gold);padding-bottom:2px}\n\n#post{max-width:var(--measure);margin:0 auto;padding:20px 0 0}\n#post p{margin:0 0 1.05em;white-space:pre-wrap}\n#post p:last-child{margin-bottom:0}\n#post time,#post .date,#post .meta{display:block;font-size:calc(var(--body)*.6);\n color:var(--muted);margin:0 0 16px}\n#post img,#post video{max-width:100%;height:auto;max-height:78vh;border-radius:3px;\n display:block;margin:0 auto 20px;background:var(--paper2)}\n#post figure{margin:0 0 10px}\n\n#share{display:flex;gap:9px;justify-content:center;flex-wrap:wrap;\n max-width:var(--measure);margin:28px auto 0;padding-top:20px;\n border-top:var(--rulew) solid var(--rule)}\n#share a,#share button{display:inline-flex;align-items:center;gap:7px;\n font-family:var(--text);font-size:calc(var(--body)*.66);color:var(--muted);\n background:none;border:var(--rulew) solid var(--rule);border-radius:5px;\n padding:8px 14px;cursor:pointer;text-decoration:none;line-height:1.4}\n#share a:hover,#share button:hover{color:var(--accent);border-color:var(--gold)}\n#share svg{width:1.05em;height:1.05em}\n\n/* ===== أيقونات المشاركة في سطر التاريخ ===== */\n.shx{margin-inline-start:auto;display:inline-flex;align-items:center;gap:5px}\n.shx a,.shx button{display:inline-flex;align-items:center;justify-content:center;\n color:var(--muted);background:none;border:var(--rulew) solid var(--rule);\n border-radius:5px;padding:5px;cursor:pointer;line-height:0}\n.shx a:hover,.shx button:hover{color:var(--accent);border-color:var(--gold)}\n.shx svg{width:1.15em;height:1.15em}\n\n\n/* ===== سهما التنقّل ===== */\n.sup{position:fixed;inset-inline-end:14px;bottom:16px;z-index:40;display:none;\n flex-direction:column;gap:7px}\n.sup button{width:38px;height:38px;display:flex;align-items:center;justify-content:center;\n padding:0;cursor:pointer;border-radius:50%;color:var(--muted);background:var(--paper2);\n border:var(--rulew) solid var(--rule);box-shadow:0 1px 5px rgba(0,0,0,.09);transition:opacity .2s}\n.sup button:hover{color:var(--accent);border-color:var(--gold)}\n.sup svg{width:19px;height:19px}\n@media print{.sup{display:none!important}}\n";
+/* ---------- صفحتا التعريف والأرشيف ---------- */
+function rootPage(o){
+  var S="script",tok=(CFG.analytics&&CFG.analytics.cloudflareToken)||"";
+  var prefs="<"+S+">(function(){try{var R=document.documentElement,g=function(k){return localStorage.getItem(k)};"+
+    "R.setAttribute('data-theme',g('theme')||(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'));"+
+    "R.setAttribute('data-contrast',g('contrast')||'normal');R.setAttribute('data-clarity',g('clarity')||'normal');"+
+    "R.setAttribute('data-color',g('color')||'full');var s=parseFloat(g('scale'));if(s)R.style.setProperty('--scale',s);}catch(e){}})();</"+S+">";
+  var supjs="<"+S+">(function(){var d=document.getElementById('sup');if(!d)return;"+
+    "function u(){var h=document.documentElement.scrollHeight,v=innerHeight,y=scrollY||0;"+
+    "d.style.display=h>v*1.8?'flex':'none';d.children[0].style.opacity=y>220?'1':'.35';"+
+    "d.children[1].style.opacity=y<h-v-60?'1':'.35'}"+
+    "d.addEventListener('click',function(e){var b=e.target.closest('button');if(!b)return;"+
+    "scrollTo({top:b.dataset.go==='top'?0:document.documentElement.scrollHeight,behavior:'smooth'})});"+
+    "addEventListener('scroll',u,{passive:true});addEventListener('resize',u);u()})();</"+S+">";
+  var beacon=tok?"<"+S+" defer src=\"https://static.cloudflareinsights.com/beacon.min.js\" data-cf-beacon='{\"token\":\""+tok+"\"}'></"+S+">":"";
+  var img=CFG.site.portrait?(/^https?:/.test(CFG.site.portrait)?CFG.site.portrait:BASEURL+CFG.site.portrait):BASEURL+"card.jpg";
+  return '<!DOCTYPE html>\n<html lang="ar" dir="rtl">\n<head>\n<meta charset="utf-8">\n'+
+   '<meta name="viewport" content="width=device-width, initial-scale=1">\n<title>'+o.title+"</title>\n"+
+   '<meta name="description" content="'+o.desc+'">\n<link rel="canonical" href="'+BASEURL+o.file+'">\n'+
+   '<meta property="og:type" content="website">\n<meta property="og:site_name" content="'+xe(CFG.site.name)+'">\n'+
+   '<meta property="og:title" content="'+o.title+'">\n<meta property="og:description" content="'+o.desc+'">\n'+
+   '<meta property="og:url" content="'+BASEURL+o.file+'">\n<meta property="og:image" content="'+xe(img)+'">\n'+
+   '<meta property="og:locale" content="ar_OM">\n<meta name="twitter:card" content="summary_large_image">\n'+
+   '<meta name="twitter:title" content="'+o.title+'">\n<meta name="twitter:description" content="'+o.desc+'">\n'+
+   '<meta name="twitter:image" content="'+xe(img)+'">\n'+
+   '<meta name="theme-color" content="'+CFG.theme.light.accent+'">\n'+
+   '<link rel="icon" href="icon-192.png">\n<link rel="apple-touch-icon" href="apple-touch-icon.png">\n'+
+   '<link rel="alternate" type="application/rss+xml" title="'+xe(CFG.site.name)+'" href="rss.xml">\n'+
+   '<link rel="stylesheet" href="p/style.css">\n'+prefs+'\n</head>\n<body>\n'+
+   '<div class="bar"><a href="index.html">→ العودة إلى المدونة</a></div>\n'+
+   o.body+"\n"+
+   '<footer class="foot">\n<div class="fl" aria-hidden="true"><i></i><span class="lz"></span><i></i></div>\n'+
+   o.foot+"\n</footer>\n"+
+   '<div class="sup" id="sup"><button data-go="top" aria-label="إلى أعلى الصفحة" title="إلى الأعلى">'+UPIC+
+   '</button><button data-go="end" aria-label="إلى أسفل الصفحة" title="إلى الأسفل">'+DNIC+"</button></div>\n"+
+   supjs+beacon+"\n</body>\n</html>\n"}
+
+function buildAbout(){
+  var s=CFG.site;
+  var bio=CFG.doors.map(function(d){
+    return '<span class="subj">'+xe(d.subj)+"</span>"+
+      (d.pred?' <span class="pred">'+xe(d.pred)+"</span>":"")
+  }).join(' <span class="sep">|</span> ');
+  var body='<main class="about">'+
+    (s.portrait?'<img src="'+xe(s.portrait)+'" alt="'+xe(s.name)+'" width="190" height="190">':"")+
+    '<p class="lead">'+xe(s.about)+"</p>"+
+    '<div class="fl" aria-hidden="true"><i></i><span class="lz"></span><i></i></div>'+
+    '<p class="bio">'+bio+"</p>"+
+    '<p class="sig">'+xe(s.tagline)+"</p>"+
+    '<p class="meta2">'+
+    (s.contactUrl?'للتواصل: <a href="'+xe(s.contactUrl)+'" target="_blank" rel="noopener">'+xe(s.contactLabel)+"</a><br>":"")+
+    xe(s.location||"")+"</p></main>";
+  return rootPage({file:"about.html",title:xe(s.name),desc:xe(snip(s.about,155)),body:body,
+    foot:'<a href="archive.html">الأرشيف الزمني</a><br>'+xe(s.name)+(s.location?" · "+xe(s.location):"")})}
+
+function buildArchive(){
+  var pub=DATA.filter(function(e){return !e.draft}),by={},order=[];
+  pub.forEach(function(e){var y=e.iso.slice(0,4);if(!by[y]){by[y]=[];order.push(y)}by[y].push(e)});
+  order.sort().reverse();
+  var body='<main class="arch">'+order.map(function(y){
+    return "<h2>"+AR(y)+"<span>"+AR(by[y].length)+"</span></h2><ul>"+
+      by[y].map(function(e){
+        return '<li><a href="p/'+e.id+'.html"><span class="ad">'+xe(e.d)+"</span>"+
+          xe(snip(e.t,72))+"</a></li>"}).join("")+"</ul>"}).join("")+"</main>";
+  return rootPage({file:"archive.html",title:"الأرشيف الزمني · "+xe(CFG.site.name),
+    desc:"أرشيف "+AR(pub.length)+" مدخلاً مرتّبة بالسنوات — "+xe(CFG.site.name),
+    body:body,foot:'<a href="about.html">عن الكاتب</a><br>'+xe(CFG.site.name)})}
+
+var STATIC_CSS = "[data-contrast=high]{--ink:#000;--muted:#332E2B;--rule:#B4A896}\n[data-theme=dark][data-contrast=high]{--ink:#FFF;--muted:#D2CAC0;--rule:#4E463D}\n[data-clarity=high]{--rulew:1.5px;--lh:2.05;--scale:1.12}\n[data-color=plain]{--accent:var(--ink);--gold:var(--ink)}\n[data-color=plain] .dr{border-bottom:var(--rulew) solid var(--rule);padding-bottom:1px}\n[data-color=plain] .lz{background:var(--muted)}\n[data-color=plain] .subj,[data-color=plain] .pred{color:var(--ink)}\n\n*{box-sizing:border-box}html{-webkit-text-size-adjust:100%}\nbody{margin:0;background:var(--paper);color:var(--ink);font-family:var(--text);\n font-size:var(--body);line-height:var(--lh);letter-spacing:0;padding:0 20px 70px}\na{color:inherit;text-decoration:none}\na:focus-visible,button:focus-visible{outline:3px solid var(--gold);outline-offset:3px}\n.hide{display:none!important}\n\n.tools{max-width:var(--measure);margin:0 auto;display:flex;justify-content:flex-end;\n align-items:center;gap:8px;padding:14px 0 0}\n.tools button{font-family:var(--text);font-size:calc(var(--body)*.66);line-height:1;\n color:var(--muted);background:none;border:var(--rulew) solid var(--rule);border-radius:5px;\n padding:8px 12px;cursor:pointer;display:inline-flex;align-items:center;gap:7px}\n.tools button:hover{color:var(--accent);border-color:var(--gold)}\n.tools svg{width:1.15em;height:1.15em}\n\n.mast{max-width:var(--measure);margin:0 auto;text-align:center;padding:32px 0 26px}\n.name{font-family:var(--display);font-weight:400;\n font-size:calc(clamp(30px,8.5vw,46px)*var(--dscale));line-height:1.45;color:var(--accent);margin:0}\n.fl{display:flex;align-items:center;justify-content:center;gap:9px;margin:15px 0}\n.fl i{display:block;height:var(--rulew);width:48px;background:var(--rule)}\n.lz{width:5px;height:5px;background:var(--gold);transform:rotate(45deg)}\n.subj{color:var(--accent)}.pred{color:var(--gold)}\n.sep{color:var(--rule);padding:0 5px}\n.tag{color:var(--muted);font-size:calc(var(--body)*.74);line-height:1.9;margin:16px auto 0;max-width:24em}\n\nmain{max-width:var(--measure);margin:0 auto}\n.e{padding:32px 0;border-top:var(--rulew) solid var(--rule)}\n.e:first-child{border-top:none}\n.meta{font-size:calc(var(--body)*.6);color:var(--muted);margin:0 0 10px;\n display:flex;align-items:center;gap:7px;flex-wrap:wrap}\n.meta .dr{color:var(--gold)}\n.meta .dot{color:var(--rule)}\n.mk{display:inline-flex;align-items:center;color:var(--gold)}\n.mk svg{width:1.2em;height:1.2em}\n\n.med{margin:0 0 18px}\n.med figure{margin:0 0 8px;display:flex;justify-content:center}\n.med img,.med video{max-width:100%;width:auto;max-height:78vh;border-radius:3px;\n display:block;background:var(--paper2);margin-inline:auto}\n.med.g2,.med.g3{display:grid;gap:8px}\n.med.g2{grid-template-columns:1fr 1fr}\n.med.g3{grid-template-columns:1fr 1fr 1fr}\n.med.g2 figure,.med.g3 figure{margin:0;display:block}\n.med.g2 img,.med.g3 img,.med.g2 video,.med.g3 video{width:100%;height:100%;\n aspect-ratio:1;object-fit:cover;max-height:none}\n.med.stack figure{margin-bottom:10px}\n.wide{max-width:calc(var(--measure) + 6em);margin-inline:auto}\n\n.tx{margin:0;white-space:pre-wrap}\n.end{display:flex;align-items:center;justify-content:center;gap:11px;margin:22px auto 0}\n.end i{display:block;height:var(--rulew);width:32px;background:var(--rule)}\n.end span{width:5px;height:5px;background:var(--gold);transform:rotate(45deg)}\n\n.share{display:flex;gap:9px;justify-content:center;flex-wrap:wrap;\n max-width:var(--measure);margin:26px auto 0;padding-top:20px;\n border-top:var(--rulew) solid var(--rule)}\n.share a,.share button{display:inline-flex;align-items:center;gap:7px;\n font-family:var(--text);font-size:calc(var(--body)*.66);color:var(--muted);\n background:none;border:var(--rulew) solid var(--rule);border-radius:5px;\n padding:8px 14px;cursor:pointer}\n.share a:hover,.share button:hover{color:var(--accent);border-color:var(--gold)}\n.share svg{width:1.05em;height:1.05em}\n\n.foot{max-width:var(--measure);margin:50px auto 0;padding-top:24px;\n border-top:var(--rulew) solid var(--rule);text-align:center;\n font-size:calc(var(--body)*.6);color:var(--muted);line-height:2}\n.foot a{color:var(--accent);border-bottom:var(--rulew) solid var(--gold);padding-bottom:2px}\n.none{text-align:center;color:var(--muted);padding:50px 0;font-size:calc(var(--body)*.8)}\n.back{display:block;max-width:var(--measure);margin:0 auto;padding:14px 0;\n font-family:var(--display);font-size:calc(var(--body)*.75);color:var(--accent)}\n\n/* ===== صفحات المداخل المستقلّة ===== */\n\n.bar,#bar{max-width:var(--measure);margin:0 auto;padding:16px 0 0;\n font-family:var(--display);font-size:calc(var(--body)*.72);color:var(--accent)}\n#bar a{color:var(--accent);border-bottom:var(--rulew) solid var(--gold);padding-bottom:2px}\n\n#post{max-width:var(--measure);margin:0 auto;padding:20px 0 0}\n#post p{margin:0 0 1.05em;white-space:pre-wrap}\n#post p:last-child{margin-bottom:0}\n#post time,#post .date,#post .meta{display:block;font-size:calc(var(--body)*.6);\n color:var(--muted);margin:0 0 16px}\n#post img,#post video{max-width:100%;height:auto;max-height:78vh;border-radius:3px;\n display:block;margin:0 auto 20px;background:var(--paper2)}\n#post figure{margin:0 0 10px}\n\n#share{display:flex;gap:9px;justify-content:center;flex-wrap:wrap;\n max-width:var(--measure);margin:28px auto 0;padding-top:20px;\n border-top:var(--rulew) solid var(--rule)}\n#share a,#share button{display:inline-flex;align-items:center;gap:7px;\n font-family:var(--text);font-size:calc(var(--body)*.66);color:var(--muted);\n background:none;border:var(--rulew) solid var(--rule);border-radius:5px;\n padding:8px 14px;cursor:pointer;text-decoration:none;line-height:1.4}\n#share a:hover,#share button:hover{color:var(--accent);border-color:var(--gold)}\n#share svg{width:1.05em;height:1.05em}\n\n/* ===== أيقونات المشاركة في سطر التاريخ ===== */\n.shx{margin-inline-start:auto;display:inline-flex;align-items:center;gap:5px}\n.shx a,.shx button{display:inline-flex;align-items:center;justify-content:center;\n color:var(--muted);background:none;border:var(--rulew) solid var(--rule);\n border-radius:5px;padding:5px;cursor:pointer;line-height:0}\n.shx a:hover,.shx button:hover{color:var(--accent);border-color:var(--gold)}\n.shx svg{width:1.15em;height:1.15em}\n\n\n/* ===== سهما التنقّل ===== */\n.sup{position:fixed;inset-inline-end:14px;bottom:16px;z-index:40;display:none;\n flex-direction:column;gap:7px}\n.sup button{width:38px;height:38px;display:flex;align-items:center;justify-content:center;\n padding:0;cursor:pointer;border-radius:50%;color:var(--muted);background:var(--paper2);\n border:var(--rulew) solid var(--rule);box-shadow:0 1px 5px rgba(0,0,0,.09);transition:opacity .2s}\n.sup button:hover{color:var(--accent);border-color:var(--gold)}\n.sup svg{width:19px;height:19px}\n@media print{.sup{display:none!important}}\n\n\n/* ===== صفحة التعريف ===== */\n.about{max-width:var(--measure);margin:0 auto;text-align:center;padding:14px 0 0}\n.about img{width:190px;height:190px;border-radius:50%;object-fit:cover;\n display:block;margin:0 auto 22px;border:2px solid var(--gold)}\n.about .lead{font-size:calc(var(--body)*1.05);line-height:2;margin:0 0 4px}\n.about .bio{font-family:var(--display);font-size:calc(var(--body)*.92);line-height:2.1;margin:4px 0 0}\n.about .sig{color:var(--muted);font-size:calc(var(--body)*.78);line-height:2;margin:18px auto 0;max-width:26em}\n.about .meta2{color:var(--muted);font-size:calc(var(--body)*.66);line-height:2.1;margin:22px 0 0}\n.about .meta2 a{color:var(--accent);border-bottom:var(--rulew) solid var(--gold);padding-bottom:2px}\n\n/* ===== الأرشيف الزمنيّ ===== */\n.arch{max-width:var(--measure);margin:0 auto;padding:10px 0 0}\n.arch h2{font-family:var(--display);font-weight:400;color:var(--accent);\n font-size:calc(var(--body)*1.12);margin:30px 0 4px;padding-top:18px;\n border-top:var(--rulew) solid var(--gold)}\n.arch h2 span{font-size:.68em;color:var(--muted);margin-inline-start:6px}\n.arch ul{list-style:none;padding:0;margin:0}\n.arch li{padding:9px 0;border-top:var(--rulew) solid var(--rule)}\n.arch li a{display:block;line-height:1.85}\n.arch li a:hover{color:var(--accent)}\n.arch .ad{color:var(--muted);font-size:calc(var(--body)*.58);display:block}\n";
 
 function recentOf(list){return list.filter(function(e){return !e.draft}).slice(0,150)}
 
@@ -578,6 +646,8 @@ function rebuildAll(){
         Object.keys(have).forEach(function(p){
           if(!want[p])entries.push({path:p,mode:"100644",type:"blob",sha:null})});
         entries.push({path:"p/style.css",mode:"100644",type:"blob",content:buildCSS()});
+        entries.push({path:"about.html",mode:"100644",type:"blob",content:buildAbout()});
+        entries.push({path:"archive.html",mode:"100644",type:"blob",content:buildArchive()});
         entries.push({path:"sitemap.xml",mode:"100644",type:"blob",content:buildSitemap()});
         entries.push({path:"rss.xml",mode:"100644",type:"blob",content:buildRSS()});
         entries.push({path:"data-recent.json",mode:"100644",type:"blob",
@@ -671,6 +741,8 @@ function buildSitemap(){
   var pub=DATA.filter(function(e){return !e.draft});
   return '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'+
     "<url><loc>"+BASEURL+"</loc><changefreq>daily</changefreq><priority>1.0</priority></url>"+
+    "<url><loc>"+BASEURL+"about.html</loc><priority>0.8</priority></url>"+
+    "<url><loc>"+BASEURL+"archive.html</loc><changefreq>weekly</changefreq><priority>0.6</priority></url>"+
     pub.map(function(e){return "<url><loc>"+BASEURL+"p/"+e.id+".html</loc><lastmod>"+xe(e.iso)+"</lastmod></url>"}).join("")+
     "</urlset>"}
 function postPage(e){
@@ -720,7 +792,7 @@ function postPage(e){
    (CFG.layout.showEndMark!==false?'<div class="end" aria-hidden="true"><i></i><span></span><i></i></div>\n':"")+
    "</article>\n</main>\n"+pNav(e)+"\n"+
    '<footer class="foot">\n<div class="fl" aria-hidden="true"><i></i><span class="lz"></span><i></i></div>\n'+
-   '<a href="../index.html#/archive">الأرشيف الزمني</a><br>'+xe(CFG.site.name)+
+   '<a href="../archive.html">الأرشيف الزمني</a><br>'+xe(CFG.site.name)+
    (CFG.site.location?" · "+xe(CFG.site.location):"")+"\n</footer>\n"+pSup()+"\n"+cpjs+supjs+beacon+"\n</body>\n</html>\n"}
 function putRaw(path,text,msg){
   var body={message:msg,content:b64e(text),branch:BRANCH};
@@ -747,6 +819,8 @@ function commitData(msg,el){
   }).then(function(){
     return putRaw("data-recent.json",JSON.stringify(recentOf(DATA)),"تحديث الدفعة الأولى")
   }).then(function(){
+    return putRaw("archive.html",buildArchive(),"تحديث الأرشيف")
+  }).then(function(){
     return putRaw("rss.xml",buildRSS(),"تحديث التغذية")
   }).then(function(){
     return putRaw("sitemap.xml",buildSitemap(),"تحديث خريطة الموقع")
@@ -761,6 +835,8 @@ $("savecfg").onclick=function(){
   say(el,"جارٍ الحفظ…","wait");
   put("config.json",CFG,"تحديث الإعدادات").then(function(){
     return putRaw("p/style.css",buildCSS(),"تحديث تنسيق الصفحات")
+  }).then(function(){
+    return putRaw("about.html",buildAbout(),"تحديث صفحة التعريف")
   }).then(function(){
     say(el,"حُفظت الإعدادات — وسرت على الصفحات المستقلّة أيضاً. تظهر خلال دقيقتين.");
     DEFAULTS=JSON.parse(JSON.stringify(CFG));fillDoorSelects();

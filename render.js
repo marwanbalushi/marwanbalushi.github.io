@@ -166,7 +166,7 @@
   function buildMast() {
     var s = CFG.site, h = '<h1 class="name"><a href="#/">' + esc(s.name) + "</a></h1>";
     if (s.showAvatar !== false && s.portrait) {
-      h += '<a class="avlink" href="#/about" aria-label="' + esc(s.avatarCaption || "عن الكاتب") + '">' +
+      h += '<a class="avlink" href="about.html" aria-label="' + esc(s.avatarCaption || "عن الكاتب") + '">' +
         '<img class="avatar" src="' + esc(s.portrait) + '" alt="' + esc(s.name) + '" ' +
         'style="width:' + (s.avatarSize || 66) + "px;height:" + (s.avatarSize || 66) + 'px" loading="lazy">' +
         '<span class="avcap">' + esc(s.avatarCaption || "عن الكاتب") + "</span></a>";
@@ -210,7 +210,7 @@
 
     $("q").placeholder = "ابحث في " + arn(DATA.length) + " نصّاً…";
     $("foot").innerHTML = '<div class="fl" aria-hidden="true"><i></i><span class="lz"></span><i></i></div>' +
-      '<a href="#/archive" style="border-bottom:var(--rulew) solid var(--rule)">الأرشيف الزمني</a><br>' +
+      '<a href="archive.html" style="border-bottom:var(--rulew) solid var(--rule)">الأرشيف الزمني</a><br>' +
       esc(CFG.site.name) + (CFG.site.location ? " · " + esc(CFG.site.location) : "");
   }
 
