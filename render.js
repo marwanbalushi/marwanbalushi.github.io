@@ -201,7 +201,8 @@
   }
 
   function shareBar(e) {
-    var S = CFG.share || {}, url = location.origin + location.pathname + "#/" + e.id;
+    var S = CFG.share || {}, base = location.href.replace(/[^\/]*$/, "");
+    var url = base + "p/" + e.id + ".html";
     var t = encodeURIComponent(e.t.slice(0, 90).replace(/\n/g, " ") + "…"), u = encodeURIComponent(url);
     var h = '<div class="share">';
     if (S.whatsapp) h += '<a href="https://wa.me/?text=' + t + "%20" + u + '" target="_blank" rel="noopener">' + IC.wa + "واتساب</a>";

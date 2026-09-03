@@ -99,7 +99,8 @@ function boot(){
   return api("/git/trees/"+BRANCH).then(function(r){
     if(!r.ok) throw new Error("المفتاح لا يملك صلاحية على المستودع");return r.json()})
   .then(function(j){
-    j.tree.forEach(function(f){if(f.path==="data.json"||f.path==="config.json")SHA[f.path]=f.sha});
+    j.tree.forEach(function(f){
+      if(/^(data|config)\.json$|^(rss|sitemap)\.xml$/.test(f.path))SHA[f.path]=f.sha});
     if(!SHA["data.json"]) throw new Error("لم أجد data.json");
     try{localStorage.setItem("ghunlocked","1")}catch(e){}
     return Promise.all([
@@ -479,6 +480,60 @@ function drawPreview(){
   $("fbody").innerHTML = PVMODE==="mast" ? pvMast() : pvEntry();}
 
 /* ---------- الحفظ ---------- */
+
+/* ---------- توليد الملفات المرافقة ---------- */
+var BASEURL="https://marwanbalushi.com/";
+function xe(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")
+  .replace(/"/g,"&quot;")}
+function snip(t,n){var s=t.replace(/\s+/g," ").trim();return s.length>n?s.slice(0,n)+"…":s}
+function rfc(iso){
+  var M=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+  var W=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+  var d=new Date(iso+"T09:00:00+04:00");
+  return W[d.getUTCDay()]+", "+String(d.getUTCDate()).padStart(2,"0")+" "+M[d.getUTCMonth()]+
+    " "+d.getUTCFullYear()+" 09:00:00 +0400"}
+function buildRSS(){
+  var pub=DATA.filter(function(e){return !e.draft}).slice(0,60);
+  var items=pub.map(function(e){
+    return "<item><title>"+xe(snip(e.t,70))+"</title><link>"+BASEURL+"p/"+e.id+".html</link>"+
+      '<guid isPermaLink="false">'+e.id+"</guid><pubDate>"+rfc(e.iso)+"</pubDate>"+
+      "<category>"+xe(e.door)+"</category><description>"+xe(snip(e.t,400))+"</description></item>"}).join("");
+  return '<?xml version="1.0" encoding="UTF-8"?>\n<rss version="2.0"><channel><title>'+
+    xe(CFG.site.name)+"</title><link>"+BASEURL+"</link><description>"+xe(CFG.site.tagline)+
+    "</description><language>ar</language>"+(pub[0]?"<lastBuildDate>"+rfc(pub[0].iso)+"</lastBuildDate>":"")+
+    items+"</channel></rss>"}
+function buildSitemap(){
+  var u=[BASEURL,BASEURL+"#/about",BASEURL+"#/archive"].concat(
+    DATA.filter(function(e){return !e.draft}).map(function(e){return BASEURL+"p/"+e.id+".html"}));
+  return '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'+
+    u.map(function(x){return "<url><loc>"+xe(x)+"</loc></url>"}).join("")+"</urlset>"}
+function postPage(e){
+  var img=BASEURL+"card.jpg";
+  (e.m||[]).some(function(m){if(!m.vf){img=CFG.media.base+"/"+m.f;return true}return false});
+  var url=BASEURL+"p/"+e.id+".html";
+  var keep={};["id","t","d","door","dk","f","m","iso"].forEach(function(k){if(k in e)keep[k]=e[k]});
+  var T=xe(snip(e.t,60)),Dsc=xe(snip(e.t,180));
+  return '<!DOCTYPE html>\n<html lang="ar" dir="rtl">\n<head>\n<meta charset="utf-8">\n'+
+   '<meta name="viewport" content="width=device-width, initial-scale=1">\n<title>'+T+"</title>\n"+
+   '<meta name="description" content="'+Dsc+'">\n<link rel="canonical" href="'+url+'">\n'+
+   '<meta property="og:type" content="article">\n<meta property="og:site_name" content="'+xe(CFG.site.name)+'">\n'+
+   '<meta property="og:title" content="'+T+'">\n<meta property="og:description" content="'+Dsc+'">\n'+
+   '<meta property="og:url" content="'+url+'">\n<meta property="og:image" content="'+xe(img)+'">\n'+
+   '<meta property="og:locale" content="ar_OM">\n<meta name="twitter:card" content="summary_large_image">\n'+
+   '<meta name="twitter:title" content="'+T+'">\n<meta name="twitter:description" content="'+Dsc+'">\n'+
+   '<meta name="twitter:image" content="'+xe(img)+'">\n<meta name="theme-color" content="#5A1F28">\n'+
+   '<link rel="stylesheet" href="style.css">\n</head>\n<body>\n<div class="bar" id="bar"></div>\n'+
+   '<main id="post"></main>\n<div id="share"></div>\n'+
+   '<footer class="foot"><a href="../index.html">العودة إلى المدونة</a></footer>\n'+
+   "<script>window.__ENTRY__="+JSON.stringify(keep)+";<\/script>\n"+
+   '<script src="../post.js"><\/script>\n</body>\n</html>\n'}
+function putRaw(path,text,msg){
+  var body={message:msg,content:b64e(text),branch:BRANCH};
+  if(SHA[path])body.sha=SHA[path];
+  return api("/contents/"+path,{method:"PUT",body:JSON.stringify(body)})
+   .then(function(r){return r.json()}).then(function(j){
+     if(j.content&&j.content.sha)SHA[path]=j.content.sha;return j})}
+
 function put(path,obj,msg){
   return api("/contents/"+path,{method:"PUT",body:JSON.stringify(
     {message:msg,content:b64e(JSON.stringify(obj)),sha:SHA[path],branch:BRANCH})})
@@ -486,7 +541,15 @@ function put(path,obj,msg){
     if(!r.ok)throw new Error(j.message||"فشل الحفظ");SHA[path]=j.content.sha;return j})})}
 function commitData(msg,el){
   el=el||$("lookmsg");say(el,"جارٍ الحفظ…","wait");stt("جارٍ الحفظ…");
+  var extra=[];
+  if(cur&&!cur.draft) extra.push(function(){return putRaw("p/"+cur.id+".html",postPage(cur),"صفحة مدخل")});
   put("data.json",DATA,msg).then(function(){
+    return extra.length?extra[0]():null
+  }).then(function(){
+    return putRaw("rss.xml",buildRSS(),"تحديث التغذية")
+  }).then(function(){
+    return putRaw("sitemap.xml",buildSitemap(),"تحديث خريطة الموقع")
+  }).then(function(){
     say(el,"حُفظ. تظهر التغييرات في المدونة خلال دقيقتين.");
     stt("حُفظ · "+AR(DATA.length)+" مدخلاً");picked={};updBulk();
     if($("form").className==="wrap")setTimeout(function(){$("cancel").click()},1200);else render();
