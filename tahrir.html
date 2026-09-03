@@ -157,6 +157,7 @@ label{display:block;font-size:14px;color:var(--muted);margin:14px 0 5px}
       <select id="bulkdoor" style="flex:1;max-width:14em"><option value="">انقل إلى باب…</option></select>
       <button class="sm" id="bulkdraft">اجعلها مسوّدات</button>
       <button class="sm" id="bulkpub">انشرها</button>
+      <button class="sm" id="pickall">حدّد الكل</button>
       <button class="sm" id="bulkclear">إلغاء التحديد</button>
     </div></div>
     <p style="color:var(--muted);font-size:14px"><span class="cnt" id="cnt">٠</span> مدخلاً</p>
@@ -207,6 +208,10 @@ label{display:block;font-size:14px;color:var(--muted);margin:14px 0 5px}
   <div id="tab-look" class="wrap hide">
     <div class="split">
       <div>
+        <h2>أنماط جاهزة</h2>
+        <div class="note">اضغط نمطاً فتتبدّل الألوان والخطوط معاً. عدّل عليه بعدها كما تشاء.</div>
+        <div id="presets" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px"></div>
+
         <h2>الألوان — الوضع النهاريّ</h2>
         <div id="colL"></div>
         <h2>الألوان — الوضع الليليّ</h2>

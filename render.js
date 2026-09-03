@@ -8,7 +8,7 @@
   function esc(s) { return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;"); }
 
   try { EDIT = !!(rd("ghtok") || rd("ghunlocked")); } catch (e) {}
-  if (EDIT) $("compose").classList.remove("hide");
+  if (EDIT) { $("compose").classList.remove("hide"); $("ctrl").classList.remove("hide"); }
 
   /* ---------- الأيقونات ---------- */
   var IC = {

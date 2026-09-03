@@ -45,6 +45,7 @@ a:focus-visible,button:focus-visible{outline:3px solid var(--gold);outline-offse
 .tools button:hover{color:var(--accent);border-color:var(--gold)}
 .tools svg{width:1.15em;height:1.15em}
 .compose{margin-inline-end:auto}
+#compose,#ctrl{display:inline-flex}
 
 .panel{max-width:var(--measure);margin:10px auto 0;border:var(--rulew) solid var(--rule);
  border-radius:8px;padding:6px 16px 14px;background:var(--paper2);display:none}
@@ -179,7 +180,13 @@ main{max-width:var(--measure);margin:0 auto}
 <body>
 
 <div class="tools">
- <a href="tahrir.html#new" id="compose" class="compose hide"><button aria-label="مدخل جديد">
+ <a href="tahrir.html" id="ctrl" class="compose hide"><button aria-label="لوحة التحكّم">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"
+   stroke-linecap="round" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/>
+   <circle cx="9" cy="6" r="2" fill="currentColor" stroke="none"/>
+   <circle cx="15" cy="12" r="2" fill="currentColor" stroke="none"/>
+   <circle cx="8" cy="18" r="2" fill="currentColor" stroke="none"/></svg>التحكّم</button></a>
+ <a href="tahrir.html#new" id="compose" class="hide"><button aria-label="مدخل جديد">
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
    stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>اكتب</button></a>
  <button id="gear" aria-label="إعدادات القراءة">

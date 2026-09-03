@@ -14,6 +14,32 @@ var COLORS=[["paper","الخلفية"],["paper2","خلفية ثانوية"],["in
   ["accent","اللون الأساسي"],["gold","اللون الثانوي"],["muted","النصّ الخافت"],["rule","الخطوط الفاصلة"]];
 var DEFAULTS=null;
 
+var PRESETS=[
+ {n:"حبر وذهب", d:"Amiri", x:"Scheherazade New",
+  l:{paper:"#F8F4EE",paper2:"#F1EBE2",ink:"#241F1E",accent:"#5A1F28",gold:"#A8834B",muted:"#6B5A56",rule:"#E2D8CD"},
+  k:{paper:"#191614",paper2:"#211D19",ink:"#E9E1D6",accent:"#C9A063",gold:"#C9A063",muted:"#9A9088",rule:"#332C27"}},
+ {n:"كحلي ملكي", d:"Amiri", x:"Noto Naskh Arabic",
+  l:{paper:"#F4F2EA",paper2:"#EAE7DC",ink:"#1D1C1A",accent:"#16264A",gold:"#9A7B3F",muted:"#55606F",rule:"#D6D2C4"},
+  k:{paper:"#12151C",paper2:"#1A1F29",ink:"#E6E9EF",accent:"#9FB6DA",gold:"#C9A063",muted:"#93A0B4",rule:"#2A3140"}},
+ {n:"زيتوني", d:"Amiri", x:"Scheherazade New",
+  l:{paper:"#F4F1E6",paper2:"#EAE7D8",ink:"#22261F",accent:"#2F3A2C",gold:"#7C8A6B",muted:"#5A6152",rule:"#D3D2C0"},
+  k:{paper:"#161813",paper2:"#1E211B",ink:"#E5E7DD",accent:"#A9BC96",gold:"#A9BC96",muted:"#8E9683",rule:"#2C3128"}},
+ {n:"ليلي نحاسي", d:"Amiri", x:"Markazi Text",
+  l:{paper:"#F7F3EF",paper2:"#EDE7E1",ink:"#201D1B",accent:"#7A3B22",gold:"#B87A55",muted:"#6B5C54",rule:"#DFD5CC"},
+  k:{paper:"#17171A",paper2:"#1F1F23",ink:"#ECE7DC",accent:"#D08F68",gold:"#D08F68",muted:"#9A968C",rule:"#33322F"}},
+ {n:"رماديّ صحفيّ", d:"Noto Kufi Arabic", x:"Noto Naskh Arabic",
+  l:{paper:"#FBFBFA",paper2:"#F1F1EF",ink:"#141414",accent:"#2B2B2B",gold:"#6E6E6E",muted:"#5A5A5A",rule:"#DCDCDA"},
+  k:{paper:"#101011",paper2:"#191919",ink:"#F0F0EE",accent:"#D6D6D2",gold:"#B4B4AE",muted:"#9C9C97",rule:"#2C2C2C"}},
+ {n:"أخضر عُمانيّ", d:"Aref Ruqaa", x:"Scheherazade New",
+  l:{paper:"#F7F5EF",paper2:"#ECE9DF",ink:"#1E211D",accent:"#1F5C3A",gold:"#9E2B2B",muted:"#59614F",rule:"#D8D6C7"},
+  k:{paper:"#12160F",paper2:"#1A1F17",ink:"#E7EADF",accent:"#7FBF97",gold:"#D98A8A",muted:"#8D9682",rule:"#28301F"}}
+];
+function drawPresets(){
+  $("presets").innerHTML=PRESETS.map(function(p,i){
+    return '<button class="sm" data-ps="'+i+'" style="border-color:'+p.l.accent+
+      ';color:'+p.l.accent+'">'+p.n+"</button>"}).join(" ")}
+
+
 function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;")}
 function say(el,t,k){el.textContent=t;el.className="msg "+(k||"ok")}
 function stt(t){$("status").textContent=t}
@@ -84,7 +110,7 @@ function boot(){
     $("login").className="wrap hide";$("setup").className="wrap hide";
     $("app").className="";$("foot").className="foot";
     stt("مفتوح · "+AR(DATA.length)+" مدخلاً");
-    buildIdentity();buildLook();fillDoorSelects();render();
+    buildIdentity();buildLook();drawPresets();fillDoorSelects();render();
     var h=location.hash.replace("#/","").replace("#","").trim();
     if(h==="new") openF(null);
     else if(h){var e=DATA.filter(function(x){return x.id===h})[0];if(e)openF(e)}
@@ -149,14 +175,24 @@ function updBulk(){
   var n=Object.keys(picked).length;
   $("npick").textContent=AR(n);
   $("bulkbar").className=n?"row":"row hide"}
+$("pickall").onclick=function(){
+  var L=filtered();
+  if(L.length>200&&!confirm("سيُحدَّد "+AR(L.length)+" مدخلاً. أمتأكّد؟"))return;
+  L.forEach(function(e){picked[e.id]=1});updBulk();render()};
 $("bulkclear").onclick=function(){picked={};updBulk();render()};
+function okBulk(what){
+  var n=Object.keys(picked).length;
+  return n && confirm(what+" "+AR(n)+" مدخلاً. لا تراجع بعد الحفظ. أمتابع؟")}
 $("bulkdoor").onchange=function(){
   var name=this.value;if(!name)return;
+  if(!okBulk("سيُنقل إلى «"+name+"»")){this.value="";return}
   DATA.forEach(function(e){if(picked[e.id]){e.door=name;e.dk=dkOf(name)}});
   this.value="";commitData("نقل مداخل إلى "+name)};
 $("bulkdraft").onclick=function(){
+  if(!okBulk("سيُحوَّل إلى مسوّدات"))return;
   DATA.forEach(function(e){if(picked[e.id])e.draft=true});commitData("تحويل إلى مسوّدات")};
 $("bulkpub").onclick=function(){
+  if(!okBulk("سيُنشر"))return;
   DATA.forEach(function(e){if(picked[e.id])delete e.draft});commitData("نشر مداخل")};
 
 /* ---------- الوسائط ---------- */
@@ -372,6 +408,13 @@ function readLook(){
     telegram:$("s_tg").checked,copy:$("s_cp").checked}}
 $("tab-look").addEventListener("input",function(){readLook();drawPreview()});
 $("tab-look").addEventListener("change",function(){readLook();drawPreview()});
+$("presets").addEventListener("click",function(e){
+  var b=e.target.closest("[data-ps]");if(!b)return;
+  var P=PRESETS[+b.dataset.ps];
+  CFG.theme.light=JSON.parse(JSON.stringify(P.l));
+  CFG.theme.dark=JSON.parse(JSON.stringify(P.k));
+  CFG.type.display=P.d;CFG.type.text=P.x;
+  buildLook()});
 $("resetlook").onclick=function(){
   if(!confirm("إعادة الألوان والخطوط والعرض إلى ما كانت عليه عند آخر فتح؟"))return;
   CFG.theme=JSON.parse(JSON.stringify(DEFAULTS.theme));
