@@ -124,3 +124,26 @@ main{max-width:var(--measure);margin:0 auto}
 .sup button:hover{color:var(--accent);border-color:var(--gold)}
 .sup svg{width:19px;height:19px}
 @media print{.sup{display:none!important}}
+
+
+/* ===== صفحة التعريف ===== */
+.about{max-width:var(--measure);margin:0 auto;text-align:center;padding:14px 0 0}
+.about img{width:190px;height:190px;border-radius:50%;object-fit:cover;
+ display:block;margin:0 auto 22px;border:2px solid var(--gold)}
+.about .lead{font-size:calc(var(--body)*1.05);line-height:2;margin:0 0 4px}
+.about .bio{font-family:var(--display);font-size:calc(var(--body)*.92);line-height:2.1;margin:4px 0 0}
+.about .sig{color:var(--muted);font-size:calc(var(--body)*.78);line-height:2;margin:18px auto 0;max-width:26em}
+.about .meta2{color:var(--muted);font-size:calc(var(--body)*.66);line-height:2.1;margin:22px 0 0}
+.about .meta2 a{color:var(--accent);border-bottom:var(--rulew) solid var(--gold);padding-bottom:2px}
+
+/* ===== الأرشيف الزمنيّ ===== */
+.arch{max-width:var(--measure);margin:0 auto;padding:10px 0 0}
+.arch h2{font-family:var(--display);font-weight:400;color:var(--accent);
+ font-size:calc(var(--body)*1.12);margin:30px 0 4px;padding-top:18px;
+ border-top:var(--rulew) solid var(--gold)}
+.arch h2 span{font-size:.68em;color:var(--muted);margin-inline-start:6px}
+.arch ul{list-style:none;padding:0;margin:0}
+.arch li{padding:9px 0;border-top:var(--rulew) solid var(--rule)}
+.arch li a{display:block;line-height:1.85}
+.arch li a:hover{color:var(--accent)}
+.arch .ad{color:var(--muted);font-size:calc(var(--body)*.58);display:block}
