@@ -123,7 +123,9 @@ document.querySelectorAll(".tabs button").forEach(function(b){
     ["entries","identity","look"].forEach(function(t){
       $("tab-"+t).className="wrap"+(t===b.dataset.t?"":" hide")});
     $("savecfg").className = b.dataset.t==="entries" ? "p hide":"p";
-    if(b.dataset.t==="look") drawPreview();
+    var pv=(b.dataset.t==="look"||b.dataset.t==="identity");
+    $("float").className=pv?"on":"";$("fopen").className="";
+    if(pv) drawPreview();
   }});
 
 /* ---------- الأبواب في القوائم ---------- */
@@ -437,9 +439,17 @@ function guard(){
   $("cwarn").className=w.length?"warn on":"warn";
   $("cwarn").innerHTML=w.length?"تباينٌ منخفض يصعب قراءته:<br>"+w.join("<br>"):""}
 
-function drawPreview(){
-  if(!CFG)return;
-  guard();
+var PVMODE="mast";
+document.querySelectorAll("[data-pv]").forEach(function(b){
+  b.onclick=function(){PVMODE=b.dataset.pv;
+    document.querySelectorAll("[data-pv]").forEach(function(x){x.classList.toggle("on",x===b)});
+    drawPreview()}});
+$("fmin").onclick=function(){var f=$("float");f.classList.toggle("min");
+  this.textContent=f.classList.contains("min")?"▴":"▾"};
+$("fclose").onclick=function(){$("float").className="";$("fopen").className="on"};
+$("fopen").onclick=function(){$("float").className="on";$("fopen").className="";drawPreview()};
+
+function pvMast(){
   var s=CFG.site,L=CFG.theme.light;
   var bio=CFG.doors.map(function(d){
     return '<span style="color:'+L.accent+'">'+esc(d.subj)+"</span>"+
@@ -447,19 +457,26 @@ function drawPreview(){
   }).join(' <span style="color:'+L.rule+'">|</span> ');
   var av=s.showAvatar!==false&&s.portrait
     ? '<img src="'+esc(s.portrait)+'" style="width:'+(s.avatarSize||66)+"px;height:"+(s.avatarSize||66)+
-      'px;border-radius:50%;object-fit:cover;display:block;margin:12px auto 6px;border:2px solid '+L.gold+'">'+
-      '<div style="text-align:center;font-family:'+CFG.type.display+',serif;font-size:14px;color:'+L.accent+'">'+
+      'px;border-radius:50%;object-fit:cover;display:block;margin:11px auto 5px;border:2px solid '+L.gold+'">'+
+      '<div style="text-align:center;font-family:'+CFG.type.display+',serif;font-size:13px;color:'+L.accent+'">'+
       esc(s.avatarCaption||"عن الكاتب")+"</div>":"";
-  $("preview").setAttribute("style",pvVars());
-  $("preview").innerHTML=
-    '<div class="pn">'+esc(s.name)+"</div>"+av+
+  return '<div class="pn" style="font-size:23px">'+esc(s.name)+"</div>"+av+
     '<div class="pend"><i></i><span></span><i></i></div>'+
-    '<div style="text-align:center;font-family:'+CFG.type.display+',serif;font-size:16px;line-height:2.1">'+bio+"</div>"+
-    '<div style="text-align:center;color:'+L.muted+';font-size:14px;margin-top:12px">'+esc(s.tagline)+"</div>"+
-    '<div style="border-top:.5px solid '+L.rule+';margin:20px 0 14px"></div>'+
-    '<p class="pm">٢٣ مايو ٢٠٢٥ · <b>'+esc(doorNames()[0]||"")+"</b></p>"+
-    '<p class="pt">في المدنِ التي غادرناها تبقى أشياءُ صغيرةٌ لا تُحصى: بابٌ لم يُغلَق جيداً، ورائحةُ مطرٍ على حجرٍ.</p>'+
+    '<div style="text-align:center;font-family:'+CFG.type.display+',serif;font-size:15px;line-height:2.1">'+bio+"</div>"+
+    '<div style="text-align:center;color:'+L.muted+';font-size:13px;margin-top:10px">'+esc(s.tagline)+"</div>"}
+function pvEntry(){
+  var L=CFG.theme.light;
+  return '<p class="pm">٢٣ مايو ٢٠٢٥ · <b>'+esc(doorNames()[0]||"")+"</b>"+
+    (CFG.layout.showReadingTime!==false?" · ٣ دقائق قراءة":"")+"</p>"+
+    '<p class="pt">في المدنِ التي غادرناها تبقى أشياءُ صغيرةٌ لا تُحصى: بابٌ لم يُغلَق جيداً، ورائحةُ مطرٍ على حجرٍ، وصوتُ أذانٍ يعبرُ النافذة في وقتٍ لم نكن نُصغي فيه.\n\nثم نعودُ بعد سنين فلا نجدُ شيئاً في مكانه، ونجدُ كلَّ شيءٍ في الذاكرة.</p>'+
     (CFG.layout.showEndMark!==false?'<div class="pend"><i></i><span></span><i></i></div>':"")}
+
+function drawPreview(){
+  if(!CFG)return;
+  guard();
+  var f=$("float");
+  f.setAttribute("style",pvVars());
+  $("fbody").innerHTML = PVMODE==="mast" ? pvMast() : pvEntry();}
 
 /* ---------- الحفظ ---------- */
 function put(path,obj,msg){

@@ -91,6 +91,23 @@ label{display:block;font-size:14px;color:var(--muted);margin:14px 0 5px}
 .prev{border:.5px solid var(--rule);border-radius:8px;padding:20px 18px;
  background:var(--pv-paper,#F8F4EE);color:var(--pv-ink,#241F1E);
  position:sticky;top:110px;max-height:74vh;overflow:auto}
+
+/* المعاينة العائمة */
+#float{position:fixed;inset-block-end:62px;inset-inline-end:14px;z-index:40;
+ width:min(330px,86vw);border:.5px solid var(--rule);border-radius:10px;
+ background:var(--paper);box-shadow:0 10px 34px rgba(0,0,0,.22);overflow:hidden;display:none}
+#float.on{display:block}
+#float .fh{display:flex;align-items:center;gap:6px;padding:7px 10px;
+ border-bottom:.5px solid var(--rule);background:var(--paper2)}
+#float .fh span{flex:1;font-size:13px;color:var(--muted)}
+#float .fh button{border:none;padding:4px 9px;font-size:13px;border-radius:4px}
+#float .fh button.on{background:var(--accent);color:var(--paper)}
+#float .fb{padding:16px 14px;max-height:48vh;overflow:auto;
+ background:var(--pv-paper,#F8F4EE);color:var(--pv-ink,#241F1E)}
+#float.min .fb{display:none}
+#fopen{position:fixed;inset-block-end:62px;inset-inline-end:14px;z-index:39;display:none}
+#fopen.on{display:block}
+@media(min-width:1000px){#float,#fopen{inset-block-end:70px}}
 .prev .pm{font-size:13px;color:var(--pv-muted,#6B5A56);margin:0 0 9px}
 .prev .pm b{color:var(--pv-gold,#A8834B);font-weight:400}
 .prev .pt{margin:0;white-space:pre-wrap;font-family:var(--pv-text,"Scheherazade New"),serif;
@@ -206,7 +223,7 @@ label{display:block;font-size:14px;color:var(--muted);margin:14px 0 5px}
 
   <!-- المظهر -->
   <div id="tab-look" class="wrap hide">
-    <div class="split">
+    <div>
       <div>
         <h2>أنماط جاهزة</h2>
         <div class="note">اضغط نمطاً فتتبدّل الألوان والخطوط معاً. عدّل عليه بعدها كما تشاء.</div>
@@ -256,9 +273,6 @@ label{display:block;font-size:14px;color:var(--muted);margin:14px 0 5px}
           <button class="dl" id="resetlook">أعد الهوية الأصلية</button>
         </div>
         <div class="msg" id="lookmsg"></div>
-      </div>
-      <div>
-        <div class="prev" id="preview"></div>
       </div>
     </div>
   </div>
@@ -312,6 +326,17 @@ label{display:block;font-size:14px;color:var(--muted);margin:14px 0 5px}
     <div><div class="prev" id="fprev"></div></div>
   </div>
 </div>
+
+<div id="float">
+  <div class="fh">
+    <button data-pv="mast" class="on">الترويسة</button>
+    <button data-pv="entry">مدخل</button>
+    <span></span>
+    <button id="fmin">▾</button><button id="fclose">✕</button>
+  </div>
+  <div class="fb" id="fbody"></div>
+</div>
+<button id="fopen">معاينة</button>
 
 <div class="foot hide" id="foot"><div class="wrap">
   <span id="status" style="flex:1;font-size:14px;color:var(--muted)">جاهز</span>

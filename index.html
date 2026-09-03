@@ -4,6 +4,21 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>المدونة</title>
+<meta name="description" content="نكتبُ عن الفقدِ.. كي لا يبردَ في القلبِ شوقٌ.. ولا تتحجّرَ ذكرى">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="مروان يوسف البلوشي">
+<meta property="og:title" content="مروان يوسف البلوشي">
+<meta property="og:description" content="نكتبُ عن الفقدِ.. كي لا يبردَ في القلبِ شوقٌ.. ولا تتحجّرَ ذكرى">
+<meta property="og:url" content="https://marwanbalushi.com/">
+<meta property="og:image" content="https://marwanbalushi.com/card.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="ar_OM">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="مروان يوسف البلوشي">
+<meta name="twitter:description" content="نكتبُ عن الفقدِ.. كي لا يبردَ في القلبِ شوقٌ.. ولا تتحجّرَ ذكرى">
+<meta name="twitter:image" content="https://marwanbalushi.com/card.jpg">
+<link rel="canonical" href="https://marwanbalushi.com/">
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#5A1F28">
 <meta name="mobile-web-app-capable" content="yes">
@@ -45,6 +60,14 @@ a:focus-visible,button:focus-visible{outline:3px solid var(--gold);outline-offse
 .tools button:hover{color:var(--accent);border-color:var(--gold)}
 .tools svg{width:1.15em;height:1.15em}
 .compose{margin-inline-end:auto}
+#compose,#ctrl{display:inline-flex}
+.owner{max-width:var(--measure);margin:10px auto 0;display:flex;align-items:center;gap:10px;
+ background:var(--paper2);border:var(--rulew) solid var(--gold);border-radius:6px;
+ padding:8px 13px;font-size:calc(var(--body)*.62);color:var(--muted)}
+.owner b{color:var(--accent);font-weight:400}
+.owner button{margin-inline-start:auto;font-family:var(--text);font-size:inherit;
+ color:var(--accent);background:none;border:var(--rulew) solid var(--gold);
+ border-radius:5px;padding:5px 12px;cursor:pointer}
 #compose,#ctrl{display:inline-flex}
 
 .panel{max-width:var(--measure);margin:10px auto 0;border:var(--rulew) solid var(--rule);
@@ -194,6 +217,11 @@ main{max-width:var(--measure);margin:0 auto}
    stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
    <circle cx="12" cy="12" r="3.2"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M19.1 4.9L17 7M7 17l-2.1 2.1"/>
   </svg>القراءة</button>
+</div>
+
+<div class="owner hide" id="owner">
+ <span>أنت في <b>وضع المالك</b> — ترى أزرار التحرير والمسوّدات.</span>
+ <button id="asreader">عرض القارئ</button>
 </div>
 
 <div class="panel" id="panel">

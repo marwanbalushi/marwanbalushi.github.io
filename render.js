@@ -7,8 +7,27 @@
   function rd(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
   function esc(s) { return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;"); }
 
-  try { EDIT = !!(rd("ghtok") || rd("ghunlocked")); } catch (e) {}
-  if (EDIT) { $("compose").classList.remove("hide"); $("ctrl").classList.remove("hide"); }
+  var OWNER = false, asReader = false;
+  try { OWNER = !!(rd("ghtok") || rd("ghunlocked")); } catch (e) {}
+  try { asReader = rd("asreader") === "1"; } catch (e) {}
+  EDIT = OWNER && !asReader;
+
+  function ownerUI() {
+    $("compose").classList.toggle("hide", !EDIT);
+    $("ctrl").classList.toggle("hide", !EDIT);
+    $("owner").classList.toggle("hide", !OWNER);
+    $("owner").querySelector("span").innerHTML = EDIT
+      ? "أنت في <b>وضع المالك</b> — ترى أزرار التحرير والمسوّدات."
+      : "أنت في <b>عرض القارئ</b> — هذا ما يراه الزائر تماماً.";
+    $("asreader").textContent = EDIT ? "عرض القارئ" : "عودة لوضع المالك";
+  }
+  if (OWNER) {
+    ownerUI();
+    $("asreader").onclick = function () {
+      asReader = !asReader; st("asreader", asReader ? "1" : "0");
+      EDIT = OWNER && !asReader; ownerUI(); shown = 0; render(); route();
+    };
+  }
 
   /* ---------- الأيقونات ---------- */
   var IC = {
@@ -136,6 +155,7 @@
 
     $("q").placeholder = "ابحث في " + arn(DATA.length) + " نصّاً…";
     $("foot").innerHTML = '<div class="fl" aria-hidden="true"><i></i><span class="lz"></span><i></i></div>' +
+      '<a href="#/archive" style="border-bottom:var(--rulew) solid var(--rule)">الأرشيف الزمني</a><br>' +
       esc(CFG.site.name) + (CFG.site.location ? " · " + esc(CFG.site.location) : "");
   }
 
@@ -248,6 +268,27 @@
   function route() {
     var h = location.hash.replace("#/", "").trim(), app = $("app");
     var old = $("solo"); if (old) old.remove();
+    if (h === "archive") {
+      app.style.display = "none";
+      var by = {};
+      DATA.filter(function (e) { return !e.draft; }).forEach(function (e) {
+        var y = e.iso.slice(0, 4); (by[y] = by[y] || []).push(e);
+      });
+      var years = Object.keys(by).sort().reverse();
+      var html = years.map(function (y) {
+        return '<h2 style="font-family:var(--display);font-weight:400;color:var(--accent);' +
+          'font-size:calc(var(--body)*1.1);margin:30px 0 4px;padding-top:18px;' +
+          'border-top:1px solid var(--gold)">' + arn(y) + " <span style=\"font-size:.7em;color:var(--muted)\">" +
+          arn(by[y].length) + "</span></h2><ul style=\"list-style:none;padding:0;margin:0\">" +
+          by[y].map(function (e) {
+            return '<li style="padding:8px 0;border-top:var(--rulew) solid var(--rule)">' +
+              '<a href="#/' + e.id + '">' + esc(e.t.slice(0, 68).replace(/\n/g, " ")) + "…</a></li>";
+          }).join("") + "</ul>";
+      }).join("");
+      document.body.insertAdjacentHTML("afterbegin",
+        '<div id="solo"><a class="back" href="#/">→ العودة إلى المدونة</a><main>' + html + "</main></div>");
+      window.scrollTo(0, 0); return;
+    }
     if (h === "about") {
       app.style.display = "none";
       document.body.insertAdjacentHTML("afterbegin",
@@ -264,6 +305,7 @@
         window.scrollTo(0, 0); return;
       }
     }
+    document.title = CFG.site.name;
     app.style.display = "";
   }
   window.addEventListener("hashchange", route);

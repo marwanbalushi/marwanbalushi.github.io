@@ -1,2 +1,5 @@
 User-agent: *
 Disallow: /radud.html
+Disallow: /tahrir.html
+
+Sitemap: https://marwanbalushi.com/sitemap.xml
