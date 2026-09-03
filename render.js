@@ -38,7 +38,8 @@
     wa:   '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18a8 8 0 0 1-4.1-1.1l-.3-.2-3 .8.8-2.9-.2-.3A8 8 0 1 1 12 20zm4.5-5.9c-.2-.1-1.4-.7-1.7-.8s-.4-.1-.5.1-.6.8-.7.9-.3.2-.5 0a6.5 6.5 0 0 1-3.2-2.8c-.2-.4.2-.4.6-1.2a.5.5 0 0 0 0-.4c0-.1-.5-1.3-.7-1.7s-.4-.4-.5-.4h-.5a.9.9 0 0 0-.7.3 2.8 2.8 0 0 0-.9 2.1 4.9 4.9 0 0 0 1 2.6 11 11 0 0 0 4.3 3.8c1.6.6 2.2.7 3 .6a2.5 2.5 0 0 0 1.7-1.2 2 2 0 0 0 .2-1.2c-.1-.1-.3-.2-.5-.3z"/></svg>',
     fb:   '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M22 12a10 10 0 1 0-11.6 9.9v-7h-2.5V12h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.4h-1.2c-1.2 0-1.6.8-1.6 1.6V12h2.7l-.4 2.9h-2.3v7A10 10 0 0 0 22 12z"/></svg>',
     tg:   '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M21.9 4.3 18.7 19c-.2 1-.9 1.3-1.8.8l-4.9-3.6-2.4 2.3c-.3.3-.5.5-1 .5l.4-5 9.1-8.2c.4-.4-.1-.6-.6-.2L6.3 12.8 1.5 11.3c-1-.3-1-1 .2-1.5l18.9-7.3c.9-.3 1.6.2 1.3 1.8z"/></svg>',
-    cp:   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>'
+    cp:   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>',
+    ok:   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>'
   };
 
   /* ---------- تطبيق الإعدادات ---------- */
@@ -61,7 +62,21 @@
       ":root{" + vars(L) + ";--sizeM:" + t.sizeMobile + "px;--sizeD:" + t.sizeDesktop + "px;" +
       "--lh:" + t.lineHeight + ";--measure:" + t.measure + "em;--dscale:" + (t.displayScale || 1) + ";" +
       '--display:"' + t.display + '",serif;--text:"' + t.text + '",serif}' +
-      "[data-theme=dark]{" + vars(D) + "}";
+      "[data-theme=dark]{" + vars(D) + "}" +
+      /* أيقونات المشاركة في سطر التاريخ */
+      ".shx{margin-inline-start:auto;display:inline-flex;align-items:center;gap:5px}" +
+      ".shx a,.shx button{display:inline-flex;align-items:center;justify-content:center;" +
+      "color:var(--muted);background:none;border:var(--rulew) solid var(--rule);" +
+      "border-radius:5px;padding:5px;cursor:pointer;line-height:0}" +
+      ".shx a:hover,.shx button:hover{color:var(--accent);border-color:var(--gold)}" +
+      ".shx svg{width:1.15em;height:1.15em}" +
+      ".pen.after-shx{margin-inline-start:7px}" +
+      /* شارة النصّ الطويل — تميّز ما يحتاج فتحاً عمّا يكتفي بموضعه */
+      ".mk{display:inline-flex;align-items:center;gap:5px;color:var(--gold);" +
+      "border:var(--rulew) solid var(--gold);border-radius:4px;padding:1px 8px;" +
+      "font-family:var(--display);font-size:.96em;line-height:1.7;white-space:nowrap}" +
+      ".mk svg{width:1.02em;height:1.02em;flex:none}" +
+      ".mk:hover{color:var(--accent);border-color:var(--accent)}";
     document.head.appendChild(s);
     document.title = cfg.site.name;
     var tc = document.querySelector('meta[name="theme-color"]');
@@ -173,6 +188,29 @@
     return "";
   }
 
+  /* عنوان الصفحة المستقلّة للمدخل — بلا شرطة، قابل للمشاركة */
+  function pageURL(e) {
+    return location.origin + location.pathname.replace(/[^\/]*$/, "") + "p/" + e.id + ".html";
+  }
+
+  /* أيقونات المشاركة المصغّرة — تُوضع في سطر التاريخ أعلى المدخل */
+  function shareIcons(e) {
+    var S = CFG.share || {}, url = pageURL(e);
+    var t = encodeURIComponent(e.t.slice(0, 90).replace(/\n/g, " ") + "…"), u = encodeURIComponent(url);
+    var h = '<span class="shx">';
+    if (S.whatsapp) h += '<a href="https://wa.me/?text=' + t + "%20" + u +
+      '" target="_blank" rel="noopener" title="واتساب" aria-label="مشاركة على واتساب">' + IC.wa + "</a>";
+    if (S.x) h += '<a href="https://x.com/intent/tweet?text=' + t + "&url=" + u +
+      '" target="_blank" rel="noopener" title="X" aria-label="مشاركة على X">' + IC.x + "</a>";
+    if (S.telegram) h += '<a href="https://t.me/share/url?url=' + u + "&text=" + t +
+      '" target="_blank" rel="noopener" title="تلغرام" aria-label="مشاركة على تلغرام">' + IC.tg + "</a>";
+    if (S.facebook) h += '<a href="https://www.facebook.com/sharer/sharer.php?u=' + u +
+      '" target="_blank" rel="noopener" title="فيسبوك" aria-label="مشاركة على فيسبوك">' + IC.fb + "</a>";
+    if (S.copy !== false) h += '<button class="cpb" data-icon="1" data-url="' + url +
+      '" title="نسخ الرابط" aria-label="نسخ الرابط">' + IC.cp + "</button>";
+    return h + "</span>";
+  }
+
   function card(e, solo) {
     var isW = e.f === "waqfah", med = "", L = CFG.layout;
     if (e.m && e.m.length) {
@@ -180,18 +218,24 @@
             (isW && L.wideMedia !== false ? "wide" : "") + '">' +
         e.m.map(function (m) {
           if (m.v && m.vf && CFG.media.base)
-            return '<figure><video controls preload="metadata" playsinline src="' +
+            return '<figure><video controls preload="metadata" playsinline poster="' +
+                   CFG.media.base + "/" + m.f + '" src="' +
                    CFG.media.base + "/" + m.vf + '#t=0.5"></video></figure>';
           return '<figure><img loading="lazy" src="' + src(m) + '" alt=""></figure>';
         }).join("") + "</div>";
     }
     var long = !solo && e.t.length > (L.clampChars || 600);
+    /* أيقونات المشاركة في سطر التاريخ لكل المداخل، طويلها وقصيرها */
+    var inline = !solo;
     var meta = '<p class="meta">' + (solo ? e.d : '<a href="#/' + e.id + '">' + e.d + "</a>") +
       (e.dk ? '<span class="dot">·</span><span class="dr">' + esc(e.door) + "</span>" : "") +
       (L.showReadingTime && e.t.length > 400 ? '<span class="dot">·</span>' + readTime(e.t) : "") +
       (e.draft ? '<span class="draft">مسوّدة</span>' : "") +
-      (long ? '<a class="mk" href="#/' + e.id + '" title="نصّ طويل">' + IC.long + "</a>" : "") +
-      (EDIT ? '<a class="pen" href="tahrir.html#/' + e.id + '" title="تحرير">' + IC.pen + "</a>" : "") +
+      (long ? '<a class="mk" href="#/' + e.id +
+              '" title="النصّ أطول ممّا ترى — اضغط ليكتمل">' + IC.long + "نصّ طويل</a>" : "") +
+      (inline ? shareIcons(e) : "") +
+      (EDIT ? '<a class="pen' + (inline ? " after-shx" : "") + '" href="tahrir.html#/' + e.id +
+              '" title="تحرير">' + IC.pen + "</a>" : "") +
       "</p>";
     var body = '<p class="tx' + (long ? " clamp" : "") + '">' + esc(e.t) + "</p>" +
       (long ? '<a class="cont" href="#/' + e.id + '">' + IC.down + "اقرأ التتمة</a>" : "");
@@ -201,15 +245,14 @@
   }
 
   function shareBar(e) {
-    var S = CFG.share || {}, base = location.origin + location.pathname.replace(/[^\/]*$/, "");
-    var url = base + "p/" + e.id + ".html";
+    var S = CFG.share || {}, url = pageURL(e);
     var t = encodeURIComponent(e.t.slice(0, 90).replace(/\n/g, " ") + "…"), u = encodeURIComponent(url);
     var h = '<div class="share">';
     if (S.whatsapp) h += '<a href="https://wa.me/?text=' + t + "%20" + u + '" target="_blank" rel="noopener">' + IC.wa + "واتساب</a>";
     if (S.x) h += '<a href="https://x.com/intent/tweet?text=' + t + "&url=" + u + '" target="_blank" rel="noopener">' + IC.x + "X</a>";
     if (S.telegram) h += '<a href="https://t.me/share/url?url=' + u + "&text=" + t + '" target="_blank" rel="noopener">' + IC.tg + "تلغرام</a>";
     if (S.facebook) h += '<a href="https://www.facebook.com/sharer/sharer.php?u=' + u + '" target="_blank" rel="noopener">' + IC.fb + "فيسبوك</a>";
-    if (S.copy !== false) h += '<button data-url="' + url + '" id="cpbtn">' + IC.cp + "نسخ الرابط</button>";
+    if (S.copy !== false) h += '<button class="cpb" data-url="' + url + '" id="cpbtn">' + IC.cp + "نسخ الرابط</button>";
     return h + "</div>";
   }
 
@@ -258,16 +301,22 @@
   });
 
   document.addEventListener("click", function (ev) {
-    var b = ev.target.closest("#cpbtn"); if (!b) return;
-    var url = b.dataset.url, o = b.innerHTML;
-    var done = function () { b.textContent = "نُسخ ✓"; setTimeout(function () { b.innerHTML = o; }, 1600); };
+    var b = ev.target.closest(".cpb"); if (!b) return;
+    ev.preventDefault();
+    var url = b.dataset.url, o = b.innerHTML, icon = b.dataset.icon === "1";
+    var done = function () {
+      b.innerHTML = icon ? IC.ok : "نُسخ ✓";
+      setTimeout(function () { b.innerHTML = o; }, 1600);
+    };
     if (navigator.clipboard) navigator.clipboard.writeText(url).then(done, done);
     else { var i = document.createElement("input"); i.value = url; document.body.appendChild(i); i.select();
            try { document.execCommand("copy"); } catch (x) {} i.remove(); done(); }
   });
 
   function route() {
-    var h = location.hash.replace("#/", "").trim().replace(/^p\//, "").replace(/\.html$/, ""), app = $("app");
+    /* يقبل «#/رقم» و«#/p/رقم.html» معاً، فلا تضيع الروابط القديمة */
+    var h = location.hash.replace("#/", "").trim().replace(/^p\//, "").replace(/\.html$/, "");
+    var app = $("app");
     var old = $("solo"); if (old) old.remove();
     if (h === "archive") {
       app.style.display = "none";
