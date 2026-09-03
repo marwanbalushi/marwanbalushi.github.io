@@ -6,6 +6,23 @@
   function st(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
   function rd(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
   function esc(s) { return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;"); }
+  function att(s) { return esc(s).replace(/"/g, "&quot;"); }
+
+  /* يجرّد النصّ من التشكيل والتطويل ويوحّد صور الهمزة والتاء والياء،
+     ليجد البحثُ «صلابة أرض» في «صلابةُ أرضٍ». يُستعمل للمقارنة فقط،
+     والنصّ المعروض يبقى كما كُتب حرفاً بحرف. */
+  var NORM = {};
+  function norm(s) {
+    return String(s)
+      .replace(/[\u064B-\u0652\u0670\u0640]/g, "")
+      .replace(/[\u0622\u0623\u0625\u0671]/g, "\u0627")
+      .replace(/\u0649/g, "\u064A")
+      .replace(/\u0626/g, "\u064A")
+      .replace(/\u0624/g, "\u0648")
+      .replace(/\u0629/g, "\u0647")
+      .replace(/\s+/g, " ")
+      .trim();
+  }
 
   var OWNER = false, asReader = false;
   try { OWNER = !!(rd("ghtok") || rd("ghunlocked")); } catch (e) {}
@@ -211,6 +228,12 @@
     return h + "</span>";
   }
 
+  /* وصف الصورة يُشتقّ من أول النصّ — لقارئ الشاشة ولفهرسة الصور */
+  function altOf(e) {
+    var t = e.t.replace(/\s+/g, " ").trim();
+    return att(t.length > 100 ? t.slice(0, 100) + "…" : t);
+  }
+
   function card(e, solo) {
     var isW = e.f === "waqfah", med = "", L = CFG.layout;
     if (e.m && e.m.length) {
@@ -221,7 +244,7 @@
             return '<figure><video controls preload="metadata" playsinline poster="' +
                    CFG.media.base + "/" + m.f + '" src="' +
                    CFG.media.base + "/" + m.vf + '#t=0.5"></video></figure>';
-          return '<figure><img loading="lazy" src="' + src(m) + '" alt=""></figure>';
+          return '<figure><img loading="lazy" src="' + src(m) + '" alt="' + altOf(e) + '"></figure>';
         }).join("") + "</div>";
     }
     var long = !solo && e.t.length > (L.clampChars || 600);
@@ -274,11 +297,12 @@
   }
 
   function filtered() {
+    var nq = query ? norm(query) : "";
     return DATA.filter(function (e) {
       return !e.draft &&
         (form === "all" || e.f === form) &&
         (!door || e.door === door) &&
-        (!query || e.t.indexOf(query) > -1);
+        (!nq || (NORM[e.id] || "").indexOf(nq) > -1);
     });
   }
   function render() {
@@ -362,10 +386,11 @@
 
   /* ---------- الإقلاع ---------- */
   Promise.all([
-    fetch("config.json?v=" + Date.now()).then(function (r) { return r.json(); }),
-    fetch("data.json?v=" + Date.now()).then(function (r) { return r.json(); })
+    fetch("config.json", { cache: "no-cache" }).then(function (r) { return r.json(); }),
+    fetch("data.json", { cache: "no-cache" }).then(function (r) { return r.json(); })
   ]).then(function (res) {
     CFG = res[0]; DATA = res[1];
+    DATA.forEach(function (e) { NORM[e.id] = norm(e.t); });
     loadFonts(CFG); applyTheme(CFG); buildMast(); render(); route(); analytics(CFG);
   }).catch(function (err) {
     $("stream").innerHTML = '<p class="none">تعذّر تحميل المدونة.<br>' + esc(err.message) + "</p>";

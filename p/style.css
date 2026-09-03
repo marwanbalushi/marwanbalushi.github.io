@@ -94,18 +94,14 @@ main{max-width:var(--measure);margin:0 auto}
  font-family:var(--display);font-size:calc(var(--body)*.72);color:var(--accent)}
 #bar a{color:var(--accent);border-bottom:var(--rulew) solid var(--gold);padding-bottom:2px}
 
-#post{max-width:var(--measure);margin:0 auto;padding:6px 0 0}
-#post .e{padding-top:14px;border-top:none}
-#post .meta time{color:var(--muted)}
-
-.nb{display:flex;gap:14px;justify-content:space-between;flex-wrap:wrap;
- max-width:var(--measure);margin:24px auto 0;padding-top:18px;
- border-top:var(--rulew) solid var(--rule)}
-.nb a{flex:1 1 44%;font-family:var(--display);font-size:calc(var(--body)*.66);
- color:var(--muted);line-height:1.75}
-.nb a[rel=next]{text-align:start}
-.nb a[rel=prev]{text-align:end}
-.nb a:hover{color:var(--accent)}
+#post{max-width:var(--measure);margin:0 auto;padding:20px 0 0}
+#post p{margin:0 0 1.05em;white-space:pre-wrap}
+#post p:last-child{margin-bottom:0}
+#post time,#post .date,#post .meta{display:block;font-size:calc(var(--body)*.6);
+ color:var(--muted);margin:0 0 16px}
+#post img,#post video{max-width:100%;height:auto;max-height:78vh;border-radius:3px;
+ display:block;margin:0 auto 20px;background:var(--paper2)}
+#post figure{margin:0 0 10px}
 
 #share{display:flex;gap:9px;justify-content:center;flex-wrap:wrap;
  max-width:var(--measure);margin:28px auto 0;padding-top:20px;
@@ -116,3 +112,11 @@ main{max-width:var(--measure);margin:0 auto}
  padding:8px 14px;cursor:pointer;text-decoration:none;line-height:1.4}
 #share a:hover,#share button:hover{color:var(--accent);border-color:var(--gold)}
 #share svg{width:1.05em;height:1.05em}
+
+/* ===== أيقونات المشاركة في سطر التاريخ ===== */
+.shx{margin-inline-start:auto;display:inline-flex;align-items:center;gap:5px}
+.shx a,.shx button{display:inline-flex;align-items:center;justify-content:center;
+ color:var(--muted);background:none;border:var(--rulew) solid var(--rule);
+ border-radius:5px;padding:5px;cursor:pointer;line-height:0}
+.shx a:hover,.shx button:hover{color:var(--accent);border-color:var(--gold)}
+.shx svg{width:1.15em;height:1.15em}
