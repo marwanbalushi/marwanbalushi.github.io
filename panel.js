@@ -637,7 +637,14 @@ function pNav(e){
 var BASEURL="https://marwanbalushi.com/";
 function xe(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")
   .replace(/"/g,"&quot;")}
-function snip(t,n){var s=t.replace(/\s+/g," ").trim();return s.length>n?s.slice(0,n)+"…":s}
+/* القطع لا يشطر رمزاً تعبيرياً نصفين — فنصفُ الرمز يُعطب دوالّ الترميز */
+function cutSafe(s,n){
+  if(s.length<=n)return s;
+  var c=s.slice(0,n),last=c.charCodeAt(c.length-1);
+  if(last>=0xD800&&last<=0xDBFF)c=c.slice(0,-1);
+  return c}
+function snip(t,n){var s=String(t).replace(/\s+/g," ").trim();
+  return s.length>n?cutSafe(s,n)+"…":s}
 function rfc(iso){
   var M=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
   var W=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];

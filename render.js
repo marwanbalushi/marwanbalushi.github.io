@@ -8,6 +8,15 @@
   function esc(s) { return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;"); }
   function att(s) { return esc(s).replace(/"/g, "&quot;"); }
 
+  /* القطع لا يشطر رمزاً تعبيرياً نصفين — فنصفُ الرمز يُعطب encodeURIComponent */
+  function cut(t, n) {
+    var s = String(t).replace(/\n/g, " ");
+    if (s.length <= n) return s;
+    var c = s.slice(0, n), last = c.charCodeAt(c.length - 1);
+    if (last >= 0xD800 && last <= 0xDBFF) c = c.slice(0, -1);
+    return c;
+  }
+
   /* يجرّد النصّ من التشكيل والتطويل ويوحّد صور الهمزة والتاء والياء،
      ليجد البحثُ «صلابة أرض» في «صلابةُ أرضٍ». يُستعمل للمقارنة فقط،
      والنصّ المعروض يبقى كما كُتب حرفاً بحرف. */
@@ -213,7 +222,7 @@
   /* أيقونات المشاركة المصغّرة — تُوضع في سطر التاريخ أعلى المدخل */
   function shareIcons(e) {
     var S = CFG.share || {}, url = pageURL(e);
-    var t = encodeURIComponent(e.t.slice(0, 90).replace(/\n/g, " ") + "…"), u = encodeURIComponent(url);
+    var t = encodeURIComponent(cut(e.t, 90) + "…"), u = encodeURIComponent(url);
     var h = '<span class="shx">';
     if (S.whatsapp) h += '<a href="https://wa.me/?text=' + t + "%20" + u +
       '" target="_blank" rel="noopener" title="واتساب" aria-label="مشاركة على واتساب">' + IC.wa + "</a>";
@@ -231,7 +240,7 @@
   /* وصف الصورة يُشتقّ من أول النصّ — لقارئ الشاشة ولفهرسة الصور */
   function altOf(e) {
     var t = e.t.replace(/\s+/g, " ").trim();
-    return att(t.length > 100 ? t.slice(0, 100) + "…" : t);
+    return att(t.length > 100 ? cut(t, 100) + "…" : t);
   }
 
   function card(e, solo) {
@@ -269,7 +278,7 @@
 
   function shareBar(e) {
     var S = CFG.share || {}, url = pageURL(e);
-    var t = encodeURIComponent(e.t.slice(0, 90).replace(/\n/g, " ") + "…"), u = encodeURIComponent(url);
+    var t = encodeURIComponent(cut(e.t, 90) + "…"), u = encodeURIComponent(url);
     var h = '<div class="share">';
     if (S.whatsapp) h += '<a href="https://wa.me/?text=' + t + "%20" + u + '" target="_blank" rel="noopener">' + IC.wa + "واتساب</a>";
     if (S.x) h += '<a href="https://x.com/intent/tweet?text=' + t + "&url=" + u + '" target="_blank" rel="noopener">' + IC.x + "X</a>";
@@ -356,7 +365,7 @@
           arn(by[y].length) + "</span></h2><ul style=\"list-style:none;padding:0;margin:0\">" +
           by[y].map(function (e) {
             return '<li style="padding:8px 0;border-top:var(--rulew) solid var(--rule)">' +
-              '<a href="#/' + e.id + '">' + esc(e.t.slice(0, 68).replace(/\n/g, " ")) + "…</a></li>";
+              '<a href="#/' + e.id + '">' + esc(cut(e.t, 68)) + "…</a></li>";
           }).join("") + "</ul>";
       }).join("");
       document.body.insertAdjacentHTML("afterbegin",
