@@ -4,15 +4,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
-<title>تحرير المدونة</title>
+<title>لوحة التحكّم</title>
 <link rel="manifest" href="manifest-tahrir.json">
 <meta name="theme-color" content="#5A1F28">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="التحرير">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
-<link rel="icon" href="icon-192.png">
 <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Scheherazade+New:wght@400;700&display=swap" rel="stylesheet">
 <style>
 :root{--paper:#F8F4EE;--paper2:#F1EBE2;--ink:#241F1E;--accent:#5A1F28;--gold:#A8834B;
@@ -22,451 +17,304 @@
  --accent:#C9A063;--gold:#C9A063;--muted:#9A9088;--rule:#332C27}}
 *{box-sizing:border-box}
 body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--text);
- font-size:19px;line-height:1.85;padding:0 16px 96px}
-h1{font-family:var(--display);font-weight:400;font-size:31px;color:var(--accent);margin:0 0 4px}
-.wrap{max-width:44em;margin:0 auto}
-.hd{text-align:center;padding:26px 0 14px}
-.hd p{color:var(--muted);font-size:16px;margin:0}
-button{font-family:var(--text);font-size:16px;color:var(--muted);background:none;
- border:.5px solid var(--rule);border-radius:5px;padding:9px 16px;cursor:pointer}
+ font-size:18px;line-height:1.8;padding:0 14px 96px}
+h1{font-family:var(--display);font-weight:400;font-size:30px;color:var(--accent);margin:0 0 4px}
+h2{font-family:var(--display);font-weight:400;font-size:22px;color:var(--accent);
+ margin:28px 0 4px;padding-top:20px;border-top:.5px solid var(--rule)}
+h2:first-of-type{border-top:none;padding-top:0;margin-top:12px}
+.wrap{max-width:56em;margin:0 auto}
+.hd{text-align:center;padding:22px 0 12px}
+.hd p{color:var(--muted);font-size:15px;margin:0}
+button,.btn{font-family:var(--text);font-size:15px;color:var(--muted);background:none;
+ border:.5px solid var(--rule);border-radius:5px;padding:8px 14px;cursor:pointer}
 button:hover{color:var(--accent);border-color:var(--gold)}
 button.p{color:var(--paper);background:var(--accent);border-color:var(--accent)}
 button.dl{color:var(--bad);border-color:var(--bad)}
-input,textarea,select{font-family:var(--text);font-size:18px;width:100%;background:var(--paper2);
- color:var(--ink);border:.5px solid var(--rule);border-radius:5px;padding:11px 13px;line-height:1.9}
-textarea{min-height:17em;resize:vertical;white-space:pre-wrap}
-label{display:block;font-size:15px;color:var(--muted);margin:15px 0 5px}
-.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
-.row>*{flex:1;min-width:135px}
+button.sm{font-size:13px;padding:5px 10px}
+input,textarea,select{font-family:var(--text);font-size:17px;width:100%;background:var(--paper2);
+ color:var(--ink);border:.5px solid var(--rule);border-radius:5px;padding:10px 12px;line-height:1.85}
+input[type=color]{padding:3px;height:42px;cursor:pointer}
+input[type=number]{max-width:9em}
+textarea{min-height:15em;resize:vertical;white-space:pre-wrap}
+label{display:block;font-size:14px;color:var(--muted);margin:14px 0 5px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end}
+.row>div{flex:1;min-width:140px}
 .row>button{flex:0 0 auto}
-.bar{position:sticky;top:0;z-index:9;background:var(--paper);border-bottom:.5px solid var(--rule);padding:11px 0}
-.card{border:.5px solid var(--rule);border-radius:8px;padding:14px;margin-bottom:10px;cursor:pointer}
+.tabs{position:sticky;top:0;z-index:20;background:var(--paper);display:flex;
+ border-bottom:.5px solid var(--rule);margin-bottom:6px}
+.tabs button{flex:1;border:none;border-radius:0;font-family:var(--display);font-size:18px;
+ padding:13px 0;border-bottom:2px solid transparent}
+.tabs button.on{color:var(--accent);border-bottom-color:var(--gold)}
+.bar{position:sticky;top:49px;z-index:19;background:var(--paper);
+ border-bottom:.5px solid var(--rule);padding:10px 0}
+.card{border:.5px solid var(--rule);border-radius:8px;padding:13px;margin-bottom:9px;cursor:pointer;
+ display:flex;gap:11px;align-items:flex-start}
 .card:hover{border-color:var(--gold)}
-.card .m{font-size:14px;color:var(--muted);margin:0 0 6px}
+.card.pick{background:rgba(168,131,75,.1);border-color:var(--gold)}
+.card .bd{flex:1;min-width:0}
+.card .m{font-size:13px;color:var(--muted);margin:0 0 5px}
 .card .m b{color:var(--gold);font-weight:400}
-.card .t{margin:0;font-size:17px;max-height:3.6em;overflow:hidden}
-.pill{display:inline-block;font-size:13px;border:.5px solid var(--rule);border-radius:3px;
+.card .t{margin:0;font-size:16px;max-height:3.4em;overflow:hidden}
+.chk{flex:none;width:22px;height:22px;border:1.5px solid var(--rule);border-radius:4px;
+ display:flex;align-items:center;justify-content:center;color:transparent;font-size:14px;margin-top:3px}
+.card.pick .chk{background:var(--gold);border-color:var(--gold);color:#fff}
+.pill{display:inline-block;font-size:12px;border:.5px solid var(--rule);border-radius:3px;
  padding:1px 8px;color:var(--muted);margin-inline-start:6px}
-.note{background:var(--paper2);border-radius:7px;padding:15px;font-size:16px;
- color:var(--muted);line-height:1.9;margin:14px 0}
-.msg{padding:12px 15px;border-radius:6px;margin:13px 0;font-size:16px;display:none}
+.pill.d{color:var(--accent);border-color:var(--gold)}
+.note{background:var(--paper2);border-radius:7px;padding:13px;font-size:15px;
+ color:var(--muted);line-height:1.9;margin:13px 0}
+.msg{padding:11px 14px;border-radius:6px;margin:12px 0;font-size:15px;display:none}
 .msg.ok{display:block;background:rgba(44,110,73,.13);color:var(--ok)}
 .msg.err{display:block;background:rgba(163,44,44,.11);color:var(--bad)}
 .msg.wait{display:block;background:var(--paper2);color:var(--muted)}
 .foot{position:fixed;inset-block-end:0;inset-inline:0;background:var(--paper);
- border-top:.5px solid var(--rule);padding:11px 16px}
-.foot .wrap{display:flex;gap:10px;align-items:center}
+ border-top:.5px solid var(--rule);padding:10px 14px;z-index:30}
+.foot .wrap{display:flex;gap:9px;align-items:center}
 .hide{display:none!important}
-.cnt{font-family:var(--display);font-size:20px;color:var(--accent)}
+.cnt{font-family:var(--display);font-size:19px;color:var(--accent)}
 .link{color:var(--accent);border-bottom:.5px solid var(--gold);cursor:pointer;font-size:15px}
-.mgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(112px,1fr));gap:10px;margin-top:6px}
+.mgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(108px,1fr));gap:9px;margin-top:6px}
 .mit{position:relative;border:.5px solid var(--rule);border-radius:6px;overflow:hidden;background:var(--paper2)}
-.mit img,.mit video{width:100%;height:84px;object-fit:cover;display:block;background:#1a1a1a}
-.mit .lab{direction:ltr;text-align:left}
-.mit .lab{font-size:12px;color:var(--muted);padding:5px 7px;line-height:1.5;
- word-break:break-all;max-height:3.4em;overflow:hidden}
-.mit .vtag{position:absolute;inset-block-start:6px;inset-inline-start:6px;background:rgba(0,0,0,.6);
- color:#fff;font-size:12px;padding:1px 8px;border-radius:3px}
-.mit .x{position:absolute;inset-block-start:6px;inset-inline-end:6px;width:26px;height:26px;
- border-radius:50%;border:none;background:rgba(0,0,0,.62);color:#fff;font-size:16px;
- line-height:1;padding:0;cursor:pointer}
+.mit img,.mit video{width:100%;height:82px;object-fit:cover;display:block;background:#1a1a1a}
+.mit .lab{font-size:11px;color:var(--muted);padding:4px 6px;direction:ltr;text-align:left;
+ word-break:break-all;max-height:3.2em;overflow:hidden}
+.mit .vtag{position:absolute;inset-block-start:5px;inset-inline-start:5px;background:rgba(0,0,0,.62);
+ color:#fff;font-size:11px;padding:1px 7px;border-radius:3px}
+.mit .x{position:absolute;inset-block-start:5px;inset-inline-end:5px;width:24px;height:24px;
+ border-radius:50%;border:none;background:rgba(0,0,0,.62);color:#fff;font-size:15px;padding:0}
 .mit .x:hover{background:var(--bad)}
-.mempty{color:var(--muted);font-size:15px;padding:10px 0}
 .warn{background:rgba(163,44,44,.09);color:var(--bad);border-radius:6px;
- padding:11px 14px;font-size:15px;margin-top:10px;display:none}
+ padding:10px 13px;font-size:14px;margin-top:9px;display:none}
 .warn.on{display:block}
+.split{display:grid;grid-template-columns:1fr;gap:16px}
+@media(min-width:1000px){.split{grid-template-columns:1fr 1fr}}
+.prev{border:.5px solid var(--rule);border-radius:8px;padding:20px 18px;
+ background:var(--pv-paper,#F8F4EE);color:var(--pv-ink,#241F1E);
+ position:sticky;top:110px;max-height:74vh;overflow:auto}
+.prev .pm{font-size:13px;color:var(--pv-muted,#6B5A56);margin:0 0 9px}
+.prev .pm b{color:var(--pv-gold,#A8834B);font-weight:400}
+.prev .pt{margin:0;white-space:pre-wrap;font-family:var(--pv-text,"Scheherazade New"),serif;
+ font-size:var(--pv-size,19px);line-height:var(--pv-lh,1.85)}
+.prev .pn{font-family:var(--pv-display,"Amiri"),serif;font-size:26px;
+ color:var(--pv-accent,#5A1F28);text-align:center;margin:0 0 10px}
+.prev img,.prev video{width:100%;border-radius:3px;margin-bottom:9px}
+.prev .pend{display:flex;align-items:center;justify-content:center;gap:10px;margin-top:18px}
+.prev .pend i{height:.5px;width:30px;background:var(--pv-rule,#E2D8CD);display:block}
+.prev .pend span{width:5px;height:5px;background:var(--pv-gold,#A8834B);transform:rotate(45deg)}
+.sw{display:flex;align-items:center;gap:10px;margin:8px 0}
+.sw input[type=checkbox]{width:auto;flex:none;transform:scale(1.3)}
+.hist{font-size:14px;color:var(--muted);border-top:.5px solid var(--rule);padding:9px 0;
+ display:flex;gap:10px;align-items:center;flex-wrap:wrap}
 </style>
 </head>
 <body>
 
-<!-- ===== الدخول بجملة السرّ ===== -->
+<!-- ===== الدخول ===== -->
 <div id="login" class="wrap">
-  <div class="hd"><h1>تحرير المدونة</h1><p>يحفظ تعديلاتك مباشرة في الموقع</p></div>
-  <div id="lockbox">
-    <label>جملة السرّ</label>
-    <input id="pass" type="password" placeholder="اكتب جملتك…" autocomplete="current-password">
-    <div class="row" style="margin-top:14px"><button class="p" id="unlock">فتح</button></div>
-    <p style="margin-top:16px"><span class="link" id="toSetup">إعداد جملة سرّ جديدة</span></p>
-  </div>
+  <div class="hd"><h1>لوحة التحكّم</h1><p>مدونتك بين يديك</p></div>
+  <label>جملة السرّ</label>
+  <input id="pass" type="password" placeholder="اكتب جملتك…" autocomplete="current-password">
+  <div class="row" style="margin-top:14px"><button class="p" id="unlock">فتح</button></div>
+  <p style="margin-top:16px"><span class="link" id="toSetup">إعداد جملة سرّ جديدة</span></p>
   <div class="msg" id="lmsg"></div>
 </div>
 
-<!-- ===== الإعداد الأوّل ===== -->
+<!-- ===== الإعداد ===== -->
 <div id="setup" class="wrap hide">
   <div class="hd"><h1>إعداد جملة السرّ</h1><p>مرّة واحدة فقط</p></div>
-  <div class="note">
-    اختر <b>جملة</b> لا كلمة. خمس كلمات فأكثر يسهل عليك حفظها ويستحيل تخمينها.<br>
-    جملتك لا تُحفظ في أي مكان، ولا يعرفها أحد سواك. وإن نسيتها، تُنشئ مفتاحاً جديداً وتعيد الإعداد.
-  </div>
-  <label>مفتاح GitHub</label>
-  <input id="stok" type="password" placeholder="github_pat_…">
-  <label>مفتاح الرفع <span style="opacity:.7">(اختياري — لرفع الصور والمقاطع)</span></label>
-  <input id="sup" type="password" placeholder="المفتاح الذي وضعته في الوسيط">
-  <label>رابط الوسيط <span style="opacity:.7">(اختياري)</span></label>
-  <input id="swrk" placeholder="https://upload.marwanbalushi.workers.dev">
-  <label>جملة السرّ</label>
-  <input id="sp1" type="password" placeholder="جملة من خمس كلمات فأكثر">
-  <label>أعد كتابتها</label>
-  <input id="sp2" type="password">
+  <div class="note">اختر <b>جملة</b> لا كلمة. خمس كلمات فأكثر. لا تُحفظ في أي مكان، ولا يعرفها أحد سواك.</div>
+  <label>مفتاح GitHub</label><input id="stok" type="password" placeholder="github_pat_…">
+  <label>مفتاح الرفع <span style="opacity:.7">(اختياري)</span></label><input id="sup" type="password">
+  <label>رابط الوسيط <span style="opacity:.7">(يبدأ بـ https://)</span></label>
+  <input id="swrk" placeholder="https://upload.xxx.workers.dev">
+  <label>جملة السرّ</label><input id="sp1" type="password">
+  <label>أعد كتابتها</label><input id="sp2" type="password">
   <div class="row" style="margin-top:16px">
-    <button class="p" id="mkkey">توليد الملف</button>
-    <button id="toLogin">رجوع</button>
-  </div>
+    <button class="p" id="mkkey">توليد الملف</button><button id="toLogin">رجوع</button></div>
   <div class="msg" id="smsg"></div>
 </div>
 
-<!-- ===== المحرّر ===== -->
-<div id="editor" class="hide">
-  <div class="bar"><div class="wrap row">
-    <input id="q" placeholder="ابحث في النصوص…" style="flex:3">
-    <select id="fdoor" style="flex:1">
-      <option value="">كل الأبواب</option>
-      <option>عُمان</option><option>الإسلام مرجعيّة</option><option>الهُويّة عزّة</option>
-      <option>الإنسان كرامة</option><option>دبلوماسيّة</option><option>غير مصنّف</option>
-    </select>
-    <button id="new">مدخل جديد</button>
-  </div></div>
-  <div class="wrap">
-    <p style="color:var(--muted);font-size:15px"><span class="cnt" id="cnt">٠</span> مدخلاً</p>
+<!-- ===== اللوحة ===== -->
+<div id="app" class="hide">
+  <div class="tabs wrap">
+    <button data-t="entries" class="on">المداخل</button>
+    <button data-t="identity">الهوية</button>
+    <button data-t="look">المظهر</button>
+  </div>
+
+  <!-- المداخل -->
+  <div id="tab-entries" class="wrap">
+    <div class="bar"><div class="row">
+      <div style="flex:3"><input id="q" placeholder="ابحث…"></div>
+      <div style="flex:1"><select id="fdoor"><option value="">كل الأبواب</option></select></div>
+      <div style="flex:1"><select id="fstate">
+        <option value="">الكل</option><option value="pub">المنشور</option><option value="draft">المسوّدات</option>
+      </select></div>
+      <button id="new">مدخل جديد</button>
+    </div>
+    <div class="row hide" id="bulkbar" style="margin-top:9px">
+      <span style="flex:1;font-size:15px;color:var(--muted)"><span class="cnt" id="npick">٠</span> محدَّد</span>
+      <select id="bulkdoor" style="flex:1;max-width:14em"><option value="">انقل إلى باب…</option></select>
+      <button class="sm" id="bulkdraft">اجعلها مسوّدات</button>
+      <button class="sm" id="bulkpub">انشرها</button>
+      <button class="sm" id="bulkclear">إلغاء التحديد</button>
+    </div></div>
+    <p style="color:var(--muted);font-size:14px"><span class="cnt" id="cnt">٠</span> مدخلاً</p>
     <div id="list"></div>
-    <button id="more" style="width:100%;margin-top:14px">المزيد</button>
+    <button id="more" style="width:100%;margin-top:12px">المزيد</button>
+  </div>
+
+  <!-- الهوية -->
+  <div id="tab-identity" class="wrap hide">
+    <h2>الاسم والتعريف</h2>
+    <label>اسم المدونة</label><input id="i_name">
+    <label>سطر التعريف تحت الاسم</label><input id="i_tagline">
+    <label>نصّ صفحة «عن الكاتب»</label><textarea id="i_about" style="min-height:6em"></textarea>
+    <div class="row">
+      <div><label>الموقع</label><input id="i_loc"></div>
+      <div><label>نصّ رابط التواصل</label><input id="i_clabel"></div>
+      <div><label>رابط التواصل</label><input id="i_curl"></div>
+    </div>
+
+    <h2>الصورة</h2>
+    <div class="row">
+      <div><label>ملف الصورة</label><input id="i_portrait"></div>
+      <div><label>قطرها في الترويسة (بكسل)</label><input id="i_avsize" type="number" min="40" max="140"></div>
+      <div><label>الكلمة تحتها</label><input id="i_avcap"></div>
+    </div>
+    <div class="sw"><input type="checkbox" id="i_showav"><label style="margin:0">إظهار الصورة في الترويسة</label></div>
+    <div class="row" style="margin-top:8px">
+      <input id="upav" type="file" accept="image/*" class="hide">
+      <button id="upavBtn">ارفع صورة جديدة</button>
+      <span id="upavmsg" style="flex:1;font-size:14px;color:var(--muted)"></span>
+    </div>
+
+    <h2>الأبواب</h2>
+    <div class="note">المبتدأ بالماروني والخبر بالذهبيّ. اترك الخبر فارغاً للأبواب المفردة.</div>
+    <div id="doors"></div>
+    <div class="row" style="margin-top:10px"><button id="adddoor">أضف باباً</button></div>
+
+    <h2>أسماء الأشكال</h2>
+    <div class="row">
+      <div><label>الكل</label><input id="f_all"></div>
+      <div><label>الطويل</label><input id="f_waqfah"></div>
+      <div><label>القصير</label><input id="f_shathrah"></div>
+    </div>
+    <div class="msg" id="imsg"></div>
+  </div>
+
+  <!-- المظهر -->
+  <div id="tab-look" class="wrap hide">
+    <div class="split">
+      <div>
+        <h2>الألوان — الوضع النهاريّ</h2>
+        <div id="colL"></div>
+        <h2>الألوان — الوضع الليليّ</h2>
+        <div id="colD"></div>
+        <div class="warn" id="cwarn"></div>
+
+        <h2>الخطوط</h2>
+        <div class="row">
+          <div><label>خطّ العناوين</label><select id="t_display"></select></div>
+          <div><label>خطّ المتن</label><select id="t_text"></select></div>
+        </div>
+        <div class="row">
+          <div><label>حجم المتن — جوال</label><input id="t_sm" type="number" min="14" max="30"></div>
+          <div><label>حجم المتن — حاسوب</label><input id="t_sd" type="number" min="14" max="34"></div>
+          <div><label>تباعد الأسطر</label><input id="t_lh" type="number" step="0.05" min="1.3" max="2.6"></div>
+        </div>
+        <div class="row">
+          <div><label>عرض عمود القراءة (em)</label><input id="t_measure" type="number" min="20" max="46"></div>
+          <div><label>حجم الاسم في الترويسة</label><input id="t_ds" type="number" step="0.05" min="0.6" max="1.8"></div>
+        </div>
+
+        <h2>العرض</h2>
+        <div class="row">
+          <div><label>حدّ النصّ الطويل (حرف)</label><input id="l_clamp" type="number" min="200" max="3000"></div>
+          <div><label>مداخل في الصفحة</label><input id="l_page" type="number" min="5" max="100"></div>
+          <div><label>معرض الصور</label><select id="l_gal">
+            <option value="grid">شبكة عمودين</option><option value="grid3">شبكة ثلاثة</option>
+            <option value="stack">فوق بعضها</option></select></div>
+        </div>
+        <div class="sw"><input type="checkbox" id="l_rt"><label style="margin:0">إظهار وقت القراءة</label></div>
+        <div class="sw"><input type="checkbox" id="l_end"><label style="margin:0">إظهار علامة الختام</label></div>
+        <div class="sw"><input type="checkbox" id="l_wide"><label style="margin:0">توسيع وسائط النصوص الطويلة</label></div>
+
+        <h2>أزرار المشاركة</h2>
+        <div class="sw"><input type="checkbox" id="s_wa"><label style="margin:0">واتساب</label></div>
+        <div class="sw"><input type="checkbox" id="s_x"><label style="margin:0">X</label></div>
+        <div class="sw"><input type="checkbox" id="s_fb"><label style="margin:0">فيسبوك</label></div>
+        <div class="sw"><input type="checkbox" id="s_tg"><label style="margin:0">تلغرام</label></div>
+        <div class="sw"><input type="checkbox" id="s_cp"><label style="margin:0">نسخ الرابط</label></div>
+
+        <div class="row" style="margin-top:22px">
+          <button class="dl" id="resetlook">أعد الهوية الأصلية</button>
+        </div>
+        <div class="msg" id="lookmsg"></div>
+      </div>
+      <div>
+        <div class="prev" id="preview"></div>
+      </div>
+    </div>
   </div>
 </div>
 
-<!-- ===== نموذج التحرير ===== -->
+<!-- ===== نموذج المدخل ===== -->
 <div id="form" class="wrap hide">
   <div class="hd"><h1 id="ftitle">تحرير مدخل</h1></div>
-  <label>النصّ</label>
-  <textarea id="ftext"></textarea>
-  <div class="row">
-    <div><label>الباب</label>
-      <select id="fdoorsel">
-        <option>غير مصنّف</option><option>عُمان</option><option>الإسلام مرجعيّة</option>
-        <option>الهُويّة عزّة</option><option>الإنسان كرامة</option><option>دبلوماسيّة</option>
-      </select></div>
-    <div><label>الشكل</label>
-      <select id="fform"><option value="shathrah">شذرة</option><option value="waqfah">وقفة</option></select></div>
-    <div><label>التاريخ</label><input id="fdate" type="date"></div>
-  </div>
-  <label>الوسائط المرتبطة بالمدخل</label>
-  <div id="mgrid" class="mgrid"></div>
-  <p class="mempty hide" id="mempty">لا وسائط في هذا المدخل.</p>
-  <div id="upwrap" class="hide" style="margin-top:12px">
-    <input id="upfile" type="file" accept="image/*,video/*" multiple style="display:none">
-    <div class="row">
-      <button id="upBtn" style="flex:0 0 auto">ارفع صورة أو مقطعاً</button>
-      <span id="upmsg" style="flex:1;font-size:15px;color:var(--muted)"></span>
+  <div class="split">
+    <div>
+      <label>النصّ</label>
+      <textarea id="ftext"></textarea>
+      <div class="row">
+        <div><label>الباب</label><select id="fdoorsel"></select></div>
+        <div><label>الشكل</label><select id="fform">
+          <option value="shathrah">قصير</option><option value="waqfah">طويل</option></select></div>
+        <div><label>التاريخ</label><input id="fdate" type="date"></div>
+      </div>
+      <div class="sw" style="margin-top:12px">
+        <input type="checkbox" id="fdraft"><label style="margin:0">مسوّدة — لا تظهر للقرّاء</label></div>
+
+      <label>الوسائط</label>
+      <div id="mgrid" class="mgrid"></div>
+      <p class="hide" id="mempty" style="color:var(--muted);font-size:15px">لا وسائط في هذا المدخل.</p>
+      <div id="upwrap" class="hide" style="margin-top:10px">
+        <input id="upfile" type="file" accept="image/*,video/*" multiple class="hide">
+        <div class="row">
+          <button id="upBtn">ارفع صورة أو مقطعاً</button>
+          <button id="libBtn">من المكتبة</button>
+          <span id="upmsg" style="flex:1;font-size:14px;color:var(--muted)"></span>
+        </div>
+        <div id="upbar" class="hide" style="height:4px;background:var(--rule);border-radius:3px;margin-top:9px;overflow:hidden">
+          <div id="upfill" style="height:100%;width:0;background:var(--gold);transition:width .2s"></div></div>
+        <div id="lib" class="hide"><div class="note" style="margin-bottom:6px">اضغط ملفاً لإضافته</div>
+          <div id="libgrid" class="mgrid"></div></div>
+      </div>
+      <p style="margin:10px 0 0"><span class="link" id="maddBtn">إضافة باسم الملف</span>
+        <span class="link" id="mrestore" style="margin-inline-start:16px;display:none">استرجاع الأصلية</span></p>
+      <div id="maddBox" class="hide" style="margin-top:9px">
+        <input id="madd" placeholder="اسم-الملف.jpg">
+        <div class="row" style="margin-top:7px"><button id="maddOk">أضف</button></div></div>
+      <div class="warn" id="mwarn">تنبيه: ستحفظ المدخل بلا وسائط، وكان فيه وسائط.</div>
+
+      <div class="row" style="margin-top:20px">
+        <button class="p" id="save">حفظ</button>
+        <button id="cancel">رجوع</button>
+        <button class="dl" id="del">حذف</button>
+      </div>
+      <div class="msg" id="fmsg"></div>
     </div>
-    <div id="upbar" class="hide" style="height:4px;background:var(--rule);border-radius:3px;margin-top:10px;overflow:hidden">
-      <div id="upfill" style="height:100%;width:0;background:var(--gold);transition:width .2s"></div>
-    </div>
+    <div><div class="prev" id="fprev"></div></div>
   </div>
-  <p style="margin:10px 0 0"><span class="link" id="maddBtn">إضافة ملف يدوياً</span>
-   <span class="link" id="mrestore" style="margin-inline-start:16px;display:none">استرجاع الوسائط الأصلية</span></p>
-  <div id="maddBox" class="hide" style="margin-top:10px">
-    <input id="madd" placeholder="1234567890-ABCdef.jpg أو .mp4">
-    <div class="row" style="margin-top:8px"><button id="maddOk">أضف</button></div>
-  </div>
-  <div class="warn" id="mwarn">تنبيه: ستحفظ المدخل بلا وسائط، وكان فيه وسائط. اضغط «استرجاع الوسائط الأصلية» إن كان هذا غير مقصود.</div>
-  <div class="row" style="margin-top:18px">
-    <button class="p" id="save">حفظ في المدونة</button>
-    <button id="cancel">رجوع</button>
-    <button class="dl" id="del">حذف</button>
-  </div>
-  <div class="msg" id="fmsg"></div>
 </div>
 
 <div class="foot hide" id="foot"><div class="wrap">
-  <span id="status" style="flex:1;font-size:15px;color:var(--muted)">جاهز</span>
+  <span id="status" style="flex:1;font-size:14px;color:var(--muted)">جاهز</span>
+  <button id="savecfg" class="p hide">احفظ الإعدادات</button>
   <a href="index.html"><button>المدونة</button></a>
   <button id="logout">قفل</button>
 </div></div>
 
-<script>
-var MEDIA_BASE="https://pub-3f426d74e97747c4ada9bcfe8803132a.r2.dev";
-var OWNER="marwanbalushi", REPO="marwanbalushi.github.io", PATH="data.json",
-    KEYF="mift.json", BRANCH="main",
-    SITE=location.origin+location.pathname.replace(/[^\/]*$/,'');
-var TOKEN="", UPKEY="", WORKER="", DATA=[], SHA="", shown=0, PAGE=20, cur=null;
-var AR=function(n){return String(n).replace(/\d/g,function(d){return '٠١٢٣٤٥٦٧٨٩'[d]})};
-var MON=['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
-var DK={'عُمان':'oman','الإسلام مرجعيّة':'marjieyah','الهُويّة عزّة':'huwiyah',
-        'الإنسان كرامة':'karamah','دبلوماسيّة':'diblomasi','غير مصنّف':''};
-var $=function(i){return document.getElementById(i)};
-function say(el,t,k){el.textContent=t;el.className='msg '+(k||'ok')}
-function stt(t){$('status').textContent=t}
-function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;')}
-function b64e(str){var b=new TextEncoder().encode(str),s='';
-  for(var i=0;i<b.length;i++)s+=String.fromCharCode(b[i]);return btoa(s)}
-function ab2b64(buf){var b=new Uint8Array(buf),s='';
-  for(var i=0;i<b.length;i++)s+=String.fromCharCode(b[i]);return btoa(s)}
-function b642ab(s){var bin=atob(s),b=new Uint8Array(bin.length);
-  for(var i=0;i<bin.length;i++)b[i]=bin.charCodeAt(i);return b}
-
-/* ---------- التشفير ---------- */
-var ITER=600000;
-function derive(pass,salt){
-  return crypto.subtle.importKey('raw',new TextEncoder().encode(pass),'PBKDF2',false,['deriveKey'])
-   .then(function(k){ return crypto.subtle.deriveKey(
-     {name:'PBKDF2',salt:salt,iterations:ITER,hash:'SHA-256'},k,
-     {name:'AES-GCM',length:256},false,['encrypt','decrypt']); });
-}
-function encryptTok(tok,pass){
-  var salt=crypto.getRandomValues(new Uint8Array(16));
-  var iv=crypto.getRandomValues(new Uint8Array(12));
-  return derive(pass,salt).then(function(key){
-    return crypto.subtle.encrypt({name:'AES-GCM',iv:iv},key,new TextEncoder().encode(tok));
-  }).then(function(ct){
-    return {v:1,it:ITER,salt:ab2b64(salt),iv:ab2b64(iv),ct:ab2b64(ct)};
-  });
-}
-function decryptTok(obj,pass){
-  return derive(pass,b642ab(obj.salt)).then(function(key){
-    return crypto.subtle.decrypt({name:'AES-GCM',iv:b642ab(obj.iv)},key,b642ab(obj.ct));
-  }).then(function(pt){ return new TextDecoder().decode(pt); });
-}
-
-function api(path,opt){
-  opt=opt||{}; opt.headers=Object.assign({'Authorization':'Bearer '+TOKEN,
-    'Accept':'application/vnd.github+json'},opt.headers||{});
-  return fetch('https://api.github.com/repos/'+OWNER+'/'+REPO+path,opt);
-}
-
-/* ---------- التبديل بين الشاشات ---------- */
-$('toSetup').onclick=function(){ $('login').className='wrap hide'; $('setup').className='wrap'; };
-$('toLogin').onclick=function(){ $('setup').className='wrap hide'; $('login').className='wrap'; };
-
-/* ---------- الإعداد ---------- */
-$('mkkey').onclick=function(){
-  var tok=$('stok').value.trim(), p1=$('sp1').value, p2=$('sp2').value;
-  if(!tok){ say($('smsg'),'الصق مفتاح GitHub','err'); return; }
-  if(p1.length<16){ say($('smsg'),'الجملة قصيرة. اجعلها ١٦ حرفاً فأكثر — خمس كلمات تكفي.','err'); return; }
-  if(p1!==p2){ say($('smsg'),'الجملتان غير متطابقتين','err'); return; }
-  say($('smsg'),'جارٍ التشفير…','wait');
-  var bundle=JSON.stringify({gh:tok, up:$('sup').value.trim(), wk:$('swrk').value.trim().replace(/\/+$/,'')});
-  encryptTok(bundle,p1).then(function(o){
-    var blob=new Blob([JSON.stringify(o)],{type:'application/json'});
-    var a=document.createElement('a');
-    a.href=URL.createObjectURL(blob); a.download='mift.json'; a.click();
-    say($('smsg'),'نزل الملف mift.json — ارفعه إلى المستودع، ثم ارجع وافتح بجملتك.');
-  }).catch(function(e){ say($('smsg'),'تعذّر التشفير: '+e.message,'err'); });
-};
-
-/* ---------- الفتح ---------- */
-$('pass').addEventListener('keydown',function(e){ if(e.key==='Enter') $('unlock').click(); });
-$('unlock').onclick=function(){
-  var p=$('pass').value;
-  if(!p){ say($('lmsg'),'اكتب جملتك','err'); return; }
-  say($('lmsg'),'جارٍ الفتح… قد يستغرق ثوانٍ','wait');
-  fetch(SITE+KEYF+'?t='+Date.now()).then(function(r){
-    if(!r.ok) throw new Error('لم أجد ملف المفتاح. أنشئه من «إعداد جملة سرّ جديدة».');
-    return r.json();
-  }).then(function(o){ return decryptTok(o,p); })
-  .then(function(raw){
-    try{ var o=JSON.parse(raw); TOKEN=o.gh; UPKEY=o.up||''; WORKER=o.wk||''; }
-    catch(x){ TOKEN=raw; }        // توافقٌ مع الإعداد القديم
-    return boot();
-  })
-  .catch(function(e){
-    say($('lmsg'), /operation-specific/i.test(e.message)||e.name==='OperationError'
-      ? 'الجملة غير صحيحة' : e.message, 'err');
-  });
-};
-
-function boot(){
-  return api('/git/trees/'+BRANCH).then(function(r){
-    if(!r.ok) throw new Error('المفتاح لا يملك صلاحية على المستودع');
-    return r.json();
-  }).then(function(j){
-    var f=j.tree.filter(function(x){return x.path===PATH})[0];
-    if(!f) throw new Error('لم أجد data.json');
-    SHA=f.sha;
-    try{ localStorage.setItem('ghunlocked','1'); }catch(e){}
-    return fetch(SITE+PATH+'?t='+Date.now());
-  }).then(function(r){return r.json()}).then(function(j){
-    DATA=j;
-    $('login').className='wrap hide'; $('setup').className='wrap hide';
-    $('editor').className=''; $('foot').className='foot';
-    stt('مفتوح · '+AR(DATA.length)+' مدخلاً');
-    render();
-    var h=location.hash.replace('#/','').replace('#','').trim();
-    if(h==='new'){ openF(null); }
-    else if(h){ var e=DATA.filter(function(x){return x.id===h})[0]; if(e) openF(e); }
-  });
-}
-$('logout').onclick=function(){
-  try{ localStorage.removeItem('ghunlocked'); }catch(e){}
-  location.href='tahrir.html';
-};
-
-/* ---------- القائمة ---------- */
-function filtered(){
-  var q=$('q').value.trim(), d=$('fdoor').value;
-  return DATA.filter(function(e){ return (!q||e.t.indexOf(q)>-1) && (!d||e.door===d) });
-}
-function render(more){
-  if(!more) shown=0;
-  var L=filtered(), box=$('list');
-  if(shown===0) box.innerHTML='';
-  $('cnt').textContent=AR(L.length);
-  var n=L.slice(shown,shown+PAGE);
-  box.insertAdjacentHTML('beforeend', n.map(function(e){
-    return '<div class="card" data-id="'+e.id+'"><p class="m">'+e.d+' · <b>'+e.door+'</b>'+
-      '<span class="pill">'+(e.f==='waqfah'?'وقفة':'شذرة')+'</span>'+
-      (e.m&&e.m.length?'<span class="pill">'+AR(e.m.length)+' وسائط</span>':'')+
-      '</p><p class="t">'+esc(e.t)+'</p></div>'; }).join(''));
-  shown+=n.length;
-  $('more').style.display = shown<L.length ? 'block':'none';
-  $('more').textContent='المزيد ('+AR(L.length-shown)+')';
-}
-$('more').onclick=function(){ render(true) };
-$('q').oninput=function(){ render() };
-$('fdoor').onchange=function(){ render() };
-$('list').onclick=function(ev){
-  var c=ev.target.closest('.card'); if(!c) return;
-  openF(DATA.filter(function(x){return x.id===c.dataset.id})[0]);
-};
-
-/* ---------- النموذج ---------- */
-var MED=[], MED0=[];
-function drawMed(){
-  var g=$('mgrid'); g.innerHTML='';
-  $('mempty').className = MED.length ? 'mempty hide':'mempty';
-  MED.forEach(function(m,i){
-    var vis = m.v
-      ? '<video muted playsinline preload="metadata" src="'+MEDIA_BASE+'/'+(m.vf||m.f)+'#t=0.5"></video>'
-      : '<img loading="lazy" src="'+MEDIA_BASE+'/'+m.f+'" alt="">';
-    var name = m.v ? (m.vf||m.f) : m.f;
-    g.insertAdjacentHTML('beforeend',
-      '<div class="mit">'+vis+
-      (m.v?'<span class="vtag">مقطع</span>':'')+
-      '<button class="x" data-i="'+i+'" title="إزالة" aria-label="إزالة">&times;</button>'+
-      '<div class="lab" title="'+name+'">'+name+'</div></div>');
-  });
-  var lost = MED0.length && MED.length<MED0.length;
-  $('mwarn').className = lost && MED.length===0 ? 'warn on':'warn';
-  $('mrestore').style.display = lost ? 'inline':'none';
-}
-$('mgrid').onclick=function(ev){
-  var b=ev.target.closest('.x'); if(!b) return;
-  MED.splice(+b.dataset.i,1); drawMed();
-};
-$('upBtn') && ($('upBtn').onclick=function(){ $('upfile').click(); });
-function upOne(file){
-  return new Promise(function(res,rej){
-    var x=new XMLHttpRequest();
-    x.open('POST', WORKER, true);
-    x.setRequestHeader('Content-Type', file.type || 'application/octet-stream');
-    x.setRequestHeader('X-Auth', UPKEY);
-    x.setRequestHeader('X-Filename', encodeURIComponent(file.name));
-    x.upload.onprogress=function(e){
-      if(e.lengthComputable) $('upfill').style.width=Math.round(e.loaded/e.total*100)+'%';
-    };
-    x.onload=function(){
-      try{ var j=JSON.parse(x.responseText); }catch(e){ return rej(new Error('ردّ غير مفهوم')); }
-      if(x.status===200 && j.ok) res(j.file); else rej(new Error(j.error||x.responseText||('خطأ '+x.status)));
-    };
-    x.onerror=function(){ rej(new Error('تعذّر الاتصال بالوسيط')); };
-    x.send(file);
-  });
-}
-$('upfile') && ($('upfile').onchange=function(){
-  var files=Array.prototype.slice.call(this.files); if(!files.length) return;
-  var i=0, ok=0;
-  $('upbar').className=''; $('upfill').style.width='0';
-  (function next(){
-    if(i>=files.length){
-      $('upmsg').textContent='رُفع '+AR(ok)+' من '+AR(files.length);
-      $('upbar').className='hide'; $('upfile').value=''; drawMed(); return;
-    }
-    var f=files[i++];
-    $('upmsg').textContent='جارٍ رفع '+f.name+'…';
-    $('upfill').style.width='0';
-    upOne(f).then(function(name){
-      var o={f:name,u:'',v:/^video\//.test(f.type)};
-      if(o.v) o.vf=name;
-      MED.push(o); ok++; drawMed(); next();
-    }).catch(function(e){
-      $('upmsg').textContent='فشل «'+f.name+'»: '+e.message;
-      $('upbar').className='hide'; $('upfile').value='';
-    });
-  })();
-});
-$('mrestore').onclick=function(){ MED=MED0.map(function(m){return Object.assign({},m)}); drawMed(); };
-$('maddBtn').onclick=function(){ $('maddBox').className = $('maddBox').className? '':'hide'; };
-$('maddOk').onclick=function(){
-  var f=$('madd').value.trim(); if(!f) return;
-  var o={f:f,u:'',v:/\.mp4$/i.test(f)}; if(o.v) o.vf=f;
-  MED.push(o); $('madd').value=''; drawMed();
-};
-
-function openF(e){
-  cur=e;
-  $('upwrap').className = (WORKER && UPKEY) ? '' : 'hide';
-  $('upmsg').textContent='';
-  MED0 = e && e.m ? e.m.map(function(m){return Object.assign({},m)}) : [];
-  MED  = MED0.map(function(m){return Object.assign({},m)});
-  drawMed();
-  $('ftitle').textContent = e ? 'تحرير مدخل' : 'مدخل جديد';
-  $('ftext').value = e ? e.t : '';
-  $('fdoorsel').value = e ? e.door : 'غير مصنّف';
-  $('fform').value = e ? e.f : 'shathrah';
-  $('fdate').value = e ? e.iso : new Date().toISOString().slice(0,10);
-  $('del').style.display = e ? '' : 'none';
-  $('fmsg').className='msg';
-  $('editor').className='hide'; $('form').className='wrap';
-  window.scrollTo(0,0);
-}
-$('new').onclick=function(){ openF(null) };
-$('cancel').onclick=function(){
-  location.hash=''; $('form').className='wrap hide'; $('editor').className=''; render();
-};
-
-function collect(){
-  var txt=$('ftext').value.trim();
-  if(!txt) throw new Error('النصّ فارغ');
-  var iso=$('fdate').value; if(!iso) throw new Error('اختر التاريخ');
-  var p=iso.split('-');
-  var med=MED;
-  var door=$('fdoorsel').value;
-  return {t:txt,iso:iso,d:AR(parseInt(p[2],10))+' '+MON[parseInt(p[1],10)-1]+' '+AR(p[0]),
-          door:door,dk:DK[door],f:$('fform').value,m:med,n:1};
-}
-$('save').onclick=function(){
-  if(MED0.length && MED.length===0 &&
-     !confirm('هذا المدخل فيه '+AR(MED0.length)+' من الوسائط وستحفظه بلا شيء منها. أتريد المتابعة؟')) return;
-  var o; try{ o=collect() }catch(e){ say($('fmsg'),e.message,'err'); return }
-  if(cur){ Object.keys(o).forEach(function(k){cur[k]=o[k]}) }
-  else { o.id='n'+Date.now(); DATA.push(o) }
-  DATA.sort(function(a,b){return a.iso<b.iso?1:a.iso>b.iso?-1:0});
-  commit('تحديث مدخل');
-};
-$('del').onclick=function(){
-  if(!cur || !confirm('حذف هذا المدخل نهائياً من المدونة؟')) return;
-  DATA=DATA.filter(function(x){return x!==cur});
-  commit('حذف مدخل');
-};
-function commit(msg){
-  say($('fmsg'),'جارٍ الحفظ…','wait'); stt('جارٍ الحفظ…');
-  api('/contents/'+PATH,{method:'PUT',body:JSON.stringify(
-    {message:msg,content:b64e(JSON.stringify(DATA)),sha:SHA,branch:BRANCH})})
-  .then(function(r){ return r.json().then(function(j){
-    if(!r.ok) throw new Error(j.message||'فشل الحفظ'); return j }) })
-  .then(function(j){
-    SHA=j.content.sha;
-    say($('fmsg'),'حُفظ. تظهر التغييرات في المدونة خلال دقيقتين.');
-    stt('حُفظ · '+AR(DATA.length)+' مدخلاً');
-    setTimeout(function(){ $('cancel').click() },1300);
-  }).catch(function(e){ say($('fmsg'),e.message,'err'); stt('فشل الحفظ') });
-}
-</script>
-
-<script>
-if('serviceWorker' in navigator){
-  window.addEventListener('load',function(){
-    navigator.serviceWorker.register('sw.js').catch(function(){});
-  });
-}
-</script>
+<script src="panel.js"></script>
 </body>
 </html>

@@ -1,6 +1,7 @@
 /* عامل الخدمة — يجعل المدونة تفتح بلا إنترنت */
-var V     = 'mb-v4';
+var V     = 'mb-v5';
 var SHELL = ['./index.html','./tahrir.html','./radud.html','./404.html',
+             './render.js','./panel.js','./config.json','./portrait.jpg',
              './manifest.json','./icon-192.png','./icon-512.png'];
 
 self.addEventListener('install', function(e){
@@ -27,7 +28,7 @@ self.addEventListener('fetch', function(e){
   if(url.hostname.indexOf('cloudflareinsights') > -1) return;
 
   // البيانات: الشبكة أولاً كي تظهر تعديلاتك فوراً، والمخزون احتياطاً
-  if(url.pathname.indexOf('data.json') > -1 || url.pathname.indexOf('radud.json') > -1){
+  if(/(data|radud|config)\.json/.test(url.pathname)){
     e.respondWith(
       fetch(req).then(function(r){
         var cp = r.clone();
