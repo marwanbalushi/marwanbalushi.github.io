@@ -134,12 +134,8 @@ document.querySelectorAll(".tabs button").forEach(function(b){
 function doorNames(){return CFG.doors.map(function(d){return d.pred?d.subj+" "+d.pred:d.subj})}
 /* التبويب أُلغي — تبقى الأبواب سطرَ تعريفٍ يُحرَّر من «الهوية» */
 function hideDoorTools(){
-  ["fdoor","bulkdoor","fdoorsel"].forEach(function(id){
-    var el=$(id); if(!el) return;
-    var p=el.parentNode;
-    if(p && p!==document.body && !p.querySelector("#fform") && p.children.length<=3)
-      p.style.display="none";
-    else el.style.display="none"});
+  /* الأبواب لا تظهر للقارئ، لكن أدواتها تبقى لك في اللوحة
+     لتنظّم الحقل الكامن وتستعمله متى شئت. */
   var box=$("doors");
   if(box && box.parentNode){
     var kids=box.parentNode.children;
@@ -220,7 +216,8 @@ function render(more){
   box.insertAdjacentHTML("beforeend",n.map(function(e){
     return '<div class="card'+(picked[e.id]?" pick":"")+'" data-id="'+e.id+'">'+
       '<div class="chk">✓</div><div class="bd"><p class="m">'+e.d+
-      '<span class="pill">'+(e.f==="waqfah"?"طويل":"قصير")+"</span>"+
+      (e.dk?" · <b>"+esc(e.door)+"</b>":"")+
+      '<span class="pill">'+esc((CFG.forms&&CFG.forms[e.f])||(e.f==="waqfah"?"مطوّلة":"شذرة"))+"</span>"+
       (e.m&&e.m.length?'<span class="pill">'+AR(e.m.length)+" وسائط</span>":"")+
       (e.draft?'<span class="pill d">مسوّدة</span>':"")+
       (e.sel===1?'<span class="pill">مختارة</span>':e.sel===-1?'<span class="pill">مستبعَدة</span>':"")+
@@ -280,12 +277,26 @@ function mkBulkSel(){
         if(val===0)delete e.sel; else e.sel=val});
       commitData(msg)};
     return b};
+  /* تحويل الشكل جماعياً */
+  var mkf=function(id,txt,val,msg){
+    var b=document.createElement("button");
+    b.id=id;b.type="button";b.className=anchor.className||"sm";
+    b.style.marginInlineStart="8px";b.textContent=txt;
+    b.onclick=function(){
+      if(!okBulk(msg))return;
+      DATA.forEach(function(e){if(picked[e.id])e.f=val});
+      commitData(msg)};
+    return b};
+  var f1=mkf("bulklong","اجعلها "+((CFG.forms&&CFG.forms.waqfah)||"مطوّلات"),"waqfah",
+             "ستصير "+((CFG.forms&&CFG.forms.waqfah)||"مطوّلات"));
+  var f2=mkf("bulkshort","اجعلها "+((CFG.forms&&CFG.forms.shathrah)||"شذرات"),"shathrah",
+             "ستصير "+((CFG.forms&&CFG.forms.shathrah)||"شذرات"));
+
   var a=mk("bulksel","اجعلها مختارة",1,"ستدخل المختارات");
   var b=mk("bulkunsel","استبعدها",-1,"ستخرج من المختارات");
   var c=mk("bulkautosel","أعِدها للتلقائيّ",0,"سيعود حكمها إلى الطول");
-  anchor.parentNode.insertBefore(c,anchor.nextSibling);
-  anchor.parentNode.insertBefore(b,anchor.nextSibling);
-  anchor.parentNode.insertBefore(a,anchor.nextSibling)}
+  [f2,f1,c,b,a].forEach(function(x){
+    anchor.parentNode.insertBefore(x,anchor.nextSibling)})}
 
 /* ---------- الوسائط ---------- */
 (function(){var st=document.createElement("style");
