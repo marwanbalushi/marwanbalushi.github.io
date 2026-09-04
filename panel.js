@@ -100,7 +100,7 @@ function boot(){
     if(!r.ok) throw new Error("المفتاح لا يملك صلاحية على المستودع");return r.json()})
   .then(function(j){
     j.tree.forEach(function(f){
-      if(/^(data|config|data-recent)\.json$|^(rss|sitemap)\.xml$|^(about|archive)\.html$/.test(f.path))SHA[f.path]=f.sha});
+      if(/^(data|config|data-recent)\.json$|^(rss|sitemap)\.xml$|^(about|archive|mukhtarat)\.html$/.test(f.path))SHA[f.path]=f.sha});
     if(!SHA["data.json"]) throw new Error("لم أجد data.json");
     try{localStorage.setItem("ghunlocked","1")}catch(e){}
     return Promise.all([
@@ -679,6 +679,24 @@ function buildAbout(){
   return rootPage({file:"about.html",title:xe(s.name),desc:xe(snip(s.about,155)),body:body,
     foot:'<a href="archive.html">الأرشيف الزمني</a><br>'+xe(s.name)+(s.location?" · "+xe(s.location):"")})}
 
+/* المختارات — أطول النصوص وأثقلها، تُبنى آلياً من حدٍّ في الإعدادات */
+function selectedOf(){
+  var lim=(CFG.layout&&CFG.layout.selectedChars)||900;
+  return DATA.filter(function(e){return !e.draft&&e.t.length>lim})}
+
+function buildSelected(){
+  var sel=selectedOf();
+  var body='<main class="arch">'+
+    '<p style="color:var(--muted);font-size:calc(var(--body)*.72);margin:0 0 6px">'+
+    AR(sel.length)+' نصّاً مطوّلاً — أثقل ما في الأرشيف.</p>'+
+    "<ul>"+sel.map(function(e){
+      return '<li><a href="p/'+e.id+'.html"><span class="ad">'+xe(e.d)+
+        ' · '+AR(Math.max(1,Math.round(e.t.trim().split(/\s+/).length/180)))+' دقيقة</span>'+
+        xe(snip(e.t,96))+"</a></li>"}).join("")+"</ul></main>";
+  return rootPage({file:"mukhtarat.html",title:"مختارات · "+xe(CFG.site.name),
+    desc:"أطول نصوص "+xe(CFG.site.name)+" وأكثفها — "+AR(sel.length)+" نصّاً",
+    body:body,foot:'<a href="archive.html">الأرشيف الزمني</a> · <a href="about.html">عن الكاتب</a><br>'+xe(CFG.site.name)})}
+
 function buildArchive(){
   var pub=DATA.filter(function(e){return !e.draft}),by={},order=[];
   pub.forEach(function(e){var y=e.iso.slice(0,4);if(!by[y]){by[y]=[];order.push(y)}by[y].push(e)});
@@ -741,6 +759,7 @@ function rebuildAll(){
         entries.push({path:"p/style.css",mode:"100644",type:"blob",content:buildCSS()});
         entries.push({path:"about.html",mode:"100644",type:"blob",content:buildAbout()});
         entries.push({path:"archive.html",mode:"100644",type:"blob",content:buildArchive()});
+        entries.push({path:"mukhtarat.html",mode:"100644",type:"blob",content:buildSelected()});
         entries.push({path:"sitemap.xml",mode:"100644",type:"blob",content:buildSitemap()});
         entries.push({path:"rss.xml",mode:"100644",type:"blob",content:buildRSS()});
         entries.push({path:"data-recent.json",mode:"100644",type:"blob",
@@ -837,6 +856,7 @@ function buildSitemap(){
     "<url><loc>"+BASEURL+"</loc><changefreq>daily</changefreq><priority>1.0</priority></url>"+
     "<url><loc>"+BASEURL+"about.html</loc><priority>0.8</priority></url>"+
     "<url><loc>"+BASEURL+"archive.html</loc><changefreq>weekly</changefreq><priority>0.6</priority></url>"+
+    "<url><loc>"+BASEURL+"mukhtarat.html</loc><priority>0.9</priority></url>"+
     pub.map(function(e){return "<url><loc>"+BASEURL+"p/"+e.id+".html</loc><lastmod>"+xe(e.iso)+"</lastmod></url>"}).join("")+
     "</urlset>"}
 function postPage(e){
@@ -888,7 +908,7 @@ function postPage(e){
    (CFG.layout.showEndMark!==false?'<div class="end" aria-hidden="true"><i></i><span></span><i></i></div>\n':"")+
    "</article>\n</main>\n"+pNav(e)+"\n"+
    '<footer class="foot">\n<div class="fl" aria-hidden="true"><i></i><span class="lz"></span><i></i></div>\n'+
-   '<a href="../archive.html">الأرشيف الزمني</a><br>'+xe(CFG.site.name)+
+   '<a href="../mukhtarat.html">مختارات</a> · <a href="../archive.html">الأرشيف</a><br>'+xe(CFG.site.name)+
    (CFG.site.location?" · "+xe(CFG.site.location):"")+"\n</footer>\n"+pSup()+"\n"+cpjs+supjs+beacon+"\n</body>\n</html>\n"}
 function putRaw(path,text,msg){
   var body={message:msg,content:b64e(text),branch:BRANCH};
@@ -916,6 +936,8 @@ function commitData(msg,el){
     return putRaw("data-recent.json",JSON.stringify(recentOf(DATA)),"تحديث الدفعة الأولى")
   }).then(function(){
     return putRaw("archive.html",buildArchive(),"تحديث الأرشيف")
+  }).then(function(){
+    return putRaw("mukhtarat.html",buildSelected(),"تحديث المختارات")
   }).then(function(){
     return putRaw("rss.xml",buildRSS(),"تحديث التغذية")
   }).then(function(){

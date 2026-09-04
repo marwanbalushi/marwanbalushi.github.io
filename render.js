@@ -199,6 +199,8 @@
 
     $("q").placeholder = "ابحث في " + arn(DATA.length) + " نصّاً…";
     $("foot").innerHTML = '<div class="fl" aria-hidden="true"><i></i><span class="lz"></span><i></i></div>' +
+      '<a href="mukhtarat.html" style="border-bottom:var(--rulew) solid var(--gold)">مختارات</a>' +
+      '<span class="sep"> · </span>' +
       '<a href="archive.html" style="border-bottom:var(--rulew) solid var(--rule)">الأرشيف الزمني</a><br>' +
       esc(CFG.site.name) + (CFG.site.location ? " · " + esc(CFG.site.location) : "");
   }

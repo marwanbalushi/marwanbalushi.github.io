@@ -83,7 +83,8 @@
     "gallery": "grid",
     "showReadingTime": true,
     "showEndMark": true,
-    "wideMedia": true
+    "wideMedia": true,
+    "selectedChars": 900
   },
   "share": {
     "whatsapp": true,
