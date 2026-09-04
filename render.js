@@ -358,7 +358,8 @@
     return DATA.filter(function (e) {
       return !e.draft &&
         (form === "all" ? true
-          : form === "sel" ? e.t.length > ((CFG.layout && CFG.layout.selectedChars) || 900)
+          : form === "sel" ? (e.sel === 1 ? true : e.sel === -1 ? false
+              : e.t.length > ((CFG.layout && CFG.layout.selectedChars) || 900))
           : e.f === form) &&
         (!nq || (NORM[e.id] || "").indexOf(nq) > -1);
     });

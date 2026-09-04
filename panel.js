@@ -223,6 +223,7 @@ function render(more){
       '<span class="pill">'+(e.f==="waqfah"?"طويل":"قصير")+"</span>"+
       (e.m&&e.m.length?'<span class="pill">'+AR(e.m.length)+" وسائط</span>":"")+
       (e.draft?'<span class="pill d">مسوّدة</span>':"")+
+      (e.sel===1?'<span class="pill">مختارة</span>':e.sel===-1?'<span class="pill">مستبعَدة</span>':"")+
       '</p><p class="t">'+esc(e.t)+"</p></div></div>"}).join(""));
   shown+=n.length;
   $("more").style.display=shown<L.length?"block":"none";
@@ -367,7 +368,8 @@ function openF(e){
   $("fform").value=e?e.f:"shathrah";
   var mp=muscatParts();
   $("fdate").value=e?e.iso:mp.date;
-  mkTimeField();
+  mkTimeField();mkSelField();
+  $("fsel").value = e ? String(e.sel|0) : "0";
   $("ftime").value = e ? (e.at&&e.at.length>=16 ? e.at.slice(11,16) : "") : mp.time;
   $("fdraft").checked=e?!!e.draft:false;
   MED0=e&&e.m?e.m.map(function(m){return Object.assign({},m)}):[];
@@ -426,6 +428,20 @@ function fmtTime(at){
   return AR(h)+":"+AR(mm)+" "+ap}
 
 /* خانة الساعة تحت التاريخ — تُبنى من الجافاسكربت */
+/* علامة الاختيار — تُبنى بجانب «مسوّدة» */
+function mkSelField(){
+  if($("fsel"))return;
+  var dr=$("fdraft");if(!dr||!dr.parentNode)return;
+  var w=document.createElement("div");
+  w.style.cssText="margin-top:10px;display:flex;align-items:center;gap:9px;flex-wrap:wrap";
+  w.innerHTML='<span style="font-size:13px;opacity:.75">المختارات:</span>'+
+    '<select id="fsel" style="font-family:inherit;font-size:14px;padding:5px 9px;border-radius:4px">'+
+    '<option value="0">تلقائيّ — بحسب الطول</option>'+
+    '<option value="1">مختارة — تدخل ولو قصرت</option>'+
+    '<option value="-1">مستبعَدة — تخرج ولو طالت</option></select>';
+  dr.parentNode.insertBefore(w, dr.nextSibling);
+  $("fsel").addEventListener("change",drawFPrev)}
+
 function mkTimeField(){
   if($("ftime"))return;
   var fd=$("fdate");if(!fd||!fd.parentNode)return;
@@ -462,6 +478,8 @@ function collect(){
     door:door,dk:dkOf(door),f:$("fform").value,m:MED,n:1};
   var tm=$("ftime")?$("ftime").value:"";
   if(/^\d{2}:\d{2}$/.test(tm))o.at=iso+"T"+tm+":00+04:00";
+  var sv=$("fsel")?parseInt($("fsel").value,10):0;
+  if(sv===1||sv===-1)o.sel=sv;
   if($("fdraft").checked)o.draft=true;
   return o}
 $("save").onclick=function(){
@@ -680,9 +698,14 @@ function buildAbout(){
     foot:'<a href="archive.html">الأرشيف الزمني</a><br>'+xe(s.name)+(s.location?" · "+xe(s.location):"")})}
 
 /* المختارات — أطول النصوص وأثقلها، تُبنى آلياً من حدٍّ في الإعدادات */
+/* مختارة = مؤشَّرة بيدك، أو تجاوزت الحدّ ولم تُستبعَد */
+function isSel(e,lim){
+  if(e.sel===1)return true;
+  if(e.sel===-1)return false;
+  return e.t.length>lim}
 function selectedOf(){
   var lim=(CFG.layout&&CFG.layout.selectedChars)||900;
-  return DATA.filter(function(e){return !e.draft&&e.t.length>lim})}
+  return DATA.filter(function(e){return !e.draft&&isSel(e,lim)})}
 
 function buildSelected(){
   var sel=selectedOf();
