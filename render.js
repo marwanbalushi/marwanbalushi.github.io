@@ -206,11 +206,11 @@
       b.onclick = function () {
         location.hash = "#/"; form = b.dataset.f;
         fb.querySelectorAll("button").forEach(function (x) { x.classList.toggle("on", x === b); });
-        shown = 0; render();
+        shown = 0; render(); qHint();
       };
     });
 
-    $("q").placeholder = "ابحث في " + arn(DATA.length) + " نصّاً…";
+    qHint();
     $("foot").innerHTML = '<div class="fl" aria-hidden="true"><i></i><span class="lz"></span><i></i></div>' +
       '<a href="archive.html" style="border-bottom:var(--rulew) solid var(--rule)">الأرشيف الزمني</a><br>' +
       esc(CFG.site.name) + (CFG.site.location ? " · " + esc(CFG.site.location) : "");
@@ -373,6 +373,20 @@
     });
   }
 
+  /* نطاق البحث المعلن — عددُ ما يشمله الزرّ المضيء */
+  function scopeCount() {
+    var lim = (CFG.layout && CFG.layout.selectedChars) || 900;
+    return DATA.filter(function (e) {
+      return !e.draft &&
+        (form === "all" ? true
+          : form === "sel" ? (e.sel === 1 ? true : e.sel === -1 ? false : e.t.length > lim)
+          : e.f === form);
+    }).length;
+  }
+  function qHint() {
+    var q = $("q"); if (q) q.placeholder = "ابحث في " + arn(scopeCount()) + " نصّاً…";
+  }
+
   function filtered() {
     var nq = query ? norm(query) : "";
     return DATA.filter(function (e) {
@@ -477,7 +491,7 @@
       .then(function (all) {
         var keep = shown;
         ingest(all); FULL = true;
-        $("q").placeholder = "ابحث في " + arn(DATA.length) + " نصّاً…";
+        qHint();
         $("q").disabled = false;
         if (first) { buildMast(); shown = 0; render(); route(); analytics(CFG); return; }
         countForms(); shown = 0; render();
