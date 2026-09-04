@@ -111,8 +111,8 @@ function boot(){
     sortData();
     $("login").className="wrap hide";$("setup").className="wrap hide";
     $("app").className="";$("foot").className="foot";
-    stt("مفتوح · "+AR(DATA.length)+" مدخلاً");
-    buildIdentity();buildLook();drawPresets();fillDoorSelects();hideDoorTools();render();mkDraftBtn();
+    stt("مفتوح · "+AR(DATA.length)+" مدخلاً · "+AR(selectedOf().length)+" مختارة");
+    buildIdentity();buildLook();drawPresets();fillDoorSelects();hideDoorTools();render();mkDraftBtn();mkBulkSel();
     var h=location.hash.replace("#/","").replace("#","").trim();
     if(h==="new") openF(null);
     else if(h){var e=DATA.filter(function(x){return x.id===h})[0];if(e)openF(e)}
@@ -263,6 +263,29 @@ $("bulkdraft").onclick=function(){
 $("bulkpub").onclick=function(){
   if(!okBulk("سيُنشر"))return;
   DATA.forEach(function(e){if(picked[e.id])delete e.draft});commitData("نشر مداخل")};
+
+/* أزرار المختارات — تُبنى بجانب إخوتها في شريط التحديد */
+function mkBulkSel(){
+  if($("bulksel"))return;
+  var bar=$("bulkbar");if(!bar)return;
+  var anchor=$("bulkpub")||$("bulkdraft");if(!anchor)return;
+  var mk=function(id,txt,val,msg){
+    var b=document.createElement("button");
+    b.id=id;b.type="button";b.className=anchor.className||"sm";
+    b.style.marginInlineStart="8px";b.textContent=txt;
+    b.onclick=function(){
+      if(!okBulk(msg))return;
+      DATA.forEach(function(e){
+        if(!picked[e.id])return;
+        if(val===0)delete e.sel; else e.sel=val});
+      commitData(msg)};
+    return b};
+  var a=mk("bulksel","اجعلها مختارة",1,"ستدخل المختارات");
+  var b=mk("bulkunsel","استبعدها",-1,"ستخرج من المختارات");
+  var c=mk("bulkautosel","أعِدها للتلقائيّ",0,"سيعود حكمها إلى الطول");
+  anchor.parentNode.insertBefore(c,anchor.nextSibling);
+  anchor.parentNode.insertBefore(b,anchor.nextSibling);
+  anchor.parentNode.insertBefore(a,anchor.nextSibling)}
 
 /* ---------- الوسائط ---------- */
 (function(){var st=document.createElement("style");
@@ -967,7 +990,7 @@ function commitData(msg,el){
     return putRaw("sitemap.xml",buildSitemap(),"تحديث خريطة الموقع")
   }).then(function(){
     say(el,"حُفظ. تظهر التغييرات في المدونة خلال دقيقتين.");
-    stt("حُفظ · "+AR(DATA.length)+" مدخلاً");picked={};updBulk();
+    stt("حُفظ · "+AR(DATA.length)+" مدخلاً · "+AR(selectedOf().length)+" مختارة");picked={};updBulk();
     if($("form").className==="wrap")setTimeout(function(){$("cancel").click()},1200);else render();
   }).catch(function(e){say(el,e.message,"err");stt("فشل الحفظ")})}
 $("savecfg").onclick=function(){

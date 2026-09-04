@@ -104,6 +104,9 @@
       "font-family:var(--display);font-size:.96em;line-height:1.7;white-space:nowrap}" +
       ".mk svg{width:1.02em;height:1.02em;flex:none}" +
       ".mk:hover{color:var(--accent);border-color:var(--accent)}" +
+      ".cnt{font-style:normal;font-size:.72em;opacity:.55;margin-inline-start:5px;" +
+      "font-family:var(--text);letter-spacing:0}" +
+      "button.on .cnt{opacity:.8}" +
       ".seg .selbtn,#forms .selbtn{color:var(--gold)}" +
       ".seg .selbtn.on,#forms .selbtn.on{color:var(--accent)}" +
       ".creed{font-family:var(--display);font-size:calc(var(--body)*.9);line-height:2.15;" +
@@ -191,11 +194,14 @@
     Object.keys(CFG.forms).forEach(function (k) {
       if (k === "selected" || k === "sel") return;
       fb.insertAdjacentHTML("beforeend",
-        '<button data-f="' + k + '"' + (k === "all" ? ' class="on"' : "") + ">" + esc(CFG.forms[k]) + "</button>");
+        '<button data-f="' + k + '"' + (k === "all" ? ' class="on"' : "") + ">" + esc(CFG.forms[k]) +
+        '<i class="cnt" data-c="' + k + '"></i></button>');
     });
     /* «مختارات» — تصفية بالثقل لا بالشكل، فتجلس بجانب أخواتها */
     fb.insertAdjacentHTML("beforeend",
-      '<button data-f="sel" class="selbtn">' + esc(CFG.forms.selected || "مختارات") + "</button>");
+      '<button data-f="sel" class="selbtn">' + esc(CFG.forms.selected || "مختارات") +
+      '<i class="cnt" data-c="sel"></i></button>');
+    countForms();
     fb.querySelectorAll("button").forEach(function (b) {
       b.onclick = function () {
         location.hash = "#/"; form = b.dataset.f;
@@ -353,6 +359,20 @@
       esc(s.location || "") + "</p></div>";
   }
 
+  /* عدد ما تحت كل زرّ — يُحسب بعد وصول الأرشيف كاملاً */
+  function countForms() {
+    var lim = (CFG.layout && CFG.layout.selectedChars) || 900;
+    var pub = DATA.filter(function (e) { return !e.draft; });
+    document.querySelectorAll(".cnt").forEach(function (el) {
+      var k = el.dataset.c, n;
+      if (k === "all") n = pub.length;
+      else if (k === "sel") n = pub.filter(function (e) {
+        return e.sel === 1 ? true : e.sel === -1 ? false : e.t.length > lim; }).length;
+      else n = pub.filter(function (e) { return e.f === k; }).length;
+      el.textContent = arn(n);
+    });
+  }
+
   function filtered() {
     var nq = query ? norm(query) : "";
     return DATA.filter(function (e) {
@@ -460,7 +480,7 @@
         $("q").placeholder = "ابحث في " + arn(DATA.length) + " نصّاً…";
         $("q").disabled = false;
         if (first) { buildMast(); shown = 0; render(); route(); analytics(CFG); return; }
-        shown = 0; render();
+        countForms(); shown = 0; render();
         while (shown < keep && $("more").style.display !== "none") render();
         if (!$("hits").textContent) $("hits").textContent = "";
         route();
