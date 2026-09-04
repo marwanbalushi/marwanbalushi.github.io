@@ -45,8 +45,9 @@
   ],
   "forms": {
     "all": "الكل",
-    "waqfah": "وقفات",
-    "shathrah": "شذرات"
+    "waqfah": "مطوّلات",
+    "shathrah": "شذرات",
+    "selected": "مختارات"
   },
   "theme": {
     "light": {
@@ -78,7 +79,7 @@
     "displayScale": 1.0
   },
   "layout": {
-    "clampChars": 600,
+    "clampChars": 300,
     "perPage": 25,
     "gallery": "grid",
     "showReadingTime": true,

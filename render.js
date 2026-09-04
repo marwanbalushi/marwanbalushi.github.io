@@ -104,6 +104,8 @@
       "font-family:var(--display);font-size:.96em;line-height:1.7;white-space:nowrap}" +
       ".mk svg{width:1.02em;height:1.02em;flex:none}" +
       ".mk:hover{color:var(--accent);border-color:var(--accent)}" +
+      ".seg .selbtn,#forms .selbtn{color:var(--gold)}" +
+      ".seg .selbtn.on,#forms .selbtn.on{color:var(--accent)}" +
       ".creed{font-family:var(--display);font-size:calc(var(--body)*.9);line-height:2.15;" +
       "margin:15px 0 0;color:var(--muted)}" +
       /* سهما التنقّل */
@@ -189,6 +191,9 @@
       fb.insertAdjacentHTML("beforeend",
         '<button data-f="' + k + '"' + (k === "all" ? ' class="on"' : "") + ">" + esc(CFG.forms[k]) + "</button>");
     });
+    /* «مختارات» — تصفية بالثقل لا بالشكل، فتجلس بجانب أخواتها */
+    fb.insertAdjacentHTML("beforeend",
+      '<button data-f="sel" class="selbtn">' + esc(CFG.forms.selected || "مختارات") + "</button>");
     fb.querySelectorAll("button").forEach(function (b) {
       b.onclick = function () {
         location.hash = "#/"; form = b.dataset.f;
@@ -199,8 +204,6 @@
 
     $("q").placeholder = "ابحث في " + arn(DATA.length) + " نصّاً…";
     $("foot").innerHTML = '<div class="fl" aria-hidden="true"><i></i><span class="lz"></span><i></i></div>' +
-      '<a href="mukhtarat.html" style="border-bottom:var(--rulew) solid var(--gold)">مختارات</a>' +
-      '<span class="sep"> · </span>' +
       '<a href="archive.html" style="border-bottom:var(--rulew) solid var(--rule)">الأرشيف الزمني</a><br>' +
       esc(CFG.site.name) + (CFG.site.location ? " · " + esc(CFG.site.location) : "");
   }
@@ -352,7 +355,9 @@
     var nq = query ? norm(query) : "";
     return DATA.filter(function (e) {
       return !e.draft &&
-        (form === "all" || e.f === form) &&
+        (form === "all" ? true
+          : form === "sel" ? e.t.length > ((CFG.layout && CFG.layout.selectedChars) || 900)
+          : e.f === form) &&
         (!nq || (NORM[e.id] || "").indexOf(nq) > -1);
     });
   }
