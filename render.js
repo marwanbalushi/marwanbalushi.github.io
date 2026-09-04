@@ -187,7 +187,9 @@
     }).join(' <span class="sep">|</span> ');
 
     var fb = $("forms"); fb.innerHTML = "";
+    /* «selected» ليس شكلاً — زرّه يُضاف بعدُ، فلا يُطبع هنا */
     Object.keys(CFG.forms).forEach(function (k) {
+      if (k === "selected" || k === "sel") return;
       fb.insertAdjacentHTML("beforeend",
         '<button data-f="' + k + '"' + (k === "all" ? ' class="on"' : "") + ">" + esc(CFG.forms[k]) + "</button>");
     });
