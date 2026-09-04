@@ -112,7 +112,7 @@ function boot(){
     $("login").className="wrap hide";$("setup").className="wrap hide";
     $("app").className="";$("foot").className="foot";
     stt("مفتوح · "+AR(DATA.length)+" مدخلاً");
-    buildIdentity();buildLook();drawPresets();fillDoorSelects();render();mkDraftBtn();
+    buildIdentity();buildLook();drawPresets();fillDoorSelects();hideDoorTools();render();mkDraftBtn();
     var h=location.hash.replace("#/","").replace("#","").trim();
     if(h==="new") openF(null);
     else if(h){var e=DATA.filter(function(x){return x.id===h})[0];if(e)openF(e)}
@@ -132,6 +132,22 @@ document.querySelectorAll(".tabs button").forEach(function(b){
 
 /* ---------- الأبواب في القوائم ---------- */
 function doorNames(){return CFG.doors.map(function(d){return d.pred?d.subj+" "+d.pred:d.subj})}
+/* التبويب أُلغي — تبقى الأبواب سطرَ تعريفٍ يُحرَّر من «الهوية» */
+function hideDoorTools(){
+  ["fdoor","bulkdoor","fdoorsel"].forEach(function(id){
+    var el=$(id); if(!el) return;
+    var p=el.parentNode;
+    if(p && p!==document.body && !p.querySelector("#fform") && p.children.length<=3)
+      p.style.display="none";
+    else el.style.display="none"});
+  var box=$("doors");
+  if(box && box.parentNode){
+    var kids=box.parentNode.children;
+    for(var i=0;i<kids.length;i++){
+      var t=(kids[i].textContent||"").trim();
+      if(t==="الأبواب"||t==="أبواب المدونة"){
+        kids[i].textContent="سطر التعريف — يظهر تحت اسمك ولا يُضغط";break}}}}
+
 function fillDoorSelects(){
   var names=doorNames();
   [["fdoor","كل الأبواب"],["bulkdoor","انقل إلى باب…"]].forEach(function(p){
@@ -203,7 +219,7 @@ function render(more){
   var n=L.slice(shown,shown+PAGE);
   box.insertAdjacentHTML("beforeend",n.map(function(e){
     return '<div class="card'+(picked[e.id]?" pick":"")+'" data-id="'+e.id+'">'+
-      '<div class="chk">✓</div><div class="bd"><p class="m">'+e.d+" · <b>"+esc(e.door)+"</b>"+
+      '<div class="chk">✓</div><div class="bd"><p class="m">'+e.d+
       '<span class="pill">'+(e.f==="waqfah"?"طويل":"قصير")+"</span>"+
       (e.m&&e.m.length?'<span class="pill">'+AR(e.m.length)+" وسائط</span>":"")+
       (e.draft?'<span class="pill d">مسوّدة</span>':"")+
@@ -383,7 +399,7 @@ function drawFPrev(){
   $("fprev").setAttribute("style",pvVars());
   var tv=$("ftime")?$("ftime").value:"";
   var tp=/^\d{2}:\d{2}$/.test(tv)?" · "+fmtTime("0000-00-00T"+tv):"";
-  $("fprev").innerHTML='<p class="pm">'+date+tp+" · <b>"+esc($("fdoorsel").value)+"</b>"+rt+
+  $("fprev").innerHTML='<p class="pm">'+date+tp+rt+
     ($("fdraft").checked?" · مسوّدة":"")+"</p>"+med+
     '<p class="pt">'+esc(txt||"…")+"</p>"+
     (CFG.layout.showEndMark!==false?'<div class="pend"><i></i><span></span><i></i></div>':"")}
@@ -833,7 +849,7 @@ function postPage(e){
   var tstr=fmtTime(e.at);
   var meta='<time datetime="'+xe(e.at||e.iso)+'">'+xe(e.d)+"</time>"+
     (tstr?'<span class="dot">·</span>'+tstr:"")+
-    (e.dk?'<span class="dot">·</span><span class="dr">'+xe(e.door)+"</span>":"")+rt+pShare(e,url);
+    rt+pShare(e,url);
   var tok=(CFG.analytics&&CFG.analytics.cloudflareToken)||"";
   var S="script";
   var prefs="<"+S+">(function(){try{var R=document.documentElement,g=function(k){return localStorage.getItem(k)};"+

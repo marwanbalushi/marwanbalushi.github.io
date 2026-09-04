@@ -1,1 +1,101 @@
-{"site":{"name":"مروان بن يوسف البلوشي","tagline":"نكتبُ عن الفقدِ.. كي لا يبردَ في القلبِ شوقٌ.. ولا تتحجّرَ ذكرى","about":"نحن هنا.. كما نحن، بعيداً عن كلِّ ارتباكاتِ المنصّاتِ.","portrait":"https://media.marwanbalushi.com/mtlui93p-cinf25-M.jpg","location":"مسقط، سلطنة عُمان","contactLabel":"@marwanbalushi80","contactUrl":"https://x.com/marwanbalushi80","showAvatar":true,"avatarSize":66,"avatarCaption":"عن الكاتب"},"doors":[{"key":"oman","subj":"عُمان","pred":""},{"key":"marjieyah","subj":"الإسلام","pred":"مرجعيّة"},{"key":"huwiyah","subj":"الهُويّة","pred":"عزّة"},{"key":"karamah","subj":"الإنسان","pred":"كرامة"},{"key":"diblomasi","subj":"دبلوماسيّة","pred":""},{"key":"mutafarriqat","subj":"متفرّقات","pred":""}],"forms":{"all":"الكل","waqfah":"وقفات","shathrah":"شذرات"},"theme":{"light":{"paper":"#f7f5ef","paper2":"#ece9df","ink":"#1e211d","accent":"#1f5c3a","gold":"#9e2b2b","muted":"#59614f","rule":"#d8d6c7"},"dark":{"paper":"#12160f","paper2":"#1a1f17","ink":"#e7eadf","accent":"#7fbf97","gold":"#d98a8a","muted":"#8d9682","rule":"#28301f"}},"type":{"display":"Aref Ruqaa","text":"Scheherazade New","sizeMobile":20,"sizeDesktop":22,"lineHeight":1.85,"measure":32,"displayScale":1},"layout":{"clampChars":600,"perPage":25,"gallery":"grid","showReadingTime":true,"showEndMark":true,"wideMedia":true},"share":{"whatsapp":true,"x":true,"facebook":true,"telegram":false,"copy":true},"media":{"base":"https://media.marwanbalushi.com"},"analytics":{"cloudflareToken":"f1a810bacea944b7a593fca594645f10"}}
+{
+  "site": {
+    "name": "مروان يوسف البلوشي",
+    "tagline": "نكتبُ عن الفقدِ.. كي لا يبردَ في القلبِ شوقٌ.. ولا تتحجّرَ ذكرى",
+    "about": "نحن هنا.. كما نحن، بعيداً عن كلِّ ارتباكاتِ المنصّاتِ وصخبِ الافتراضيين.",
+    "portrait": "portrait.jpg",
+    "location": "مسقط، سلطنة عُمان",
+    "contactLabel": "@marwanbalushi80",
+    "contactUrl": "https://x.com/marwanbalushi80",
+    "showAvatar": true,
+    "avatarSize": 66,
+    "avatarCaption": "عن الكاتب"
+  },
+  "doors": [
+    {
+      "key": "oman",
+      "subj": "عُمان",
+      "pred": ""
+    },
+    {
+      "key": "marjieyah",
+      "subj": "الإسلام",
+      "pred": "مرجعيّة"
+    },
+    {
+      "key": "huwiyah",
+      "subj": "الهُويّة",
+      "pred": "عزّة"
+    },
+    {
+      "key": "karamah",
+      "subj": "الإنسان",
+      "pred": "كرامة"
+    },
+    {
+      "key": "diblomasi",
+      "subj": "دبلوماسيّة",
+      "pred": ""
+    },
+    {
+      "key": "mutafarriqat",
+      "subj": "متفرّقات",
+      "pred": ""
+    }
+  ],
+  "forms": {
+    "all": "الكل",
+    "waqfah": "وقفات",
+    "shathrah": "شذرات"
+  },
+  "theme": {
+    "light": {
+      "paper": "#F8F4EE",
+      "paper2": "#F1EBE2",
+      "ink": "#241F1E",
+      "accent": "#5A1F28",
+      "gold": "#A8834B",
+      "muted": "#6B5A56",
+      "rule": "#E2D8CD"
+    },
+    "dark": {
+      "paper": "#191614",
+      "paper2": "#211D19",
+      "ink": "#E9E1D6",
+      "accent": "#C9A063",
+      "gold": "#C9A063",
+      "muted": "#9A9088",
+      "rule": "#332C27"
+    }
+  },
+  "type": {
+    "display": "Amiri",
+    "text": "Scheherazade New",
+    "sizeMobile": 20,
+    "sizeDesktop": 22,
+    "lineHeight": 1.85,
+    "measure": 32,
+    "displayScale": 1.0
+  },
+  "layout": {
+    "clampChars": 600,
+    "perPage": 25,
+    "gallery": "grid",
+    "showReadingTime": true,
+    "showEndMark": true,
+    "wideMedia": true
+  },
+  "share": {
+    "whatsapp": true,
+    "x": true,
+    "facebook": true,
+    "telegram": false,
+    "copy": true
+  },
+  "media": {
+    "base": "https://media.marwanbalushi.com"
+  },
+  "analytics": {
+    "cloudflareToken": "f1a810bacea944b7a593fca594645f10"
+  }
+}

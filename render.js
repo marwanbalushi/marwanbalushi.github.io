@@ -104,6 +104,8 @@
       "font-family:var(--display);font-size:.96em;line-height:1.7;white-space:nowrap}" +
       ".mk svg{width:1.02em;height:1.02em;flex:none}" +
       ".mk:hover{color:var(--accent);border-color:var(--accent)}" +
+      ".creed{font-family:var(--display);font-size:calc(var(--body)*.9);line-height:2.15;" +
+      "margin:15px 0 0;color:var(--muted)}" +
       /* سهما التنقّل */
       ".sup{position:fixed;inset-inline-end:14px;bottom:16px;z-index:40;display:none;" +
       "flex-direction:column;gap:7px}" +
@@ -172,28 +174,15 @@
         '<span class="avcap">' + esc(s.avatarCaption || "عن الكاتب") + "</span></a>";
     }
     h += '<div class="fl" aria-hidden="true"><i></i><span class="lz"></span><i></i></div>' +
-         '<nav class="doors" id="doors" aria-label="أبواب المدونة"></nav>' +
+         '<p class="creed" id="doors"></p>' +
          '<p class="tag">' + esc(s.tagline) + "</p>";
     $("mast").innerHTML = h;
 
-    var dn = $("doors");
-    CFG.doors.forEach(function (d, i) {
-      if (i) dn.insertAdjacentHTML("beforeend", '<span class="sep">|</span>');
-      var full = d.pred ? d.subj + " " + d.pred : d.subj;
-      dn.insertAdjacentHTML("beforeend",
-        '<b data-d="' + esc(full) + '"><span class="subj">' + esc(d.subj) + "</span>" +
-        (d.pred ? ' <span class="pred">' + esc(d.pred) + "</span>" : "") + "</b>");
-    });
-    dn.onclick = function (e) {
-      var b = e.target.closest("b"); if (!b) return;
-      location.hash = "#/";
-      door = door === b.dataset.d ? null : b.dataset.d;
-      dn.querySelectorAll("b").forEach(function (x) {
-        x.classList.toggle("off", !!door && x.dataset.d !== door);
-        x.classList.toggle("sel", door === x.dataset.d);
-      });
-      shown = 0; render();
-    };
+    /* سطرُ تعريفٍ يُقرأ ولا يُضغط — تحرّره من «الهوية» في اللوحة */
+    $("doors").innerHTML = (CFG.doors || []).map(function (d) {
+      return '<span class="subj">' + esc(d.subj) + "</span>" +
+             (d.pred ? ' <span class="pred">' + esc(d.pred) + "</span>" : "");
+    }).join(' <span class="sep">|</span> ');
 
     var fb = $("forms"); fb.innerHTML = "";
     Object.keys(CFG.forms).forEach(function (k) {
@@ -313,7 +302,6 @@
     var tstr = fmtTime(e.at);
     var meta = '<p class="meta">' + (solo ? e.d : '<a href="#/' + e.id + '">' + e.d + "</a>") +
       (tstr ? '<span class="dot">·</span>' + tstr : "") +
-      (e.dk ? '<span class="dot">·</span><span class="dr">' + esc(e.door) + "</span>" : "") +
       (L.showReadingTime && e.t.length > 400 ? '<span class="dot">·</span>' + readTime(e.t) : "") +
       (e.draft ? '<span class="draft">مسوّدة</span>' : "") +
       (long ? '<a class="mk" href="#/' + e.id +
@@ -363,7 +351,6 @@
     return DATA.filter(function (e) {
       return !e.draft &&
         (form === "all" || e.f === form) &&
-        (!door || e.door === door) &&
         (!nq || (NORM[e.id] || "").indexOf(nq) > -1);
     });
   }
