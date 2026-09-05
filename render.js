@@ -314,7 +314,8 @@
       '" target="_blank" rel="noopener" title="نُشر أوّلاً في إكس — اضغط لفتح الأصل"' +
       ' aria-label="نُشر أوّلاً في إكس" style="display:inline-flex;align-items:center;' +
       'justify-content:center;width:17px;height:17px;border-radius:50%;vertical-align:middle;' +
-      'margin-inline-start:8px;opacity:.34;color:inherit;text-decoration:none">' +
+      'margin-inline-start:2px;flex:none;opacity:.8;color:var(--muted);' +
+      'border:var(--rulew) solid var(--rule);text-decoration:none">' +
       IC.x.replace("<svg", '<svg width="10" height="10"') + "</a>";
   }
 
