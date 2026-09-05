@@ -295,6 +295,29 @@
     supUpd();
   }
 
+  /* ---------- شعار إكس: من أين جاء النصّ ---------- */
+  function xHandle() {
+    var u = (CFG.site && CFG.site.contactUrl) || "";
+    var m = u.match(/(?:x|twitter)\.com\/([A-Za-z0-9_]{1,15})/);
+    return m ? m[1] : "i";
+  }
+  function srcId(e) {
+    var v = String(e.src || "");
+    if (/^\d{15,20}$/.test(v)) return v;
+    v = String(e.id || "");
+    return /^\d{15,20}$/.test(v) ? v : "";
+  }
+  function xBadge(e) {
+    var id = srcId(e);
+    if (!id) return "";
+    return '<a class="xsrc" href="https://x.com/' + xHandle() + "/status/" + id +
+      '" target="_blank" rel="noopener" title="نُشر أوّلاً في إكس — اضغط لفتح الأصل"' +
+      ' aria-label="نُشر أوّلاً في إكس" style="display:inline-flex;align-items:center;' +
+      'justify-content:center;width:17px;height:17px;border-radius:50%;vertical-align:middle;' +
+      'margin-inline-start:8px;opacity:.34;color:inherit;text-decoration:none">' +
+      IC.x.replace("<svg", '<svg width="10" height="10"') + "</a>";
+  }
+
   function card(e, solo) {
     var isW = e.f === "waqfah", med = "", L = CFG.layout;
     if (e.m && e.m.length) {
@@ -315,6 +338,7 @@
     var tstr = fmtTime(e.at);
     var meta = '<p class="meta">' + (solo ? e.d : '<a href="#/' + e.id + '">' + e.d + "</a>") +
       (tstr ? '<span class="dot">·</span>' + tstr : "") +
+      xBadge(e) +
       (L.showReadingTime && e.t.length > 400 ? '<span class="dot">·</span>' + readTime(e.t) : "") +
       (e.draft ? '<span class="draft">مسوّدة</span>' : "") +
       (long ? '<a class="mk" href="#/' + e.id +
