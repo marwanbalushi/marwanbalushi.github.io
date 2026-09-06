@@ -107,6 +107,7 @@
       ".cnt{font-style:normal;font-size:.72em;opacity:.55;margin-inline-start:5px;" +
       "font-family:var(--text);letter-spacing:0}" +
       "button.on .cnt{opacity:.8}" +
+      ".seg .doorbtn,#forms .doorbtn{color:var(--accent)}" +
       ".seg .selbtn,#forms .selbtn{color:var(--gold)}" +
       ".seg .selbtn.on,#forms .selbtn.on{color:var(--accent)}" +
       ".creed{font-family:var(--display);font-size:calc(var(--body)*.9);line-height:2.15;" +
@@ -201,16 +202,23 @@
     fb.insertAdjacentHTML("beforeend",
       '<button data-f="sel" class="selbtn">' + esc(CFG.forms.selected || "مختارات") +
       '<i class="cnt" data-c="sel"></i></button>');
+    /* بابٌ واحد يُرى — يُعرَّف في الإعدادات بمفتاحه واسمه، وسائرها كامنة */
+    var vd = (CFG.layout && CFG.layout.visibleDoor) || null;
+    if (vd && vd.key) {
+      fb.insertAdjacentHTML("beforeend",
+        '<button data-f="door:' + esc(vd.key) + '" class="doorbtn">' + esc(vd.name || vd.key) +
+        '<i class="cnt" data-c="door:' + esc(vd.key) + '"></i></button>');
+    }
     countForms();
     fb.querySelectorAll("button").forEach(function (b) {
       b.onclick = function () {
         location.hash = "#/"; form = b.dataset.f;
         fb.querySelectorAll("button").forEach(function (x) { x.classList.toggle("on", x === b); });
-        shown = 0; render(); qHint();
+        shown = 0; render();
       };
     });
 
-    qHint();
+    $("q").placeholder = "ابحث في " + arn(DATA.length) + " نصّاً…";
     $("foot").innerHTML = '<div class="fl" aria-hidden="true"><i></i><span class="lz"></span><i></i></div>' +
       '<a href="archive.html" style="border-bottom:var(--rulew) solid var(--rule)">الأرشيف الزمني</a><br>' +
       esc(CFG.site.name) + (CFG.site.location ? " · " + esc(CFG.site.location) : "");
@@ -295,30 +303,6 @@
     supUpd();
   }
 
-  /* ---------- شعار إكس: من أين جاء النصّ ---------- */
-  function xHandle() {
-    var u = (CFG.site && CFG.site.contactUrl) || "";
-    var m = u.match(/(?:x|twitter)\.com\/([A-Za-z0-9_]{1,15})/);
-    return m ? m[1] : "i";
-  }
-  function srcId(e) {
-    var v = String(e.src || "");
-    if (/^\d{15,20}$/.test(v)) return v;
-    v = String(e.id || "");
-    return /^\d{15,20}$/.test(v) ? v : "";
-  }
-  function xBadge(e) {
-    var id = srcId(e);
-    if (!id) return "";
-    return '<a class="xsrc" href="https://x.com/' + xHandle() + "/status/" + id +
-      '" target="_blank" rel="noopener" title="نُشر أوّلاً في إكس — اضغط لفتح الأصل"' +
-      ' aria-label="نُشر أوّلاً في إكس" style="display:inline-flex;align-items:center;' +
-      'justify-content:center;width:17px;height:17px;border-radius:50%;vertical-align:middle;' +
-      'margin-inline-start:2px;flex:none;opacity:.8;color:var(--muted);' +
-      'border:var(--rulew) solid var(--rule);text-decoration:none">' +
-      IC.x.replace("<svg", '<svg width="10" height="10"') + "</a>";
-  }
-
   function card(e, solo) {
     var isW = e.f === "waqfah", med = "", L = CFG.layout;
     if (e.m && e.m.length) {
@@ -339,8 +323,9 @@
     var tstr = fmtTime(e.at);
     var meta = '<p class="meta">' + (solo ? e.d : '<a href="#/' + e.id + '">' + e.d + "</a>") +
       (tstr ? '<span class="dot">·</span>' + tstr : "") +
-      xBadge(e) +
       (L.showReadingTime && e.t.length > 400 ? '<span class="dot">·</span>' + readTime(e.t) : "") +
+      (L.visibleDoor && e.dk === L.visibleDoor.key
+        ? '<span class="dot">·</span><span class="dr">' + esc(e.door) + "</span>" : "") +
       (e.draft ? '<span class="draft">مسوّدة</span>' : "") +
       (long ? '<a class="mk" href="#/' + e.id +
               '" title="النصّ أطول ممّا ترى — اضغط ليكتمل">' + IC.long + "نصّ طويل</a>" : "") +
@@ -390,7 +375,9 @@
     var pub = DATA.filter(function (e) { return !e.draft; });
     document.querySelectorAll(".cnt").forEach(function (el) {
       var k = el.dataset.c, n;
-      if (k === "all") n = pub.length;
+      if (k.indexOf("door:") === 0) { var dk = k.slice(5);
+        n = pub.filter(function (e) { return e.dk === dk; }).length; }
+      else if (k === "all") n = pub.length;
       else if (k === "sel") n = pub.filter(function (e) {
         return e.sel === 1 ? true : e.sel === -1 ? false : e.t.length > lim; }).length;
       else n = pub.filter(function (e) { return e.f === k; }).length;
@@ -398,25 +385,12 @@
     });
   }
 
-  /* نطاق البحث المعلن — عددُ ما يشمله الزرّ المضيء */
-  function scopeCount() {
-    var lim = (CFG.layout && CFG.layout.selectedChars) || 900;
-    return DATA.filter(function (e) {
-      return !e.draft &&
-        (form === "all" ? true
-          : form === "sel" ? (e.sel === 1 ? true : e.sel === -1 ? false : e.t.length > lim)
-          : e.f === form);
-    }).length;
-  }
-  function qHint() {
-    var q = $("q"); if (q) q.placeholder = "ابحث في " + arn(scopeCount()) + " نصّاً…";
-  }
-
   function filtered() {
     var nq = query ? norm(query) : "";
     return DATA.filter(function (e) {
       return !e.draft &&
-        (form === "all" ? true
+        (form.indexOf("door:") === 0 ? e.dk === form.slice(5)
+          : form === "all" ? true
           : form === "sel" ? (e.sel === 1 ? true : e.sel === -1 ? false
               : e.t.length > ((CFG.layout && CFG.layout.selectedChars) || 900))
           : e.f === form) &&
@@ -516,7 +490,7 @@
       .then(function (all) {
         var keep = shown;
         ingest(all); FULL = true;
-        qHint();
+        $("q").placeholder = "ابحث في " + arn(DATA.length) + " نصّاً…";
         $("q").disabled = false;
         if (first) { buildMast(); shown = 0; render(); route(); analytics(CFG); return; }
         countForms(); shown = 0; render();
