@@ -6,6 +6,16 @@
   function st(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
   function rd(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
   function esc(s) { return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;"); }
+
+  /* الأبواب الظاهرة كأزرار — «visibleDoors» جمعاً، و«visibleDoor» مفرداً للتوافق */
+  function visDoors() {
+    var L = (CFG && CFG.layout) || {};
+    if (L.visibleDoors && L.visibleDoors.length) return L.visibleDoors;
+    return (L.visibleDoor && L.visibleDoor.key) ? [L.visibleDoor] : [];
+  }
+  function isVisDoor(dk) {
+    return visDoors().some(function (v) { return v.key === dk; });
+  }
   function att(s) { return esc(s).replace(/"/g, "&quot;"); }
 
   /* القطع لا يشطر رمزاً تعبيرياً نصفين — فنصفُ الرمز يُعطب encodeURIComponent */
@@ -120,7 +130,21 @@
       "border:var(--rulew) solid var(--rule);box-shadow:0 1px 5px rgba(0,0,0,.09);transition:opacity .2s}" +
       ".sup button:hover{color:var(--accent);border-color:var(--gold)}" +
       ".sup svg{width:19px;height:19px}" +
-      "@media print{.sup{display:none!important}}";
+      "@media print{.sup{display:none!important}}" +
+      /* عارض الصورة الكاملة — نقرةٌ واحدة تُظهر الصورة بلا اقتطاع */
+      ".med figure img{cursor:zoom-in}" +
+      ".lbx{position:fixed;inset:0;z-index:90;display:flex;align-items:center;" +
+      "justify-content:center;background:rgba(12,10,9,.94);cursor:zoom-out;" +
+      "padding:22px;opacity:0;transition:opacity .18s}" +
+      ".lbx.on{opacity:1}" +
+      ".lbx img{max-width:100%;max-height:100%;width:auto;height:auto;" +
+      "object-fit:contain;border-radius:3px;box-shadow:0 6px 34px rgba(0,0,0,.5)}" +
+      ".lbx .lbxc{position:absolute;top:14px;inset-inline-end:16px;width:38px;height:38px;" +
+      "display:flex;align-items:center;justify-content:center;border-radius:50%;cursor:pointer;" +
+      "color:#EDE6DA;background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.22);" +
+      "font-size:21px;line-height:1;font-family:var(--text)}" +
+      ".lbx .lbxc:hover{background:rgba(255,255,255,.2)}" +
+      "@media print{.lbx{display:none!important}}";
     var rss = document.createElement("link");
     rss.rel = "alternate"; rss.type = "application/rss+xml";
     rss.title = cfg.site.name; rss.href = "rss.xml";
@@ -202,13 +226,12 @@
     fb.insertAdjacentHTML("beforeend",
       '<button data-f="sel" class="selbtn">' + esc(CFG.forms.selected || "مختارات") +
       '<i class="cnt" data-c="sel"></i></button>');
-    /* بابٌ واحد يُرى — يُعرَّف في الإعدادات بمفتاحه واسمه، وسائرها كامنة */
-    var vd = (CFG.layout && CFG.layout.visibleDoor) || null;
-    if (vd && vd.key) {
+    /* أبوابٌ تُرى — تُعرَّف في الإعدادات بمفاتيحها وأسمائها، وسائرها كامنة */
+    visDoors().forEach(function (vd) {
       fb.insertAdjacentHTML("beforeend",
         '<button data-f="door:' + esc(vd.key) + '" class="doorbtn">' + esc(vd.name || vd.key) +
         '<i class="cnt" data-c="door:' + esc(vd.key) + '"></i></button>');
-    }
+    });
     countForms();
     fb.querySelectorAll("button").forEach(function (b) {
       b.onclick = function () {
@@ -324,7 +347,7 @@
     var meta = '<p class="meta">' + (solo ? e.d : '<a href="#/' + e.id + '">' + e.d + "</a>") +
       (tstr ? '<span class="dot">·</span>' + tstr : "") +
       (L.showReadingTime && e.t.length > 400 ? '<span class="dot">·</span>' + readTime(e.t) : "") +
-      (L.visibleDoor && e.dk === L.visibleDoor.key
+      (isVisDoor(e.dk)
         ? '<span class="dot">·</span><span class="dr">' + esc(e.door) + "</span>" : "") +
       (e.draft ? '<span class="draft">مسوّدة</span>' : "") +
       (long ? '<a class="mk" href="#/' + e.id +
@@ -415,6 +438,37 @@
     var el = this;
     clearTimeout(tmr);
     tmr = setTimeout(function () { query = el.value.trim(); location.hash = "#/"; shown = 0; render(); }, 220);
+  });
+
+  /* ---------- عارض الصورة الكاملة ---------- */
+  var LBX = null;
+  function lbxClose() {
+    if (!LBX) return;
+    LBX.classList.remove("on");
+    var n = LBX; LBX = null;
+    setTimeout(function () { if (n && n.parentNode) n.remove(); }, 200);
+  }
+  function lbxOpen(srcUrl, alt) {
+    lbxClose();
+    var d = document.createElement("div");
+    d.className = "lbx";
+    d.setAttribute("role", "dialog");
+    d.setAttribute("aria-label", "عرض الصورة كاملةً");
+    d.innerHTML = '<span class="lbxc" role="button" aria-label="إغلاق">×</span>' +
+                  '<img src="' + esc(srcUrl) + '" alt="' + esc(alt || "") + '">';
+    document.body.appendChild(d);
+    LBX = d;
+    requestAnimationFrame(function () { d.classList.add("on"); });
+    d.addEventListener("click", lbxClose);
+  }
+  document.addEventListener("click", function (ev) {
+    var im = ev.target.closest(".med figure img");
+    if (!im) return;
+    ev.preventDefault();
+    lbxOpen(im.currentSrc || im.src, im.alt);
+  });
+  document.addEventListener("keydown", function (ev) {
+    if (ev.key === "Escape") lbxClose();
   });
 
   document.addEventListener("click", function (ev) {
