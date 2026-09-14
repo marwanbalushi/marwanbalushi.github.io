@@ -219,11 +219,15 @@
     /* «صور» ينقل إلى الألبوم، ولا يصفّي — فيُميَّز بسهم */
     fb.insertAdjacentHTML("beforeend",
       '<button type="button" class="galbtn">صور' + IC.arrow + "</button>");
-    fb.querySelector(".galbtn").onclick = function () { location.href = "suwar.html"; };
+    fb.querySelector(".galbtn").onclick = function (ev) {
+      ev.preventDefault(); ev.stopPropagation();
+      location.href = "suwar.html";
+    };
     countForms();
     fb.querySelectorAll("button").forEach(function (b) {
+      if (b.classList.contains("galbtn")) return;
       b.onclick = function () {
-        location.hash = "#/"; form = b.dataset.f;
+        location.hash = "#/"; form = b.dataset.f || "all";
         fb.querySelectorAll("button").forEach(function (x) { x.classList.toggle("on", x === b); });
         shown = 0; render();
       };
@@ -403,12 +407,13 @@
   function filtered() {
     var nq = query ? norm(query) : "";
     return DATA.filter(function (e) {
+      var f = form || "all";
       return !e.draft &&
-        (form.indexOf("door:") === 0 ? e.dk === form.slice(5)
-          : form === "all" ? true
-          : form === "sel" ? (e.sel === 1 ? true : e.sel === -1 ? false
+        (f.indexOf("door:") === 0 ? e.dk === f.slice(5)
+          : f === "all" ? true
+          : f === "sel" ? (e.sel === 1 ? true : e.sel === -1 ? false
               : e.t.length > ((CFG.layout && CFG.layout.selectedChars) || 900))
-          : e.f === form) &&
+          : e.f === f) &&
         (!nq || (NORM[e.id] || "").indexOf(nq) > -1);
     });
   }
