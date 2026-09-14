@@ -108,10 +108,9 @@
       ".cnt{font-style:normal;font-size:.72em;opacity:.55;margin-inline-start:5px;" +
       "font-family:var(--text);letter-spacing:0}" +
       "button.on .cnt{opacity:.8}" +
-      ".galbtn{display:inline-flex;align-items:center;gap:4px;color:var(--muted);" +
-      "font-family:inherit;font-size:inherit;padding:inherit;cursor:pointer;text-decoration:none}" +
-      ".galbtn:hover{color:var(--accent)}" +
-      ".galbtn svg{width:.8em;height:.8em;opacity:.6}" +
+      "#forms .galbtn{color:var(--muted)}" +
+      "#forms .galbtn:hover{color:var(--accent)}" +
+      "#forms .galbtn svg{width:.78em;height:.78em;opacity:.55;margin-inline-start:3px}" +
       ".pin{display:inline-flex;align-items:center;color:var(--gold);" +
       "border:var(--rulew) solid var(--gold);border-radius:4px;padding:1px 8px;" +
       "font-family:var(--display);font-size:.96em;line-height:1.7;white-space:nowrap}" +
@@ -219,7 +218,8 @@
     }
     /* «صور» ينقل إلى الألبوم، ولا يصفّي — فيُميَّز بسهم */
     fb.insertAdjacentHTML("beforeend",
-      '<a class="galbtn" href="suwar.html">صور' + IC.arrow + "</a>");
+      '<button type="button" class="galbtn">صور' + IC.arrow + "</button>");
+    fb.querySelector(".galbtn").onclick = function () { location.href = "suwar.html"; };
     countForms();
     fb.querySelectorAll("button").forEach(function (b) {
       b.onclick = function () {
@@ -497,6 +497,12 @@
     app.style.display = "";
   }
   window.addEventListener("hashchange", route);
+  /* الرجوع بزرّ المتصفّح يستعيد الصفحة من ذاكرته بلا تشغيل الشيفرة —
+     فنُعيد بناءها يدوياً كي لا يختفي الصفّ. */
+  window.addEventListener("pageshow", function (ev) {
+    if (!ev.persisted || !CFG || !DATA.length) return;
+    buildMast(); shown = 0; render(); route();
+  });
   window.addEventListener("hashchange", function () { setTimeout(supUpd, 80); });
 
   /* ---------- الإقلاع ---------- */
