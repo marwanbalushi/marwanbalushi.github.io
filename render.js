@@ -2,6 +2,7 @@
 (function () {
   var R = document.documentElement, $ = function (i) { return document.getElementById(i); };
   var CFG = null, DATA = [], form = "all", door = null, query = "", shown = 0, EDIT = false, SC = 1;
+  window.addEventListener("error", function () { /* لا يُسكت الصفحة كلها إن سقط جزء */ });
   var arn = function (n) { return String(n).replace(/\d/g, function (d) { return "٠١٢٣٤٥٦٧٨٩"[d]; }); };
   function st(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
   function rd(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
@@ -504,9 +505,20 @@
   window.addEventListener("hashchange", route);
   /* الرجوع بزرّ المتصفّح يستعيد الصفحة من ذاكرته بلا تشغيل الشيفرة —
      فنُعيد بناءها يدوياً كي لا يختفي الصفّ. */
-  window.addEventListener("pageshow", function (ev) {
-    if (!ev.persisted || !CFG || !DATA.length) return;
+  function revive() {
+    if (!CFG || !DATA.length) return;
+    form = "all"; query = ""; door = null;
+    try { $("q").value = ""; } catch (e) {}
     buildMast(); shown = 0; render(); route();
+    if (typeof supUpd === "function") setTimeout(supUpd, 60);
+  }
+  /* الرجوع من ذاكرة المتصفّح يستعيد الصفحة بلا تشغيل الشيفرة،
+     فتبقى العناصر ومُنصِتاتها مفقودة — فنُعيد البناء كاملاً. */
+  window.addEventListener("pageshow", function (ev) { if (ev.persisted) revive(); });
+  document.addEventListener("visibilitychange", function () {
+    if (document.visibilityState !== "visible") return;
+    var fb = $("forms");
+    if (fb && fb.children.length && !fb.querySelector(".galbtn")) revive();
   });
   window.addEventListener("hashchange", function () { setTimeout(supUpd, 80); });
 
