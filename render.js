@@ -65,6 +65,7 @@
     fb:   '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M22 12a10 10 0 1 0-11.6 9.9v-7h-2.5V12h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.4h-1.2c-1.2 0-1.6.8-1.6 1.6V12h2.7l-.4 2.9h-2.3v7A10 10 0 0 0 22 12z"/></svg>',
     tg:   '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M21.9 4.3 18.7 19c-.2 1-.9 1.3-1.8.8l-4.9-3.6-2.4 2.3c-.3.3-.5.5-1 .5l.4-5 9.1-8.2c.4-.4-.1-.6-.6-.2L6.3 12.8 1.5 11.3c-1-.3-1-1 .2-1.5l18.9-7.3c.9-.3 1.6.2 1.3 1.8z"/></svg>',
     cp:   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>',
+    arrow: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 5l-7 7 7 7"/></svg>',
     up:   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 15l-6-6-6 6"/></svg>',
     ok:   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>'
   };
@@ -107,6 +108,10 @@
       ".cnt{font-style:normal;font-size:.72em;opacity:.55;margin-inline-start:5px;" +
       "font-family:var(--text);letter-spacing:0}" +
       "button.on .cnt{opacity:.8}" +
+      ".galbtn{display:inline-flex;align-items:center;gap:4px;color:var(--muted);" +
+      "font-family:inherit;font-size:inherit;padding:inherit;cursor:pointer;text-decoration:none}" +
+      ".galbtn:hover{color:var(--accent)}" +
+      ".galbtn svg{width:.8em;height:.8em;opacity:.6}" +
       ".pin{display:inline-flex;align-items:center;color:var(--gold);" +
       "border:var(--rulew) solid var(--gold);border-radius:4px;padding:1px 8px;" +
       "font-family:var(--display);font-size:.96em;line-height:1.7;white-space:nowrap}" +
@@ -212,6 +217,9 @@
         '<button data-f="door:' + esc(vd.key) + '" class="doorbtn">' + esc(vd.name || vd.key) +
         '<i class="cnt" data-c="door:' + esc(vd.key) + '"></i></button>');
     }
+    /* «صور» ينقل إلى الألبوم، ولا يصفّي — فيُميَّز بسهم */
+    fb.insertAdjacentHTML("beforeend",
+      '<a class="galbtn" href="suwar.html">صور' + IC.arrow + "</a>");
     countForms();
     fb.querySelectorAll("button").forEach(function (b) {
       b.onclick = function () {
