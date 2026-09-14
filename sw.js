@@ -1,15 +1,9 @@
-/* عامل الخدمة — شبكة أولاً، والتخزين احتياط عند انقطاعها.
-   لا يخزّن البيانات ولا صفحات المداخل، فلا يبقى القارئ على نسخة قديمة أبداً. */
-var V = "mb-v4";
-var SHELL = ["./", "./index.html", "./portrait.jpg", "./icon-192.png", "./icon-512.png",
-             "./apple-touch-icon.png", "./manifest.json", "./card.jpg"];
+/* عامل الخدمة — يخزّن الصور والأيقونات وحدها.
+   ولا يمسّ الشيفرة ولا البيانات ولا الصفحات، فلا يعلق قارئ على نسخة قديمة. */
+var V = "mb-v6";
+var KEEP = /\.(png|jpe?g|webp|gif|svg|ico|woff2?)$/i;
 
-self.addEventListener("install", function (e) {
-  self.skipWaiting();
-  e.waitUntil(caches.open(V).then(function (c) {
-    return Promise.all(SHELL.map(function (u) { return c.add(u).catch(function () {}); }));
-  }));
-});
+self.addEventListener("install", function (e) { self.skipWaiting(); });
 
 self.addEventListener("activate", function (e) {
   e.waitUntil(caches.keys().then(function (ks) {
@@ -25,18 +19,19 @@ self.addEventListener("fetch", function (e) {
   try { url = new URL(req.url); } catch (x) { return; }
   if (url.origin !== self.location.origin) return;
 
+  /* الشيفرة والبيانات والصفحات: شبكة دائماً، بلا وسيط */
+  if (!KEEP.test(url.pathname)) return;
+
+  /* الصور: من التخزين إن وُجدت، وإلا من الشبكة ثم تُخزَّن */
   e.respondWith(
-    fetch(req).then(function (res) {
-      if (res && res.status === 200 && res.type === "basic" &&
-          !/\.(json|xml)$/.test(url.pathname) && url.pathname.indexOf("/p/") !== 0) {
-        var copy = res.clone();
-        caches.open(V).then(function (c) { c.put(req, copy); });
-      }
-      return res;
-    }).catch(function () {
-      return caches.match(req).then(function (hit) {
-        return hit || caches.match("./index.html");
+    caches.match(req).then(function (hit) {
+      return hit || fetch(req).then(function (res) {
+        if (res && res.status === 200 && res.type === "basic") {
+          var copy = res.clone();
+          caches.open(V).then(function (c) { c.put(req, copy); });
+        }
+        return res;
       });
-    })
+    }).catch(function () { return fetch(req); })
   );
 });
