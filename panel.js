@@ -609,8 +609,13 @@ function readLook(){
   CFG.type={display:$("t_display").value,text:$("t_text").value,
     sizeMobile:+$("t_sm").value,sizeDesktop:+$("t_sd").value,lineHeight:+$("t_lh").value,
     measure:+$("t_measure").value,displayScale:+$("t_ds").value};
+  /* نحفظ ما لا خانةَ له في اللوحة، كي لا يضيع عند الحفظ */
+  var keepL={};
+  ["selectedChars","visibleDoor"].forEach(function(k){
+    if(CFG.layout && CFG.layout[k]!==undefined) keepL[k]=CFG.layout[k]});
   CFG.layout={clampChars:+$("l_clamp").value,perPage:+$("l_page").value,gallery:$("l_gal").value,
     showReadingTime:$("l_rt").checked,showEndMark:$("l_end").checked,wideMedia:$("l_wide").checked};
+  Object.keys(keepL).forEach(function(k){CFG.layout[k]=keepL[k]});
   CFG.share={whatsapp:$("s_wa").checked,x:$("s_x").checked,facebook:$("s_fb").checked,
     telegram:$("s_tg").checked,copy:$("s_cp").checked}}
 $("tab-look").addEventListener("input",function(){readLook();drawPreview()});
