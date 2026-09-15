@@ -102,6 +102,13 @@
     "telegram": false,
     "copy": true
   },
+  "contact": {
+    "enabled": true,
+"endpoint": "https://rasail.mshri2557.workers.dev",
+    "turnstileKey": "",
+    "title": "راسِلْني",
+    "note": "رسالتك تصلني وحدي، ولا تُنشر."
+  },
   "media": {
     "base": "https://media.marwanbalushi.com"
   },
