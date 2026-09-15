@@ -1052,12 +1052,20 @@ function postPage(e){
    '<footer class="foot">\n<div class="fl" aria-hidden="true"><i></i><span class="lz"></span><i></i></div>\n'+
    '<a href="../mukhtarat.html">مختارات</a> · <a href="../suwar.html">الصور</a> · <a href="../archive.html">الأرشيف</a><br>'+xe(CFG.site.name)+
    (CFG.site.location?" · "+xe(CFG.site.location):"")+"\n</footer>\n"+pSup()+"\n"+cpjs+supjs+beacon+"\n</body>\n</html>\n"}
+/* تكتب ملفّاً نصّياً. وGitHub لا يقبل استبدال ملفٍّ قائم بلا علامته،
+   فإن لم تكن العلامة محفوظة عندنا جلبناها أوّلاً.
+   ونفحص جواب الخادم، فالفشل الصامت أسوأ من الفشل المعلن. */
 function putRaw(path,text,msg){
-  var body={message:msg,content:b64e(text),branch:BRANCH};
-  if(SHA[path])body.sha=SHA[path];
-  return api("/contents/"+path,{method:"PUT",body:JSON.stringify(body)})
-   .then(function(r){return r.json()}).then(function(j){
-     if(j.content&&j.content.sha)SHA[path]=j.content.sha;return j})}
+  var pre=SHA[path]?Promise.resolve(SHA[path])
+    :api("/contents/"+path+"?ref="+BRANCH).then(function(r){
+       return r.ok?r.json().then(function(j){return j.sha}):null},function(){return null});
+  return pre.then(function(sha){
+    var body={message:msg,content:b64e(text),branch:BRANCH};
+    if(sha)body.sha=sha;
+    return api("/contents/"+path,{method:"PUT",body:JSON.stringify(body)})
+     .then(function(r){return r.json().then(function(j){
+       if(!r.ok)throw new Error((j.message||"فشل الكتابة")+" — "+path);
+       if(j.content&&j.content.sha)SHA[path]=j.content.sha;return j})})})}
 
 function put(path,obj,msg){
   return api("/contents/"+path,{method:"PUT",body:JSON.stringify(

@@ -104,8 +104,8 @@
   },
   "contact": {
     "enabled": true,
-"endpoint": "https://rasail.mshri2557.workers.dev",
-    "turnstileKey": "    "turnstileKey": "0x4AAAAAAAE1VYyvPa3w_uVVm",
+    "endpoint": "https://rasail.mshri2557.workers.dev",
+    "turnstileKey": "0x4AAAAAAAE1VYyvPa3w_uVVm",
     "title": "راسِلْني",
     "note": "رسالتك تصلني وحدي، ولا تُنشر."
   },
