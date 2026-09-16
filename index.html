@@ -93,7 +93,12 @@ a.avlink{display:block;text-align:center;margin-top:16px}
  box-shadow:0 0 0 4px var(--paper),0 0 0 5px var(--rule);transition:transform .25s}
 a.avlink:hover .avatar{transform:scale(1.05)}
 .avcap{display:inline-block;font-family:var(--display);font-size:calc(var(--body)*.66);
- color:var(--accent);border-bottom:1.5px solid var(--gold);padding-bottom:2px;margin-bottom:4px}
+ color:var(--accent);background:var(--paper2);
+ border:var(--rulew) solid var(--rule);border-radius:999px;
+ padding:5px 17px 6px;margin-bottom:5px;
+ transition:background .25s ease,border-color .25s ease,padding .25s ease}
+a.avlink:hover .avcap,a.avlink:focus-visible .avcap{
+ background:var(--paper);border-color:var(--gold);padding-inline:21px}
 @keyframes avin{0%{opacity:0;transform:scale(.82)}60%{opacity:1;transform:scale(1.06)}100%{opacity:1;transform:scale(1)}}
 a.avlink .avatar{animation:avin .9s .35s ease-out both}
 a.avlink .avcap{animation:avin .7s .6s ease-out both}
