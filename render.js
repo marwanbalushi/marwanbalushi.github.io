@@ -357,7 +357,27 @@
       (long ? '<a class="cont" href="#/' + e.id + '">' + IC.down + "اقرأ التتمة</a>" : "");
     var endm = !long && CFG.layout.showEndMark !== false
       ? '<div class="end" aria-hidden="true"><i></i><span></span><i></i></div>' : "";
-    return '<article class="e">' + meta + med + body + endm + "</article>";
+    return '<article class="e">' + meta + med + body + qCard(e) + endm + "</article>";
+  }
+
+  /* بطاقة الاقتباس — مدخلٌ قديم يُشار إليه في مدخلٍ جديد.
+     تحمل تاريخه وطرفاً من نصّه وصورته الصغيرة، وتفتحه بالضغط. */
+  function qCard(e) {
+    if (!e.q) return "";
+    var t = null;
+    for (var i = 0; i < DATA.length; i++) { if (DATA[i].id === e.q) { t = DATA[i]; break } }
+    if (!t) return "";
+    var im = "";
+    for (var j = 0; j < (t.m || []).length; j++) {
+      var f = t.m[j].f || "";
+      if (f && !/\.(mp4|webm|mov|m4v)$/i.test(f)) {
+        im = '<img class="qi" loading="lazy" src="' + src(t.m[j]) + '" alt="">';
+        break;
+      }
+    }
+    return '<a class="qc" href="#/' + t.id + '">' +
+      '<span class="qb"><span class="qm">' + esc(t.d) + "</span>" +
+      '<span class="qt">' + esc(cut(t.t, 200)) + "</span></span>" + im + "</a>";
   }
 
   function shareBar(e) {
