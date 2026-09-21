@@ -193,3 +193,17 @@ main{max-width:var(--measure);margin:0 auto}
  font-size:calc(var(--body)*.66);color:var(--muted);line-height:1.9}
 .mres.ok{color:var(--accent)}
 .mres.err{color:var(--gold)}
+
+/* ===== بطاقة الاقتباس ===== */
+.qc{display:flex;gap:12px;align-items:flex-start;text-decoration:none;
+ max-width:var(--measure);margin:16px auto 4px;padding:12px 14px;
+ background:var(--paper2);border:var(--rulew) solid var(--rule);border-radius:10px;
+ transition:border-color .25s ease,background .25s ease}
+.qc:hover{border-color:var(--gold);background:var(--paper)}
+.qc .qb{flex:1;min-width:0}
+.qc .qm{display:block;color:var(--muted);font-size:calc(var(--body)*.56);
+ line-height:1.9;margin-bottom:3px}
+.qc .qt{display:block;color:var(--ink);opacity:.86;
+ font-size:calc(var(--body)*.72);line-height:1.95}
+.qc .qi{flex:0 0 auto;width:62px;height:62px;object-fit:cover;
+ border-radius:7px;border:var(--rulew) solid var(--rule)}
