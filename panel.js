@@ -1068,8 +1068,16 @@ function buildSitemap(){
     pub.map(function(e){return "<url><loc>"+BASEURL+"p/"+e.id+".html</loc><lastmod>"+xe(e.iso)+"</lastmod></url>"}).join("")+
     "</urlset>"}
 function postPage(e){
-  var img=BASEURL+"card.jpg";
-  (e.m||[]).some(function(m){if(!m.vf){img=CFG.media.base+"/"+m.f;return true}return false});
+  /* صورة البطاقة: صورة المدخل إن كانت له صورة ثابتة، وإلا صورة المدونة.
+     والمقاطع القديمة لها صورةٌ ثابتة في m.f فتصلح للبطاقة، أما ما كان
+     ملفّه مقطعاً فلا تقبله المنصّات فنتجاوزه. */
+  var img=CFG.site.portrait
+    ?(/^https?:/.test(CFG.site.portrait)?CFG.site.portrait:BASEURL+CFG.site.portrait)
+    :BASEURL+"card.jpg";
+  (e.m||[]).some(function(m){
+    var f=m.f||"";
+    if(f&&!/\.(mp4|webm|mov|m4v)$/i.test(f)){img=CFG.media.base+"/"+f;return true}
+    return false});
   var url=BASEURL+"p/"+e.id+".html";
   var T=xe(snip(e.t,65)),Dsc=xe(snip(e.t,155));
   var rt=(CFG.layout.showReadingTime!==false&&e.t.length>400)
