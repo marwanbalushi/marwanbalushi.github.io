@@ -649,6 +649,70 @@
       $("stream").innerHTML = '<p class="none">تعذّر تحميل المدونة.<br>' + esc(err.message) + "</p>";
     });
 
+  /* ===== مكبّر الصور =====
+     الصورة في المتن تُفتح ملءَ الشاشة بالضغط، وتُغلق بالضغط أو بـEsc.
+     وإن كان في المدخل أكثر من صورة، فالتنقّل بالسهمين أو بالسحب.
+     ويظهر وصف المكفوفين تحتها إن كان مكتوباً. */
+  (function () {
+    var box = null, pics = [], at = 0;
+
+    function show(i) {
+      at = (i + pics.length) % pics.length;
+      var p = pics[at], im = box.querySelector(".lbi"), cp = box.querySelector(".lbc");
+      im.src = p.src; im.alt = p.alt || "";
+      cp.textContent = p.alt || ""; cp.style.display = p.alt ? "" : "none";
+      box.querySelector(".lbn").textContent =
+        pics.length > 1 ? arn(at + 1) + " / " + arn(pics.length) : "";
+    }
+
+    function close() {
+      if (!box) return;
+      box.remove(); box = null; document.body.style.overflow = "";
+    }
+
+    function open(list, i) {
+      pics = list;
+      box = document.createElement("div");
+      box.className = "lb";
+      box.innerHTML = '<img class="lbi" alt=""><p class="lbc"></p><span class="lbn"></span>' +
+        '<button class="lbx" aria-label="إغلاق">\u00d7</button>' +
+        (list.length > 1
+          ? '<button class="lba lbp" aria-label="السابقة">\u203a</button>' +
+            '<button class="lba lbf" aria-label="التالية">\u2039</button>' : "");
+      document.body.appendChild(box);
+      document.body.style.overflow = "hidden";
+      show(i);
+      box.addEventListener("click", function (ev) {
+        if (ev.target.closest(".lbp")) return show(at - 1);
+        if (ev.target.closest(".lbf")) return show(at + 1);
+        if (ev.target.closest(".lbi")) return;
+        close();
+      });
+      var x0 = 0;
+      box.addEventListener("touchstart", function (ev) { x0 = ev.touches[0].clientX; }, { passive: true });
+      box.addEventListener("touchend", function (ev) {
+        var dx = ev.changedTouches[0].clientX - x0;
+        if (Math.abs(dx) > 50) show(at + (dx > 0 ? -1 : 1));
+      }, { passive: true });
+    }
+
+    document.addEventListener("keydown", function (ev) {
+      if (!box) return;
+      if (ev.key === "Escape") close();
+      else if (ev.key === "ArrowRight") show(at - 1);
+      else if (ev.key === "ArrowLeft") show(at + 1);
+    });
+
+    document.addEventListener("click", function (ev) {
+      var im = ev.target.closest(".med img");
+      if (!im || box) return;
+      ev.preventDefault();
+      var all = [].slice.call(im.closest(".med").querySelectorAll("img"));
+      open(all.map(function (x) { return { src: x.currentSrc || x.src, alt: x.alt }; }),
+           all.indexOf(im));
+    });
+  })();
+
   if ("serviceWorker" in navigator)
     window.addEventListener("load", function () { navigator.serviceWorker.register("sw.js").catch(function () {}); });
 })();
