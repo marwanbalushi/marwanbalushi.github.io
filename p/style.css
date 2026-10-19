@@ -207,3 +207,25 @@ main{max-width:var(--measure);margin:0 auto}
  font-size:calc(var(--body)*.72);line-height:1.95}
 .qc .qi{flex:0 0 auto;width:62px;height:62px;object-fit:cover;
  border-radius:7px;border:var(--rulew) solid var(--rule)}
+
+
+/* ===== الوسوم ===== */
+.tx .tg{color:var(--gold);border-bottom:var(--rulew) solid transparent;
+ transition:color .2s ease,border-color .2s ease}
+.tx .tg:hover{color:var(--accent);border-bottom-color:var(--gold)}
+.tgbar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;
+ max-width:var(--measure);margin:0 auto 22px;padding:9px 18px;
+ background:var(--paper2);border:var(--rulew) solid var(--rule);border-radius:999px}
+.tgbar .tgn{font-family:var(--display);color:var(--accent);
+ font-size:calc(var(--body)*.8)}
+.tgbar .tgc{flex:1;color:var(--muted);font-size:calc(var(--body)*.6)}
+.tgbar .tgx{color:var(--muted);font-size:calc(var(--body)*.6);
+ border-bottom:var(--rulew) solid var(--rule);cursor:pointer}
+.tgbar .tgx:hover{color:var(--accent);border-color:var(--gold)}
+
+/* ===== مداخل تشبه هذا ===== */
+.rel{max-width:var(--measure);margin:38px auto 0;padding-top:22px;
+ border-top:var(--rulew) solid var(--rule)}
+.rel h2{font-family:var(--display);font-weight:400;color:var(--accent);
+ font-size:calc(var(--body)*.88);margin:0 0 4px;text-align:center}
+.rel .qc{margin:12px auto 0}
