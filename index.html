@@ -94,28 +94,30 @@ a.avlink{display:block;text-align:center;margin-top:16px}
 a.avlink:hover .avatar{transform:scale(1.05)}
 /* ===== مكبّر الصور ===== */
 .med img{cursor:zoom-in}
-.lb{position:fixed;inset:0;z-index:9999;display:flex;flex-direction:column;
- align-items:center;justify-content:center;gap:16px;padding:46px 20px;
- background:var(--paper);animation:lbin .18s ease}
+.lb{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;
+ justify-content:center;overflow:hidden;background:var(--paper);animation:lbin .18s ease}
 @keyframes lbin{from{opacity:0}to{opacity:1}}
-.lb .lbi{max-width:min(96vw,1180px);max-height:80vh;object-fit:contain;
- border-radius:4px;cursor:default}
-.lb .lbc{max-width:var(--measure);margin:0;text-align:center;color:var(--muted);
- font-size:calc(var(--body)*.62);line-height:1.95}
+.lb .lbi{max-width:100vw;max-height:100vh;width:auto;height:auto;
+ object-fit:contain;cursor:zoom-in}
+.lb.zoom{overflow:auto}
+.lb.zoom .lbi{max-width:none;max-height:none;margin:auto;cursor:zoom-out}
+.lb.zoom .lbc{display:none!important}
+.lb .lbc{position:absolute;inset-inline:0;bottom:0;margin:0;padding:13px 22px 15px;
+ text-align:center;color:var(--muted);font-size:calc(var(--body)*.62);line-height:1.9;
+ background:var(--paper2);border-top:var(--rulew) solid var(--rule)}
 .lb .lbn{position:absolute;top:18px;inset-inline-start:22px;
  color:var(--muted);font-size:calc(var(--body)*.56)}
-.lb .lbx,.lb .lba{font-family:inherit;background:none;border:0;cursor:pointer;
- color:var(--muted);line-height:1;padding:0}
-.lb .lbx{position:absolute;top:10px;inset-inline-end:14px;
- width:42px;height:42px;font-size:27px}
-.lb .lba{position:absolute;top:50%;transform:translateY(-50%);
- width:46px;height:46px;font-size:28px;background:var(--paper2);
+.lb .lbx,.lb .lba{font-family:inherit;cursor:pointer;color:var(--muted);
+ line-height:1;padding:0;background:var(--paper2);
  border:var(--rulew) solid var(--rule);border-radius:50%}
-.lb .lbp{inset-inline-start:12px}
-.lb .lbf{inset-inline-end:12px}
-.lb .lbx:hover{color:var(--accent)}
-.lb .lba:hover{color:var(--accent);border-color:var(--gold)}
-@media(max-width:520px){.lb{padding:40px 10px}.lb .lba{width:40px;height:40px;font-size:24px}}
+.lb .lbx{position:absolute;top:12px;inset-inline-end:16px;
+ width:42px;height:42px;font-size:25px}
+.lb .lba{position:absolute;top:50%;transform:translateY(-50%);
+ width:46px;height:46px;font-size:28px}
+.lb .lbp{inset-inline-start:14px}
+.lb .lbf{inset-inline-end:14px}
+.lb .lbx:hover,.lb .lba:hover{color:var(--accent);border-color:var(--gold)}
+@media(max-width:520px){.lb .lba{width:40px;height:40px;font-size:24px}}
 
 /* ===== الوسوم ===== */
 .tx .tg{color:var(--gold);border-bottom:var(--rulew) solid transparent;

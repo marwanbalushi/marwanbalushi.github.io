@@ -659,6 +659,7 @@
     function show(i) {
       at = (i + pics.length) % pics.length;
       var p = pics[at], im = box.querySelector(".lbi"), cp = box.querySelector(".lbc");
+      box.classList.remove("zoom"); box.scrollTop = 0; box.scrollLeft = 0;
       im.src = p.src; im.alt = p.alt || "";
       cp.textContent = p.alt || ""; cp.style.display = p.alt ? "" : "none";
       box.querySelector(".lbn").textContent =
@@ -685,7 +686,7 @@
       box.addEventListener("click", function (ev) {
         if (ev.target.closest(".lbp")) return show(at - 1);
         if (ev.target.closest(".lbf")) return show(at + 1);
-        if (ev.target.closest(".lbi")) return;
+        if (ev.target.closest(".lbi")) { box.classList.toggle("zoom"); return; }
         close();
       });
       var x0 = 0;
