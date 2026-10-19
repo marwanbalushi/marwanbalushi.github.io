@@ -2,6 +2,7 @@
 (function () {
   var R = document.documentElement, $ = function (i) { return document.getElementById(i); };
   var CFG = null, DATA = [], form = "all", door = null, query = "", shown = 0, EDIT = false, SC = 1;
+  var tag = "", TAGS = {};
   window.addEventListener("error", function () { /* لا يُسكت الصفحة كلها إن سقط جزء */ });
   var arn = function (n) { return String(n).replace(/\d/g, function (d) { return "٠١٢٣٤٥٦٧٨٩"[d]; }); };
   function st(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
@@ -228,7 +229,7 @@
     fb.querySelectorAll("button").forEach(function (b) {
       if (b.classList.contains("galbtn")) return;
       b.onclick = function () {
-        location.hash = "#/"; form = b.dataset.f || "all";
+        location.hash = "#/"; form = b.dataset.f || "all"; tag = "";
         fb.querySelectorAll("button").forEach(function (x) { x.classList.toggle("on", x === b); });
         shown = 0; render();
       };
@@ -353,20 +354,34 @@
       (EDIT ? '<a class="pen' + (inline ? " after-shx" : "") + '" href="tahrir.html#/' + e.id +
               '" title="تحرير">' + IC.pen + "</a>" : "") +
       "</p>";
-    var body = '<p class="tx' + (long ? " clamp" : "") + '">' + esc(e.t) + "</p>" +
+    var body = '<p class="tx' + (long ? " clamp" : "") + '">' + tagLinks(esc(e.t)) + "</p>" +
       (long ? '<a class="cont" href="#/' + e.id + '">' + IC.down + "اقرأ التتمة</a>" : "");
     var endm = !long && CFG.layout.showEndMark !== false
       ? '<div class="end" aria-hidden="true"><i></i><span></span><i></i></div>' : "";
     return '<article class="e">' + meta + med + body + qCard(e) + endm + "</article>";
   }
 
-  /* بطاقة الاقتباس — مدخلٌ قديم يُشار إليه في مدخلٍ جديد.
-     تحمل تاريخه وطرفاً من نصّه وصورته الصغيرة، وتفتحه بالضغط. */
-  function qCard(e) {
-    if (!e.q) return "";
-    var t = null;
-    for (var i = 0; i < DATA.length; i++) { if (DATA[i].id === e.q) { t = DATA[i]; break } }
-    if (!t) return "";
+  /* ===== الوسوم =====
+     الوسوم مكتوبة في النصوص أصلاً، فنتعرّفها عند العرض ونجعلها روابط.
+     ولا يُمسّ data.json بحرف. */
+  var TAGSRC = "#([0-9A-Za-z_\\u0621-\\u063A\\u0641-\\u064A\\u064B-\\u0652" +
+               "\\u0660-\\u0669\\u0671-\\u06D3]+)";
+
+  function tagsOf(t) {
+    var re = new RegExp(TAGSRC, "g"), out = [], m;
+    while ((m = re.exec(t))) if (out.indexOf(m[1]) < 0) out.push(m[1]);
+    return out;
+  }
+
+  /* تُستدعى بعد esc وحدها، كي لا يُحقن وسمٌ في نصٍّ غير مهروب */
+  function tagLinks(h) {
+    return h.replace(new RegExp(TAGSRC, "g"), function (w, t) {
+      return '<a class="tg" href="#/w/' + encodeURIComponent(t) + '">#' + t + "</a>";
+    });
+  }
+
+  /* بطاقةٌ صغيرة لمدخل: تاريخه وطرفٌ من نصّه وصورته */
+  function miniCard(t) {
     var im = "";
     for (var j = 0; j < (t.m || []).length; j++) {
       var f = t.m[j].f || "";
@@ -378,6 +393,35 @@
     return '<a class="qc" href="#/' + t.id + '">' +
       '<span class="qb"><span class="qm">' + esc(t.d) + "</span>" +
       '<span class="qt">' + esc(cut(t.t, 200)) + "</span></span>" + im + "</a>";
+  }
+
+  /* مداخل تشترك مع هذا في وسومه، الأكثر اشتراكاً أوّلاً ثم الأحدث */
+  function related(e, n) {
+    var mine = TAGS[e.id] || [];
+    if (!mine.length) return "";
+    var sc = [];
+    DATA.forEach(function (x) {
+      if (x.draft || x.id === e.id) return;
+      var k = 0, xt = TAGS[x.id] || [];
+      for (var i = 0; i < mine.length; i++) if (xt.indexOf(mine[i]) > -1) k++;
+      if (k) sc.push([k, x]);
+    });
+    if (!sc.length) return "";
+    sc.sort(function (a, b) {
+      return b[0] - a[0] || (a[1].iso < b[1].iso ? 1 : a[1].iso > b[1].iso ? -1 : 0);
+    });
+    return '<section class="rel"><h2>مداخل تشبه هذا</h2>' +
+      sc.slice(0, n || 3).map(function (p) { return miniCard(p[1]); }).join("") + "</section>";
+  }
+
+  /* بطاقة الاقتباس — مدخلٌ قديم يُشار إليه في مدخلٍ جديد.
+     تحمل تاريخه وطرفاً من نصّه وصورته الصغيرة، وتفتحه بالضغط. */
+  function qCard(e) {
+    if (!e.q) return "";
+    var t = null;
+    for (var i = 0; i < DATA.length; i++) { if (DATA[i].id === e.q) { t = DATA[i]; break } }
+    if (!t) return "";
+    return miniCard(t);
   }
 
   function shareBar(e) {
@@ -435,6 +479,7 @@
           : f === "sel" ? (e.sel === 1 ? true : e.sel === -1 ? false
               : e.t.length > ((CFG.layout && CFG.layout.selectedChars) || 900))
           : e.f === f) &&
+        (!tag || (TAGS[e.id] || []).indexOf(tag) > -1) &&
         (!nq || (NORM[e.id] || "").indexOf(nq) > -1);
     });
   }
@@ -447,7 +492,11 @@
       if (pi > 0) { var pe = list.splice(pi, 1)[0]; list.unshift(pe); }
     }
     if (!list.length) { s.innerHTML = '<p class="none">لا مداخل هنا بعد.</p>'; more.style.display = "none"; $("hits").textContent = ""; return; }
-    if (shown === 0) s.innerHTML = "";
+    if (shown === 0) s.innerHTML = tag
+      ? '<div class="tgbar"><span class="tgn">#' + esc(tag) + "</span>" +
+        '<span class="tgc">' + arn(list.length) + " مدخلاً</span>" +
+        '<a class="tgx" href="#/">إزالة المرشّح</a></div>'
+      : "";
     var n = list.slice(shown, shown + (CFG.layout.perPage || 25));
     s.insertAdjacentHTML("beforeend", n.map(function (e) { return card(e, false); }).join(""));
     shown += n.length;
@@ -461,7 +510,16 @@
   $("q").addEventListener("input", function () {
     var el = this;
     clearTimeout(tmr);
-    tmr = setTimeout(function () { query = el.value.trim(); location.hash = "#/"; shown = 0; render(); }, 220);
+    tmr = setTimeout(function () { query = el.value.trim(); tag = ""; location.hash = "#/"; shown = 0; render(); }, 220);
+  });
+
+  /* إزالة مرشّح الوسم — الرابط وحده لا يكفي لأنّ «#/» لا يمحو الوسم عمداً،
+     كي يعود القارئ من مدخلٍ فتحه إلى صفّ الوسم لا إلى المدونة كلّها. */
+  document.addEventListener("click", function (ev) {
+    var x = ev.target.closest(".tgx"); if (!x) return;
+    ev.preventDefault(); tag = ""; shown = 0;
+    if (location.hash && location.hash !== "#/") location.hash = "#/"; else render();
+    window.scrollTo(0, 0);
   });
 
   document.addEventListener("click", function (ev) {
@@ -503,6 +561,14 @@
         '<div id="solo"><a class="back" href="#/">→ العودة إلى المدونة</a><main>' + html + "</main></div>");
       window.scrollTo(0, 0); return;
     }
+    if (h.indexOf("w/") === 0) {
+      var wt = "";
+      try { wt = decodeURIComponent(h.slice(2)); } catch (x) { wt = h.slice(2); }
+      app.style.display = "";
+      if (tag !== wt) { tag = wt; shown = 0; render(); }
+      document.title = "#" + wt + " · " + CFG.site.name;
+      window.scrollTo(0, 0); return;
+    }
     if (h === "about") {
       app.style.display = "none";
       document.body.insertAdjacentHTML("afterbegin",
@@ -515,7 +581,7 @@
         app.style.display = "none";
         document.body.insertAdjacentHTML("afterbegin",
           '<div id="solo"><a class="back" href="#/">→ العودة إلى المدونة</a><main>' +
-          card(e, true) + shareBar(e) + "</main></div>");
+          card(e, true) + shareBar(e) + related(e) + "</main></div>");
         window.scrollTo(0, 0); return;
       }
     }
@@ -527,7 +593,7 @@
      فنُعيد بناءها يدوياً كي لا يختفي الصفّ. */
   function revive() {
     if (!CFG || !DATA.length) return;
-    form = "all"; query = ""; door = null;
+    form = "all"; query = ""; door = null; tag = "";
     try { $("q").value = ""; } catch (e) {}
     buildMast(); shown = 0; render(); route();
     if (typeof supUpd === "function") setTimeout(supUpd, 60);
@@ -547,7 +613,8 @@
   var FULL = false;
   function ingest(list) {
     DATA = list; NORM = {};
-    DATA.forEach(function (e) { NORM[e.id] = norm(e.t); });
+    TAGS = {};
+    DATA.forEach(function (e) { NORM[e.id] = norm(e.t); TAGS[e.id] = tagsOf(e.t); });
   }
   function loadFull(first) {
     return fetch("data.json", { cache: "no-cache" }).then(function (r) { return r.json(); })
